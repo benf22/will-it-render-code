@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "will-it-render"
+version = "0.1.0"
+description = "AttnSteer — predict and steer whether a target class will render in a generated video, from DiT cross-attention."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [{ name = "The will-it-render authors" }]
+keywords = ["diffusion", "video-generation", "attention", "steering", "probing", "LTX", "WAN", "CogVideoX"]
+
+# Core runtime: the probe/AttnSteer code + feature I/O + config loading. Deliberately light.
+# The DiT engines (LTX-2 / Wan2.1 / CogVideoX) are NOT pip deps — they are resolved from
+# local checkouts via env vars (VP_LTX_ROOT / VP_WAN_ROOT / VP_COGX_ROOT); see README.
+dependencies = [
+    "torch>=2.4",
+    "numpy",
+    "pandas",
+    "pyyaml",
+    "omegaconf",
+    "safetensors",
+    "tqdm",
+]
+
+[project.optional-dependencies]
+# Object/visual detectors used for video labeling (heavy, some AGPL — see THIRD_PARTY.md).
+detectors = ["ultralytics", "transformers", "pillow"]
+# PANNs audio tagging for audio labeling.
+audio = ["librosa", "soundfile"]
+# Baseline method extras (Attend-and-Excite / TempoControl reimplementations).
+baselines = []
+# VBench quality metrics (heavy; optional evaluation extra).
+vbench = ["vbench"]
+# Everything, for a full dev/eval environment.
+all = ["will-it-render[detectors,audio,baselines,vbench]"]
+dev = ["pytest", "ruff"]
+
+[project.scripts]
+# Headline entry point — one prompt + one AttnSteer bundle → steered video (Phase 4).
+wir-run = "will_it_render.inference.run:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["gpu: requires a GPU and a local DiT engine checkout (excluded from CI)"]

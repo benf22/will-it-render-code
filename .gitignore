@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Local env / secrets
+.env
+*.local
+
+# Artifacts fetched at runtime (probe/AttnSteer bundles, model weights) — never committed.
+# The demo seed-42 latents under examples/ are the deliberate exception (force-added).
+artifacts/
+*.pt
+*.safetensors
+*.ckpt
+
+# Media / outputs
+outputs/
+*.mp4
+*.wav
+*.gif
+
+# OS
+.DS_Store
