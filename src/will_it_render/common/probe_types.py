@@ -1,4 +1,4 @@
-"""Shared probe data types for the video_probing extraction pipeline.
+"""Shared probe data types for the will-it-render extraction pipeline.
 
 These definitions are intentionally independent of any model library (Ovi, LTX, etc.)
 so that run_extraction.py and aggregator.py can run in any Python environment.

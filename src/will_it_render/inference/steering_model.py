@@ -655,7 +655,7 @@ class PerFrameTimelineSteeringModel(StepKeyedSteeringModel):
                   f"all-ones (present in every frame)")
         # Reuse the baseline's resampler ('all_ones'/list → [T]); imported lazily to keep
         # this module independent of the baselines package.
-        from will_it_render.evaluation.baselines.tempocontrol.loss import _resolve_control_signal
+        from will_it_render.common.control_signal import resolve_control_signal as _resolve_control_signal
 
         sig = _resolve_control_signal(raw, T, self.device)
         self._timeline_cache[key] = sig

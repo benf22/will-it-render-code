@@ -39,6 +39,7 @@ from typing import Optional, Sequence
 import torch
 import torch.nn.functional as F
 
+from will_it_render.common.control_signal import resolve_control_signal as _resolve_control_signal
 from will_it_render.common.steering_base import SteeringModel
 from will_it_render.common.aggregator import _resolve_spatial, aggregate_captures_to_vector
 
@@ -62,27 +63,6 @@ def _pearson_loss(attention_signal: torch.Tensor, control_signal: torch.Tensor) 
     return -cov / (std_a * std_c)
 
 
-def _resolve_control_signal(
-    raw: str | Sequence[float] | None, n_frames: int, device: torch.device
-) -> torch.Tensor:
-    """Build the ``[T]`` control signal. ``"all_ones"`` / None → every frame active.
-
-    An explicit list of a different length is resampled to ``n_frames`` with
-    ``adaptive_max_pool1d`` (the same resampling their audio path uses), so a signal
-    authored for another model's latent frame count still lines up.
-    """
-    if raw is None or (isinstance(raw, str) and raw.strip().lower() == "all_ones"):
-        return torch.ones(n_frames, dtype=torch.float32, device=device)
-    if isinstance(raw, str):
-        values = [float(x) for x in raw.replace(",", " ").split()]
-    else:
-        values = [float(x) for x in raw]
-    if not values:
-        raise ValueError("control_signal is empty; use 'all_ones' or a list of values.")
-    sig = torch.tensor(values, dtype=torch.float32, device=device)
-    if sig.numel() != n_frames:
-        sig = F.adaptive_max_pool1d(sig.view(1, 1, -1), n_frames).view(-1)
-    return sig
 
 
 class TempoControlSteeringModel(SteeringModel):
