@@ -1,4 +1,15 @@
-"""Probe-extraction hook for CogVideoX joint self-attention.
+# Portions of this file (the attention-output computation reproduced to keep generation
+# bit-exact) are adapted from the 🤗 diffusers ``CogVideoXAttnProcessor2_0`` and are licensed
+# under the Apache License, Version 2.0:
+#
+#     Copyright 2024 The HuggingFace Team. All rights reserved.
+#     Licensed under the Apache License, Version 2.0 (the "License");
+#     you may not use this file except in compliance with the License.
+#     You may obtain a copy of the License at
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+# See THIRD_PARTY.md. The surrounding AttnSteer capture logic is MIT-licensed (see LICENSE).
+"""AttnSteer capture hook for CogVideoX joint self-attention.
 
 Unlike LTX/Wan (which have a dedicated cross-attention module), CogVideoX concatenates the
 226 T5 text tokens with the video tokens into ONE sequence and runs full self-attention

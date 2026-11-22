@@ -31,7 +31,11 @@ bundle/
 type its seed latent was tagged for; `--seed N` for any other seed regenerates noise on the
 fly (reproducible only on the same GPU type — CUDA RNG is architecture-dependent).
 
-The grad-aggregation rule glossary (ported from the source `steering/RULE_NAMES.md`) lives
-here.
+## Gradient-aggregation rules
+
+`steering.grad_aggregate` selects how per-objective / per-step gradients are combined before
+the latent update (plain mean, mutual-agreement gating, worst-object fallback, flow-PCA
+projections, …). The rules are defined and documented in `steering_core.py`'s
+`GRAD_AGGREGATE_REGISTRY` — each registered rule carries a docstring describing its behavior.
 
 > Scaffold — loop + `run.py` ported in Phases 2b / 4.
