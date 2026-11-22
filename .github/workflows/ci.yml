@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  cpu-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install (CPU torch + package + dev)
+        run: |
+          python -m pip install --upgrade pip
+          # CPU-only torch to keep CI light.
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install -e ".[dev]"
+
+      - name: Run CPU test suite (GPU tests excluded)
+        run: pytest -q -m "not gpu"
+
+      # The secret/path scanner and stale-module scanner run as part of the suite above,
+      # so a leaked personal path / token / dropped-module reference fails CI here.
