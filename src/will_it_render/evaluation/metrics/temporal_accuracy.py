@@ -388,7 +388,7 @@ OURS = ["grit", "gdino", "owl"]
 
 
 def _build_detector(name: str, device: str):
-    from labeling.visual_classifier import (
+    from will_it_render.common.visual_classifier import (
         GRiTClassifier, GroundingDINOClassifier, OWLv2Classifier, YoloV10Classifier)
     return {
         "yolov10": YoloV10Classifier, "grit": GRiTClassifier,

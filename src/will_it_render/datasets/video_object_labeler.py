@@ -39,8 +39,8 @@ from typing import List
 import pandas as pd
 from tqdm import tqdm
 
-from labeling.csv_writer import write_labels_csv
-from labeling.visual_classifier import (
+from will_it_render.datasets.csv_writer import write_labels_csv
+from will_it_render.common.visual_classifier import (
     GRiTClassifier,
     GroundingDINOClassifier,
     OWLv2Classifier,

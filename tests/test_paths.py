@@ -37,3 +37,16 @@ def test_seed_latents_dir_env(tmp_path, monkeypatch):
     monkeypatch.setenv("VP_SEED_LATENTS_DIR", str(tmp_path / "sl"))
     assert paths.seed_latents_dir() == tmp_path / "sl"
     assert (tmp_path / "sl").is_dir()
+
+
+def test_config_dir_finds_repo_configs(monkeypatch):
+    monkeypatch.delenv("VP_CONFIG_DIR", raising=False)
+    cd = paths.config_dir()
+    assert (cd / "models").is_dir()
+    assert (cd / "models" / "ltx.yaml").exists()
+
+
+def test_config_dir_env_override(tmp_path, monkeypatch):
+    (tmp_path / "models").mkdir()
+    monkeypatch.setenv("VP_CONFIG_DIR", str(tmp_path))
+    assert paths.config_dir() == tmp_path

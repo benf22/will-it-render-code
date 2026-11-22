@@ -159,7 +159,7 @@ class WanSteeringAdapter(SteeringBackendAdapter):
         t = self.timesteps[step_idx]
         timestep = torch.stack([t])
         self.probe_ctx.active = False
-        from steering import steering_core as _sc
+        from will_it_render.inference import steering_core as _sc
         if _sc.SOLVER_RESET and getattr(self, "_steered", False):
             # A steered latent was committed for this step: skip the UniPC corrector (it would
             # rebuild the sample from the previous, un-steered latent), and under "full" also

@@ -10,7 +10,7 @@ from typing import Any
 
 import pandas as pd
 
-# ── VBench on sys.path (mirrors labeling/visual_classifier.py) ───────────────
+# ── VBench on sys.path (mirrors common/visual_classifier.py) ───────────────
 _VBENCH_ROOT = Path(__file__).parents[2] / "VBench"
 if str(_VBENCH_ROOT) not in sys.path:
     sys.path.insert(0, str(_VBENCH_ROOT))

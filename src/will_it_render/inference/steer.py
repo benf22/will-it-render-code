@@ -38,12 +38,12 @@ import torch
 import yaml
 from omegaconf import OmegaConf
 
-from baselines import build_baseline_steering_model
+from will_it_render.evaluation.baselines import build_baseline_steering_model
 from will_it_render.common.agg import build_agg_kwargs
 from will_it_render.common.prompts import load_prompts, normalize_row, parse_target_words
 from will_it_render.backends.model_backend import create_backend
 from will_it_render.common.storage import make_output_dir
-from steering import steering_core
+from will_it_render.inference import steering_core
 from will_it_render.inference.steering_model import build_steering_model
 
 
@@ -96,11 +96,12 @@ def load_configs(config_path: str):
     steering = raw_cfg["steering"]
     model_type: str = raw_cfg.get("model_type", "ltx")
 
-    # The per-model config is the only shared config and always lives in the repo's
-    # configs/models/ dir — resolve it there, independent of where this steering
-    # config file sits (it lives under steering/).
-    repo_root = Path(__file__).parent.parent
-    model_cfg_path = repo_root / "configs" / "models" / f"{model_type}.yaml"
+    # The per-model config is the only shared config; it lives in the repo's configs/models/
+    # dir, located via common.paths.config_dir() (VP_CONFIG_DIR or an upward search — the
+    # old parent.parent walk broke once this module moved under src/, plan §10b R5).
+    from will_it_render.common import paths
+
+    model_cfg_path = paths.config_dir() / "models" / f"{model_type}.yaml"
     with open(model_cfg_path) as f:
         model_cfg = yaml.safe_load(f)
     model_extraction_cfg: dict = model_cfg.get("extraction", {})

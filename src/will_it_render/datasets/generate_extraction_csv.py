@@ -20,7 +20,7 @@ import csv
 import sys
 from pathlib import Path
 
-from dataset_creation.csv_reader import read_objects_csv
+from will_it_render.datasets.csv_reader import read_objects_csv
 
 
 _REQUIRED_COLS = {"prompt", "object_name", "target_words"}
@@ -66,7 +66,7 @@ def main():
         parser.error("Either --objects_csv or --manual_prompts_csv is required")
 
     entries = read_objects_csv(args.objects_csv)
-    from dataset_creation.enricher import build_enricher, enrich_entry
+    from will_it_render.datasets.enricher import build_enricher, enrich_entry
     pipe = build_enricher(args.model, args.device)
 
     rows = []

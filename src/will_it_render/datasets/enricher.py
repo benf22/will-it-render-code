@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import List
 
-from dataset_creation.csv_reader import ObjectEntry
+from will_it_render.datasets.csv_reader import ObjectEntry
 
 _SYSTEM_PROMPT = (
     "You are a creative scene description generator. "

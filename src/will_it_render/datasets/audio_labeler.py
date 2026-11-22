@@ -14,8 +14,8 @@ import json
 from pathlib import Path
 from typing import List
 
-from labeling.audio_classifier import AudioSetClassifier
-from labeling.csv_writer import write_labels_csv
+from will_it_render.datasets.audio_classifier import AudioSetClassifier
+from will_it_render.datasets.csv_writer import write_labels_csv
 
 
 def run_labeling(

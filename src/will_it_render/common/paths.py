@@ -68,6 +68,27 @@ def cogx_root(override=None) -> Path:
     return engine_root("cogx", override)
 
 
+def config_dir() -> Path:
+    """Locate the ``configs/`` directory (holding ``models/<backend>.yaml``).
+
+    ``VP_CONFIG_DIR`` → that path; else walk up from this package looking for a directory
+    that contains ``configs/models`` (works from a source checkout). Raises if not found —
+    set ``VP_CONFIG_DIR`` for an installed package whose configs live elsewhere.
+    """
+    env = os.environ.get("VP_CONFIG_DIR")
+    if env:
+        return Path(env).expanduser()
+    here = Path(__file__).resolve()
+    for parent in here.parents:
+        candidate = parent / "configs"
+        if (candidate / "models").is_dir():
+            return candidate
+    raise RuntimeError(
+        "Could not locate the configs/ directory. Set VP_CONFIG_DIR to the directory "
+        "containing models/<backend>.yaml."
+    )
+
+
 def artifact_cache_dir() -> Path:
     """Where fetched AttnSteer bundles / probe weights / cached features live.
 

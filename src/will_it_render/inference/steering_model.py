@@ -1131,7 +1131,7 @@ def _build_steering_model_impl(
         )
     # Anything else is a baseline (see baselines/__init__.py) — imported lazily so this
     # module stays independent of the baselines package.
-    from baselines import build_baseline_steering_model
+    from will_it_render.evaluation.baselines import build_baseline_steering_model
 
     return build_baseline_steering_model(
         mode, cfg, device, agg_kwargs, probe_config, steps_filter

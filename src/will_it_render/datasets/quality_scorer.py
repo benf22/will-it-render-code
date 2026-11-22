@@ -1,6 +1,6 @@
 """Video-realism / visual-quality scorers (word-free analogue of visual_classifier.py).
 
-Unlike the object classifiers in ``labeling/visual_classifier.py`` (which score a
+Unlike the object classifiers in ``common/visual_classifier.py`` (which score a
 *(video, word)* pair), a ``QualityScorer`` scores a whole video and returns one or more
 named continuous sub-scores. Two scorers are provided:
 
@@ -32,7 +32,7 @@ from typing import Dict, List
 
 import torch
 
-# VBench on sys.path (mirrors labeling/visual_classifier.py and evaluation/vbench_eval.py)
+# VBench on sys.path (mirrors common/visual_classifier.py and evaluation/vbench_eval.py)
 _VBENCH_ROOT = Path(__file__).parents[2] / "VBench"
 if str(_VBENCH_ROOT) not in sys.path:
     sys.path.insert(0, str(_VBENCH_ROOT))
