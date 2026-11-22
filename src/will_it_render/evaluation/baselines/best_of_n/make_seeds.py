@@ -8,7 +8,7 @@ completed n and a run can be topped up later.
 Outputs (in ``--out-dir``):
   seeds_all.csv            prompt_idx, k, rep, seed            (the full stream, the record)
   prompts_r<lo>to<hi>_k<k>.csv   per-(rep-block, k) generation CSVs (prompt cols + ``seed`` + ``rep``),
-                           one row per (prompt, rep) in the block; consumed by steering.sweep
+                           one row per (prompt, rep) in the block
   seeds_unique.txt         every distinct seed (for gen_seed_latents*)
 """
 from __future__ import annotations

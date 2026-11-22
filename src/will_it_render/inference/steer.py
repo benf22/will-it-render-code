@@ -11,7 +11,7 @@ for each prompt — saving ``output.mp4`` / ``output.wav`` and a per-step
 ``steering_metrics.json`` per prompt.
 
 The body is factored into reusable functions so other drivers (e.g.
-``steering/sweep.py``) can load the configs / build the expensive backend ONCE and
+a caller) can load the configs / build the expensive backend ONCE and
 call :func:`run_steering` many times without reloading the model:
 
     load_configs  → parse the steering yaml + resolve the shared model config

@@ -12,42 +12,16 @@ The per-frame columns cover **all native frames** of the clip. The legacy column
 old 16-frame logic: detectors score every native frame once, and the legacy columns
 aggregate only the 16 middle-sampled frames the old pipeline used (no extra inference).
 
-Two execution modes:
+Single-node, 1+ GPUs (DDP via torchrun):
 
-Mode: torchrun (default)
-    torchrun --nproc_per_node=4 -m labeling.video_object_labeler \\
+    torchrun --nproc_per_node=4 -m will_it_render.datasets.video_object_labeler \\
         --root /data/extractions \\
         --out /data/labels.csv \\
         [--classifiers grit gdino owl] \\
         [--frame-threshold 0.15]
 
-Mode: queue (fault-tolerant, distributed)
-    # Step 1 — seed once. --out accepts a file or a directory (labels.csv is
-    # appended to a directory); if omitted it defaults to <root>/labels.csv.
-    python -m labeling.video_object_labeler --mode seed \\
-        --root /data/extractions \\
-        --queue-dir /data/queue \\
-        [--out /data/labels.csv] \\
-        [--classifiers grit gdino owl] \\
-        [--frame-threshold 0.15] \\
-        [--label my_run]
-
-    # Step 2a — launch workers on a VM (one per GPU)
-    bash infra/launch_vm.sh 0,1,2,3 \\
-        --task-module labeling.video_object_labeler \\
-        --queue-dir /data/queue \\
-        [--device cuda]
-
-    # Step 2b — OR launch a SLURM array job. SLURM logs are written to
-    # <out-dir>/slurm_logs/ (the directory of --out recorded at seed time).
-    bash infra/launch_slurm.sh \\
-        --partition gpu_a100 \\
-        --task-module labeling.video_object_labeler \\
-        --queue-dir /data/queue \\
-        [--n-workers 8] \\
-        [--n-gpus 1] \\
-        [--mem 0] \\
-        [--device cuda]
+(The research monorepo's distributed filesystem-queue mode is out of scope for this
+single-node public repo — see the extraction plan §3.)
 """
 from __future__ import annotations
 
@@ -239,7 +213,7 @@ def run_labeling(
 
 
 # ---------------------------------------------------------------------------
-# Filesystem-queue task module interface (used by infra/worker.py)
+# Per-clip task interface (single-node torchrun driver below).
 # ---------------------------------------------------------------------------
 
 def add_worker_args(parser: argparse.ArgumentParser) -> None:
@@ -365,61 +339,13 @@ def process_task(task: dict, ctx: dict, args: argparse.Namespace) -> bool:
 
 
 def _run_seed(args: argparse.Namespace) -> None:
-    _repo_root = str(Path(__file__).parent.parent)
-    if _repo_root not in sys.path:
-        sys.path.insert(0, _repo_root)
-    from infra.fs_queue import FilesystemQueue, register_queue
-
-    root = Path(args.root)
-    subdirs = sorted(
-        p for p in root.iterdir()
-        if p.is_dir() and list(p.glob("*.mp4")) and (p / "feature_metadata.json").exists()
+    # The distributed filesystem-queue mode lived in the research monorepo's cluster tooling,
+    # which is out of scope for this single-node public repo (plan §3). Use torchrun mode
+    # (``--mode torchrun``) for multi-GPU sharding on one machine.
+    raise NotImplementedError(
+        "Queue (seed) mode is not available in this single-node repo; run with "
+        "--mode torchrun for multi-GPU DDP sharding on one machine."
     )
-
-    if not subdirs:
-        print(f"No valid extraction dirs found in {root}", file=sys.stderr)
-        return
-
-    queue_dir = Path(args.queue_dir)
-    if queue_dir.exists():
-        print(f"ERROR: Queue directory already exists: {queue_dir}\n"
-              f"Delete it or choose a different --queue-dir.", file=sys.stderr)
-        sys.exit(1)
-
-    cfg = {
-        "output_csv": str(Path(args.out).resolve()),
-        "frame_threshold": args.frame_threshold,
-        "classifiers": args.classifiers,
-        "gdino_model": args.gdino_model,
-        "vlm_model": getattr(args, "vlm_model", "Qwen/Qwen2.5-VL-32B-Instruct"),
-        "owl_model": args.owl_model,
-        "quick_frames": args.quick_frames,
-        "fix_pil_negation": args.fix_pil_negation,
-        "source_negated": args.source_negated,
-    }
-    queue_dir.mkdir(parents=True, exist_ok=True)
-    (queue_dir / "run_config.json").write_text(json.dumps(cfg, indent=2))
-
-    label = args.label or root.name
-    run_meta = {
-        "label": label,
-        "created_at": time.time(),
-        "n_tasks": len(subdirs),
-        "output_dir": str(root.resolve()),
-    }
-    (queue_dir / "run_meta.json").write_text(json.dumps(run_meta, indent=2))
-
-    queue = FilesystemQueue(queue_dir)
-    for subdir in subdirs:
-        queue.push({"extraction_dir": str(subdir)})
-
-    register_queue(queue_dir, label=label, output_dir=str(root), n_tasks=len(subdirs))
-
-    c = queue.counts()
-    print(f"Pushed {len(subdirs)} task(s) to {queue_dir}")
-    print(f"Queue: pending={c['pending']}  claimed={c['claimed']}  done={c['done']}  failed={c['failed']}")
-    print(f"Run config: {queue_dir / 'run_config.json'}")
-    print(f"Label: {label!r}  |  Run monitor: python infra/monitor.py")
 
 
 def main():

@@ -1,54 +1,23 @@
-"""DDP entry point for probe feature extraction.
-
-=== STANDALONE / TORCHRUN (single machine) ===
+"""DDP entry point for AttnSteer feature extraction (single node, 1+ GPUs).
 
     # 1 GPU
-    python data_extraction/run_extraction.py \\
-        --config configs/probing.yaml \\
-        --prompts_csv example_prompts/dog_prompt.csv \\
-        --output_dir /tmp/probe_test
+    python -m will_it_render.datasets.run_extraction \\
+        --config configs/attnsteer.yaml \\
+        --prompts_csv examples/example_prompts/dog_prompt.csv \\
+        --output_dir /tmp/extract_test
 
-    # 4 GPUs (DDP)
-    torchrun --nproc_per_node=4 data_extraction/run_extraction.py \\
-        --config configs/probing.yaml \\
-        --prompts_csv example_prompts/dog_prompt.csv \\
-        --output_dir /tmp/probe_test
+    # N GPUs on one machine (DDP)
+    torchrun --nproc_per_node=4 -m will_it_render.datasets.run_extraction \\
+        --config configs/attnsteer.yaml \\
+        --prompts_csv examples/example_prompts/dog_prompt.csv \\
+        --output_dir /tmp/extract_test
 
 Modes:
     --mode generate   Generate videos only, no feature extraction (fast).
-    --mode extract    Generate videos and extract per-step probe features (default).
+    --mode extract    Generate videos and extract per-step AttnSteer features (default).
 
-=== FILESYSTEM TASK-QUEUE (multi-VM / SLURM, no server needed) ===
-
-Step 1 — seed the queue (once, from anywhere):
-    python infra/seed_queue.py \\
-        --csv example_prompts/dog_prompt.csv \\
-        --queue-dir /outputs/run1/queue
-
-Step 2a — launch workers on a VM (one process per GPU):
-    bash infra/launch_vm.sh 0,1,2,3 \\
-        python infra/worker.py \\
-            --task-module data_extraction.run_extraction \\
-            --queue-dir /outputs/run1/queue \\
-            --config configs/probing.yaml \\
-            --output_dir /outputs/run1 \\
-            --mode extract
-
-Step 2b — OR launch a SLURM array job (one array task per GPU):
-    export QUEUE_DIR=/outputs/run1/queue CONFIG=configs/probing.yaml \\
-           OUTPUT_DIR=/outputs/run1 TASK_MODULE=data_extraction.run_extraction
-    sbatch --array=0-15 infra/launch_slurm.sbatch
-
-Step 3 — monitor progress (optional):
-    python infra/monitor.py --queue-dir /outputs/run1/queue
-
-Notes:
-  - --output_dir and --queue-dir must be on a shared filesystem (NFS, etc.).
-  - VM workers and SLURM workers can share the same queue simultaneously.
-  - Tasks are claimed via os.rename() — atomic on POSIX/NFS, no race conditions.
-  - Restarting a worker with the same --worker-id recovers its stale claims.
-  - Workers exit after --timeout seconds (default 60) of a fully-empty queue.
-  - Failed tasks live in <queue-dir>/failed/; inspect with --tail-failed.
+(The research monorepo's multi-VM / SLURM filesystem-queue runner is out of scope for this
+single-node public repo — see the extraction plan §3.)
 """
 from __future__ import annotations
 
@@ -65,7 +34,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-# Add parent directory to sys.path to enable imports
 
 import numpy as np
 import scipy.io.wavfile as wavfile_io
@@ -139,7 +107,7 @@ class ExtractionContext:
 
 
 def add_worker_args(parser: argparse.ArgumentParser) -> None:
-    """Register static CLI args on the shared worker parser (consumed by infra/worker.py)."""
+    """Register static CLI args on the shared worker parser."""
     parser.add_argument("--config", required=True)
     parser.add_argument("--output_dir", required=True)
     parser.add_argument(
@@ -382,7 +350,7 @@ def run(args):
 
 
 def is_task_done(task: dict, args: argparse.Namespace) -> bool:
-    """Return True if this task's output already exists (used by infra/worker.py for stale-claim reclaim)."""
+    """Return True if this task's output already exists (skip-if-done guard)."""
     seed_str = task.get("seed", "").strip()
     seed = int(seed_str) if seed_str else None
     out_dir = make_output_dir(Path(args.output_dir), int(task["prompt_idx"]), seed=seed)

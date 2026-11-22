@@ -7,10 +7,10 @@
 #   python -m training.trainer training.lr=5e-4 training.num_epochs=100
 #   python -m training.trainer --config-name my_experiment          # alternate yaml in configs/
 #
-# Multi-GPU: use the atomic filesystem queue — see training/queue_trainer.py:
+# Single-node training. (The research monorepo's multi-GPU filesystem-queue runner is
 #
-#   python -m training.queue_trainer --mode seed ...
-#   bash infra/launch_vm.sh 0,1,2,3 --task-module training.queue_trainer --queue-dir ...
+#   out of scope for this public repo — see plan §3.)
+#
 #
 # Each worker claims independent (step, block) tasks from the queue — no DDP needed.
 #
@@ -210,7 +210,7 @@ def build_training_kwargs(t) -> dict:
     """Build the train_one_step kwargs dict from a training config section.
 
     ``t`` is ``cfg.training`` (DictConfig or plain dict with .get). Shared by the
-    hydra entry point (main) and the queue seeding (training/queue_trainer.py).
+    hydra entry point (main).
     """
     return dict(
         probe_model=str(t.get("probe_model", "conv")),
@@ -516,7 +516,7 @@ def aggregate_run(run_dir: str | Path, wandb_run=None, metric: str = "auroc") ->
     Fully disk-driven and idempotent: writes training_results.csv and summary
     plots into run_dir, overwriting any previous aggregate. Called by the
     single-process trainer at the end of a run, by the last queue worker, and by
-    `python -m training.queue_trainer --mode aggregate`.
+    the single-node aggregation path.
 
     `metric` selects the best epoch used for `training_results.csv`, the
     prompt-length-segmented table, and `training_summary.png` (see summarize_run).
@@ -2227,7 +2227,7 @@ def train_all_steps(
     """Train one probe per (step, block) work item in a single process.
 
     Multi-GPU distribution goes through the filesystem queue instead — see
-    training/queue_trainer.py.
+    the single-node run path.
     """
     if device is None:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
