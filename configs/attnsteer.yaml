@@ -1,0 +1,160 @@
+# Main AttnSteer experiment config.
+# Backend engine config + extraction defaults are loaded from configs/models/<model_type>.yaml.
+model_type: ltx   # ltx | wan | cogvideox
+
+extraction:
+  sample_steps: 50
+  seed: 42
+  # Storage dtype for saved feature safetensors (float16 halves disk, no training impact).
+  feature_dtype: float16   # float32 | float16 | bfloat16
+
+labeling:
+  device: cpu
+  audioset_csv: null   # null = auto-detect panns_inference / LanguageBind fallback
+
+training:
+  # Data — point these at your own labels CSVs / output dir.
+  train_csv: /path/to/train.csv
+  val_csv: /path/to/val.csv
+  output_dir: ./output/training
+
+  batch_size: 128
+  num_epochs: 200
+  lr: 3.0e-3
+  weight_decay: 1.0e-5
+  dropout: 0.3
+  num_workers: 4             # only used when gpu_resident_data=false (CPU-streaming path)
+  gpu_resident_data: true    # true → preload features into VRAM once (fast, must fit in GPU memory)
+                             # false → stream from CPU RAM with pin_memory + non_blocking overlap
+  eval_every_n_epochs: 5
+  plot_every_n_epochs: 10
+  best_metric: val_loss      # val_loss (lower, every epoch) | val_auroc | val_f1 (higher, +1 eval/epoch)
+  early_stop_patience: 40    # 0 = off; else stop after N epochs with no best_metric improvement
+  lr_scheduler: cosine       # cosine | cosine_warm_restarts
+  cosine_restart_period: 50  # (warm restarts) T_0
+  cosine_restart_mult: 1     # (warm restarts) T_mult
+
+  steps_indices_to_optimize: null       # 0-based indices into available steps; null = all
+  steps_values_to_optimize: [40, 49]    # actual denoising step values (set one of these, or neither)
+
+  # AttnSteer architecture — conv | mlp | attn_pool | maxpool | resnet | transformer.
+  # (Shape params n_blocks_heads / latent_hw / latent_num_frames are read automatically
+  #  from the extraction's extraction_config.yaml.)
+  model_arch: resnet
+  avg_channels: none         # channel reduction before the model — none | all | layers
+
+  # conv
+  bottleneck_ch: 128
+  conv_kernel_size: 3
+  mlp_hidden: 128
+  # mlp
+  mlp_hidden_dims: [512, 128]
+  # attn_pool
+  attn_pool_conv_ch: 8
+  attn_pool_mlp_hidden: 8
+
+  # resnet (intended for per_layer: true; spatial-only stack + temporal-mixing final block; ~80k params)
+  resnet_base_ch: 16
+  resnet_n_blocks: 3
+  resnet_groups: 8
+  resnet_temporal_spatial: false   # true=(3,3,3) full-3D final block; false=(3,1,1) pure-temporal (lighter)
+  resnet_head_dropout: 0.0
+  resnet_dropblock_size: 0
+  resnet_norm: group               # group | instance
+  resnet_input_norm: none          # none | mass (mass → unit per-frame spatial sum, inflation-invariant)
+
+  # Learned layer aggregation (resnet only; feeds blocks STACKED, learns a combine over the layer axis).
+  # Requires avg_channels: none and per_layer: false.
+  resnet_layer_agg: none           # none | scalar | per_head | conv_k | conv_k_proj | mlp | attn
+  resnet_layer_agg_k: 2
+  resnet_layer_agg_hidden: 16
+
+  # transformer (consumes stacked blocks; requires avg_channels: none, per_layer: false; ~3M params)
+  transformer_d_model: 256
+  transformer_nhead: 4
+  transformer_num_layers: 3
+  transformer_dim_feedforward: 512
+  transformer_head_attn_nheads: 4
+  transformer_layer_attn_nheads: 4
+  transformer_token_hidden: 0
+  transformer_token_mode: linear   # linear | conv
+  transformer_token_conv_ch: 32
+  transformer_mlp_hidden: 128
+  transformer_pool: query          # query | mean
+  transformer_timestep_mode: none  # none | pre | mid
+  transformer_num_timesteps: 0
+
+  # Denoising-step conditioning (FiLM) — only meaningful for multi-step pooled training.
+  resnet_step_cond: false
+  resnet_step_embed_dim: 64
+
+  # Multi-task aesthetic head (resnet only) — predicts the clip aesthetic score alongside the class logit.
+  multitask_aesthetic: false
+  aesthetic_csv: /path/to/aesthetic.csv
+  aesthetic_col: score_aesthetic_quality
+  aesthetic_loss_weight: 0.5
+  aesthetic_loss: bce_soft         # bce_soft | mse
+
+  # Per-frame presence head (resnet only) — per-latent-frame presence alongside the clip logit.
+  # Targets from the object labeler's frames_final bit-strings, binned by the causal-VAE grouping.
+  perframe_presence_head: false
+  perframe_csv: null
+  perframe_col: frames_final
+  perframe_target_mode: majority   # majority | any | soft
+  perframe_head: shared            # shared (0 new params) | separate
+  perframe_loss_weight: 1.0
+  perframe_class_loss_weight: 1.0
+  perframe_init_ckpt_dir: null
+  perframe_freeze_backbone: false
+
+  # Class-identity head (resnet only) — predicts which object class the map belongs to.
+  class_head: false
+  class_loss_weight: 1.0
+  class_loss_balance: none         # none | inverse | sqrt_inverse | effective_num
+  class_loss_balance_beta: 0.999
+  class_init_ckpt_dir: null
+  class_freeze_backbone: false
+
+  # Multi-step pooled training.
+  multistep:
+    steps: null
+
+  # Adversarial (PGD) training on the input attention maps (see training/README).
+  adv_training: false
+  adv_alpha: 0.5
+  adv_pgd_steps: 5
+  adv_epsilon: 0.05
+  adv_step_size: null
+  adv_norm: linf                   # linf | l2
+  adv_projection: box              # box | simplex | softmax
+  adv_axis: spatial                # spatial | frame_spatial (simplex/softmax only)
+  adv_domain_max: 1.0
+  adv_random_start: true
+  adv_on: all                      # all | pos | neg
+  adv_objective: clip              # clip | perframe_min
+  adv_eval_mode: true
+  adv_warmup_epochs: 0
+  adv_eval_robust: true
+  adv_eval_train: true
+  adv_eval_train_max: 1024
+  adv_eval_val_max: 0
+  adv_loss: bce                    # bce | alp | trades
+  adv_trades_beta: 1.0
+  adv_save_examples: 50
+  adv_save_maps: per_layer         # pooled | per_layer | full
+  adv_example_seed: 0
+  adv_init_ckpt_dir: null
+
+  pos_weight: null                 # null = auto (n_neg/n_pos per step)
+  balanced_batches: false
+  train_root_override: null
+  val_root_override: null
+
+  # W&B
+  disable_wandb: false
+  wandb_project: will-it-render
+  wandb_name: null
+  wandb_notes: null
+
+  per_layer: true                  # true → one model per (step, block) instead of per step
+  layer_indices: [-2]              # block indices to train when per_layer=true; null = all

@@ -213,7 +213,9 @@ def build_training_kwargs(t) -> dict:
     hydra entry point (main).
     """
     return dict(
-        probe_model=str(t.get("probe_model", "conv")),
+        # config key is `model_arch` (N1); `probe_model` accepted as a legacy alias. The
+        # internal kwarg + checkpoint field stay `probe_model` (mirrors the state-dict key).
+        probe_model=str(t.get("model_arch", t.get("probe_model", "conv"))),
         avg_channels=t.get("avg_channels", "none"),  # none|all|layers (or legacy bool); _parse_avg_mode normalizes
         train_spatial_downsample=int(t.get("train_spatial_downsample", 1)),
         feature_cache_dir=(str(t.get("feature_cache_dir")) if t.get("feature_cache_dir") is not None else None),

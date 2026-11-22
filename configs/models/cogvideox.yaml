@@ -1,0 +1,63 @@
+# CogVideoX-5B backend — text→video (video-only, no audio).
+# Runs on diffusers (pip-installed in the cogvideox refmodel venv; NOT path-injected
+# like LTX/Wan). Joint self-attention DiT: text (226 T5 tokens) is concatenated with the
+# video tokens into one sequence and attended together — there is no separate cross-attn
+# module. The probe hook (will_it_render.backends.hooks.cogvideox_hooks) materializes the
+# video-query × text-key sub-block of that joint attention, so the stored feature has the
+# same [n_blocks, n_heads, Lq] layout as the LTX/Wan backends.
+engine:
+  # Full 24 GB checkpoint (transformer 11 GB bf16 + T5-XXL text encoder + 3D-causal VAE).
+  checkpoint_dir: /path/to/cogvideox-5b
+  # Which HF diffusers venv the workers must use (informational; the launcher activates it):
+  #   a diffusers>=0.39, transformers venv with CogVideoX support (set VP_COGX_ROOT if not pip diffusers)
+  dtype: bfloat16
+
+extraction:
+  # CogVideoX-5B ships a CogVideoXDDIMScheduler; the backend uses the checkpoint's own
+  # scheduler, so solver_name/shift are accepted for interface symmetry but IGNORED.
+  solver_name: ddim
+  shift: 0.0
+  video_guidance_scale: 6.0          # CogVideoX recommended CFG scale
+  use_dynamic_cfg: true              # official inference uses the cosine CFG ramp
+  # CogVideoX-5B native training resolution / length.
+  video_frame_height_width: [480, 720]
+  video_negative_prompt: ""
+  num_frames: 49                     # 6 s at 8 fps (VAE temporal 4× → 13 latent frames)
+  frame_rate: 8.0
+  sample_rate: 16000                 # unused (video-only)
+  max_sequence_length: 226           # T5 text tokens (fixed pad) → Lk
+
+  # Canonical per-seed initial latents. CogVideoX samples the initial noise with a CUDA
+  # generator (GPU-architecture dependent), so — exactly as for LTX/Wan — the pipeline
+  # LOADS precomputed noise instead of sampling, making the same seed reproduce the
+  # identical *initial* latent on any GPU. Generate once with
+  # will_it_render.backends.seed_latents_cogx on the tagged GPU. Missing seeds hard-fail.
+  # NOTE: the DENOISING forward is still GPU-type dependent, so the FINAL video differs
+  # across GPU tiers — run_extraction records the generating GPU per prompt (gen_meta.json)
+  # so pass-2 (feature) regen can be routed to the same tier and reproduce pass-1 exactly.
+  seed_latents_dir: ./seed_latents   # or set VP_SEED_LATENTS_DIR
+  seed_latents_gpu_tag: a100
+
+  # VAE stride (4, 8, 8) → latent (F', H/8, W/8); the transformer additionally patchifies
+  # spatially by patch_size 2. The aggregator auto-detects the ×2 patch factor:
+  #   latent_hw = (H//height, W//width) = (60, 90)
+  #   Lq = F' * (H//height//2) * (W//width//2) = 13 * 30 * 45 = 17550
+  latent_scale_factors:
+    time: 4
+    height: 8
+    width: 8
+
+  hook_type: video_ca
+
+  capture_every_n_steps: 1000
+  first_step_to_capture: 40
+  # LTX/Wan-faithful front-loaded step set (default 50 denoising steps).
+  capture_steps: [0, 1, 4, 7, 10, 15]
+  # Every-other transformer block of the 42 → 21 blocks. Stored probe_config records
+  # capture_blocks + n_blocks_total=42 so training scatters them back to original indices.
+  capture_blocks: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40]
+  per_word_features: true
+  extract_keys: false
+  # 2× spatial avg-pool at EXTRACTION (bakes into stored files): 30×45 → 15×22, Lq 17550→4290.
+  # With 21 blocks this is 8.65 MB/word/step ≈ LTX-scale storage (~3.1 TB for 20k×6steps×3words).
+  attn_spatial_downsample: 2

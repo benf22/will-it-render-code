@@ -1,0 +1,60 @@
+engine:
+  checkpoint_path: /path/to/LTX-2/checkpoints/ltx-2.3-22b-distilled-1.1.safetensors   # or set via your launcher
+  gemma_root: /path/to/LTX-2/checkpoints/gemma-3-12b-it-qat-q4_0-unquantized
+
+extraction:
+  solver_name: unipc        # unipc | dpm++ | euler
+  shift: 5.0
+  video_guidance_scale: 5.0
+  # LTX guider quality knobs (OFF by default — omitting them reproduces historical runs
+  # exactly). Our custom denoising loop bypasses LTX's preset layer, so unlike the official
+  # ti2vid_* CLIs these are not applied unless set here (or via model_extraction_overrides
+  # in a sweep). To match LTX's intended (less-saturated) look, set:
+  #   video_rescale_scale: 0.7   # CFG-rescale, "reduce oversaturation" — safe, no extra pass
+  #   video_guidance_scale: 3.0  # LTX's default (vs our 5.0)
+  # video_stg_scale (default 0) needs a perturbed forward the probe/steering loop does NOT run —
+  # leave 0 unless that path is added.
+  video_frame_height_width: [512, 512]
+  video_negative_prompt: ""
+
+  num_frames: 97
+  frame_rate: 25.0
+  sample_rate: 16000
+
+  # Canonical per-seed initial latents. Seed→noise is GPU-architecture dependent
+  # so the pipeline LOADS precomputed video+audio latents
+  # (generated once on ctxa100 via will_it_render.backends.seed_latents) instead of
+  # sampling — making the same seed reproduce the identical video on any GPU. Missing
+  # seeds hard-fail. Files live at <dir>/<model_name>/<HxWxF_fps>/seed_NNNNN__<tag>.pt
+  seed_latents_dir: ./seed_latents   # or set VP_SEED_LATENTS_DIR
+  seed_latents_gpu_tag: ctxa100
+
+  # VAE scale factors used to compute video cross-attention sequence length:
+  #   Lq = ((num_frames - 1) // time + 1) * (height // lat_h) * (width // lat_w)
+  #   For 512x512x97 frames: ((97-1)//8 + 1) * (512//32) * (512//32) = 13*16*16 = 3328
+  latent_scale_factors:
+    time: 8     # VAE temporal downsampling (causal: first frame uncompressed)
+    height: 32  # VAE spatial height downsampling
+    width: 32   # VAE spatial width downsampling
+  ###############
+
+  hook_type: video_ca
+
+  # Capture features every N denoising steps (1 = every step, 5 = every 5th step, etc.)
+  capture_every_n_steps: 1000
+  # First denoising step to capture (0 = capture from the start).
+  # If first_step_to_capture > total_steps-1, only the last step is captured.
+  first_step_to_capture: 40
+  # Explicit list of 0-based denoising-step indices to capture. When set (non-null)
+  # it OVERRIDES capture_every_n_steps / first_step_to_capture and captures exactly
+  # these steps (the final step is NOT auto-added — list it explicitly if wanted).
+  capture_steps: [0, 1, 4, 7, 10, 15, 20]
+  # Explicit list of 0-based transformer-block (layer) indices to hook. When set,
+  # only these blocks are captured/stored; probe_config.yaml records capture_blocks
+  # + n_blocks_total so training scatters them back to their ORIGINAL indices
+  # (non-captured blocks load as NaN; training guards against selecting them).
+  # null = capture all blocks.
+  capture_blocks: null
+  per_word_features: true   # true → separate tensor per target word
+  extract_keys: false        # true → include text key component
+  attn_spatial_downsample: 1 #2 # t>1 → 2D avg-pool spatial dims by t

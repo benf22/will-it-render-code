@@ -1,0 +1,51 @@
+# WAN (Wan2.1) backend — task t2v-1.3B. Video-only (no audio).
+# Runs on the SDPA path (no flash_attn); build against your Wan2.1 checkout (set VP_WAN_ROOT).
+engine:
+  task: t2v-1.3B
+  checkpoint_dir: /path/to/Wan2.1-T2V-1.3B
+  # Path to the Wan2.1 repo (path-injected at runtime; `wan` is not pip-installed).
+  # Optional; VP_WAN_ROOT is used if omitted.
+  wan_root: null
+
+extraction:
+  solver_name: unipc         # unipc | dpm++
+  shift: 5.0                  # flow-scheduler shift (WAN 1.3B default 5.0 at ≤720p)
+  video_guidance_scale: 6.0   # CFG scale (WAN t2v-1.3B recommended 6.0)
+  # WAN 1.3B is trained at 480×832 (~480p). (H, W).
+  video_frame_height_width: [480, 832]
+  video_negative_prompt: ""   # empty → WAN's built-in sample_neg_prompt
+
+  num_frames: 21              # WAN wants 4n+1 (21f low-res run; T_lat=6)
+  frame_rate: 16.0
+
+  # Canonical per-seed initial latents (like LTX): seed→noise is GPU-arch dependent, so
+  # the pipeline LOADS precomputed noise instead of sampling — same seed ⇒ same video on
+  # any GPU. Generate once on the tagged GPU with will_it_render.backends.seed_latents_wan.
+  # Files: <dir>/wan-<task>/<HxWxF_fps>fps/seed_NNNNN__<tag>.pt. Missing seeds hard-fail.
+  seed_latents_dir: ./seed_latents   # or set VP_SEED_LATENTS_DIR
+  seed_latents_gpu_tag: h100
+  # No audio (video-only backend); kept for interface symmetry, unused by WanBackend.
+  sample_rate: 16000
+
+  # VAE stride (4, 8, 8) → latent (F', H/8, W/8); the transformer additionally patchifies
+  # spatially by patch_size (1, 2, 2). Used to derive latent_hw for the aggregator, which
+  # auto-detects the extra ×2 patch factor:
+  #   latent_hw = (H // height, W // width);  Lq = F' * (H//height//2) * (W//width//2)
+  latent_scale_factors:
+    time: 4     # VAE temporal stride
+    height: 8   # VAE spatial-height stride
+    width: 8    # VAE spatial-width stride
+
+  hook_type: video_ca
+
+  # Capture gating (identical semantics to the LTX backend).
+  capture_every_n_steps: 1000
+  first_step_to_capture: 40
+  # Explicit 0-based denoising steps to capture (overrides the stride schedule).
+  capture_steps: [0, 1, 4, 7, 10, 15, 20, 25, 30, 35]
+  # Explicit 0-based transformer-block indices to hook; null = all 30 blocks. Hooking a
+  # subset shrinks the stored feature (all-blocks is 30 blocks × 12 heads × Lq per word).
+  capture_blocks: null
+  per_word_features: true    # separate tensor per target word
+  extract_keys: false        # include the text-key component
+  attn_spatial_downsample: 1 # t>1 → 2D avg-pool the attention's spatial dims by t
