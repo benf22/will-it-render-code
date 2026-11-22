@@ -432,7 +432,8 @@ init();
 
 
 def _load_probe_config(extraction_dir: str) -> dict | None:
-    cfg_path = Path(extraction_dir).parent / "probe_config.yaml"
+    from will_it_render.common.extraction_config import find_extraction_config
+    cfg_path = find_extraction_config(Path(extraction_dir).parent)
     if not cfg_path.exists():
         return None
     with open(cfg_path) as f:

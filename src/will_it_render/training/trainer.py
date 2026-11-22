@@ -78,6 +78,7 @@ from will_it_render.training.feature_dataset import BalancedBatchSampler, ProbeD
 # module's full training stack (WILL_IT_RENDER_PLAN.md §10b R1). Re-exported here for
 # backwards compatibility — ``from training.trainer import build_attnsteer`` keeps working.
 from will_it_render.common.attnsteer_factory import build_attnsteer  # noqa: E402,F401
+from will_it_render.common.extraction_config import find_extraction_config
 
 
 def _dump_epoch_preds(train_ds, train_probs, val_ds, val_probs, path: Path) -> None:
@@ -130,8 +131,8 @@ def _load_probe_config(
     for _, row in df.drop_duplicates(subset=["root_extraction_dir", "relative_extraction_dir"]).iterrows():
         root = root_override if root_override is not None else row["root_extraction_dir"]
         extraction_dir = Path(root) / row["relative_extraction_dir"]
-        probe_cfg_path = extraction_dir.parent / "probe_config.yaml"
-        if probe_cfg_path.exists():
+        probe_cfg_path = find_extraction_config(extraction_dir.parent)
+        if probe_cfg_path is not None:
             with open(probe_cfg_path) as f:
                 return yaml.safe_load(f)
     raise FileNotFoundError(

@@ -59,7 +59,7 @@ def run_video_edit_steering(steering: dict, backend, model_extraction_cfg: dict,
 
     agg_kwargs = build_agg_kwargs(model_extraction_cfg)
     steps_to_steer = steering.get("steps_to_steer", None)
-    probe_config_path = steering["model"].get("probe_config")
+    probe_config_path = steering["model"].get("extraction_config", steering["model"].get("probe_config"))
     if probe_config_path:
         with open(probe_config_path) as f:
             probe_config = yaml.safe_load(f)

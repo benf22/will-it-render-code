@@ -253,7 +253,7 @@ def process_task(task: dict, ctx: ExtractionContext, args: argparse.Namespace) -
             feat_dir = saver.finalize(token_index_map) if ctx.per_word_features else saver.finalize()
             print(f"\n  features → {feat_dir}/")
 
-            probe_cfg_path = ctx.output_dir / "probe_config.yaml"
+            probe_cfg_path = ctx.output_dir / "extraction_config.yaml"  # N1: was probe_config.yaml
             if not probe_cfg_path.exists() and probe_shape:
                 lhw = probe_shape.get("latent_hw")
                 Lq = probe_shape["Lq"]

@@ -209,7 +209,7 @@ def _make_attn_capture_sink(root: Path, stem: str, step: int, logger: logging.Lo
         tmp = d / f"step_{step:03d}.safetensors.tmp"
         save_file(feats, str(tmp))
         os.replace(tmp, final)  # atomic: a reader never sees a half-written file
-        pc = root / "probe_config.yaml"
+        pc = root / "extraction_config.yaml"  # N1
         if not pc.exists():
             shape = probe_shape_from_captures(captures, **steering_model.agg_kwargs)
             h, w = shape["latent_hw"]
@@ -254,7 +254,7 @@ def run_steering(steering: dict, backend, model_extraction_cfg: dict, raw_cfg: d
     # Extraction probe_config.yaml — provides capture_blocks + pre-reduction
     # n_blocks/n_heads needed to reshape captures for the probe. Optional: baselines
     # (baselines/) have no trained probe and infer the shapes from the captures.
-    probe_config_path = steering["model"].get("probe_config")
+    probe_config_path = steering["model"].get("extraction_config", steering["model"].get("probe_config"))
     if probe_config_path:
         with open(probe_config_path) as f:
             probe_config = yaml.safe_load(f)
