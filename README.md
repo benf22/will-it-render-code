@@ -7,9 +7,12 @@ generation at inference time so the class *does* render.
 
 Backends: **LTX-2**, **WAN (Wan2.1)**, **CogVideoX**.
 
-> **Status: scaffold.** This repository is being extracted from a research monorepo. The
-> directory tree, packaging, and docs are in place; module code is ported in subsequent
-> phases (see `WILL_IT_RENDER_PLAN.md` in the source repo). Nothing here runs yet.
+> **Status: migrated, pre-release.** The full module tree (common / backends / inference /
+> datasets / training / evaluation + baselines), configs, packaging, docs, tests, and CI are
+> in place and the whole package imports cleanly. The CPU test suite (training/inference/
+> metrics/scanners) is green; **backends and end-to-end `wir-run` have not yet been
+> runtime-verified** (they need a GPU + a DiT engine checkout + an AttnSteer bundle). Probe
+> weights / bundles are not yet uploaded. See `WILL_IT_RENDER_PLAN.md` in the source repo.
 
 ## Why "will it render"
 
