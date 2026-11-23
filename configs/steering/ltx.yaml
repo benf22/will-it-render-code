@@ -1,0 +1,31 @@
+# AttnSteer — LTX-2, per-clip object induction. Paper "Ours" (main table).
+# Formal version: LTX_ours_mutualFix (FORMAL_VERSIONS.md). Paper (rule C): det-all 0.755, det-ratio 0.939.
+# Pairs with an LTX AttnSteer bundle (checkpoints + extraction_config + seed latent) — supplied by
+# `wir-run --bundle ...` / scripts/download_artifacts.py. GPU: steered ~84 GB (H100-NVL / H200 / B200 / RTX-6000-Blackwell).
+model_type: ltx
+steering:
+  seed: 42
+  sample_steps: 50
+  guidance_scale: 5.0
+  steps_to_steer: [0, 1, 4, 7, 10, 15]
+  grad_aggregate: gated0.95_mutual        # worst-object fallback (LTX); gate p>=0.95 + mutual-agree
+  mutual_order: worst_first               # fold weakest object first
+  mutual_fold: anchor                     # per-patch agreement fold (keep patches agreeing with running sum)
+  optimization:
+    n_iters: 5
+    optimizer: simple                     # plain GD — the quality lever (Adam collapses photorealism)
+    lr: 15.0
+    magnitude_reg: 0.0
+    anchor_reg: 0.0
+    pred_reg: 0.0
+    kl_reg: 0.0
+    entropy_reg: 0.0
+  model:
+    mode: per_step
+    checkpoints_dir: /path/to/attnsteer-bundle/checkpoints          # supplied by the bundle (wir-run overrides)
+    extraction_config: /path/to/attnsteer-bundle/extraction_config.yaml
+  objective:
+    target: 1.0
+    weight: 0.5
+    balance_weight: 0.0
+    loss_type: mean

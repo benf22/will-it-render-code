@@ -1,0 +1,36 @@
+# AttnSteer — WAN (Wan2.1-T2V-1.3B, 21f), per-clip object induction. Paper "Ours" (main table).
+# Formal version: WAN_ours_mutualFix_rgbfixProbe (FORMAL_VERSIONS.md). Paper (rule C): det-all 0.599, det-ratio 0.893.
+# Uses the colour-corrected full-res retrained probe (train_spatial_downsample 1). Pairs with a WAN bundle.
+# GPU: full-res steered → B200 / H200 only.
+model_type: wan
+model_extraction_overrides:
+  attn_spatial_downsample: 1              # full-res probe (matches train_spatial_downsample 1)
+steering:
+  seed: 42
+  sample_steps: 50
+  guidance_scale: 6.0
+  steps_to_steer: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+  grad_aggregate: gated0.95_mutual_zero   # zero fallback (WAN): no push when every object >= 0.95
+  mutual_order: worst_first
+  mutual_fold: anchor
+  solver_reset: corrector
+  optimization:
+    n_iters: 8
+    optimizer: simple
+    lr: 5.0
+    stop_when_min_prob: 0.95              # stop iterating once all objects >= 0.95 (efficient loop)
+    magnitude_reg: 0.0
+    anchor_reg: 0.0
+    pred_reg: 0.0
+    kl_reg: 0.0
+    entropy_reg: 0.0
+  model:
+    mode: per_step
+    nearest_probe: true                   # borrow closest probe for steps without their own
+    checkpoints_dir: /path/to/attnsteer-bundle/checkpoints
+    extraction_config: /path/to/attnsteer-bundle/extraction_config.yaml
+  objective:
+    target: 1.0
+    weight: 1.0
+    balance_weight: 0.0
+    loss_type: mean

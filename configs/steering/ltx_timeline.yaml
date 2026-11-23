@@ -1,0 +1,37 @@
+# AttnSteer — LTX-2, per-frame TEMPORAL control (control WHEN an object is on screen).
+# Paper "Ours" for the temporal-control table (TempoControl protocol). Formal version:
+# LTX_perframe_v3 (bce_huber_m2) — "the single arm in every paper table" (FORMAL_VERSIONS.md).
+# temporal-acc 0.681 / 0.841 / 0.913 (1 / 2 / multi-object).
+# Uses a DISTINCT bundle: an adversarially-hardened PER-FRAME AttnSteer probe (not the per-clip one).
+# Each prompt row supplies a `timelines` column (per-object on/off schedule). GPU: as LTX per-clip (~84 GB).
+model_type: ltx
+steering:
+  seed: 42
+  sample_steps: 50
+  guidance_scale: 5.0
+  steps_to_steer: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  optimization:
+    optimizer: simple
+    lr: 10.0
+    n_iters: 5
+    grad_balance: unitnorm          # v2: per-object unit-normed gradients summed
+    anchor_reg: 1700.0              # calibrated latent trust-region (~3x BCE)
+    kl_reg: 100.0                   # softmax-KL trust region (~0.1x BCE)
+    magnitude_reg: 0.04             # latent-norm preservation (~0.04x BCE)
+    pred_reg: 0.0
+    gamma: 1.0
+    grad_project: none
+  model:
+    mode: per_frame
+    nearest_probe: true
+    checkpoints_dir: /path/to/attnsteer-perframe-bundle/checkpoints        # adv-hardened per-frame probe
+    extraction_config: /path/to/attnsteer-perframe-bundle/extraction_config.yaml
+  objective:
+    frame_reduce: bce_huber         # v3: capped mirror of log(BCE)
+    huber_m: 2                      # v3: ceiling m=2
+    loss_kind: bce
+    weight: 1.0
+    present_weight: 1.0
+    absent_weight: 1.0
+    balance_weight: 0.0
+    loss_type: mean

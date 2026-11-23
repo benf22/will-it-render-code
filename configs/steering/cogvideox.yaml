@@ -1,0 +1,33 @@
+# AttnSteer — CogVideoX-5B, per-clip object induction. Paper "Ours" (main table).
+# Formal version: CogVideoX_ours_mutualFix (FORMAL_VERSIONS.md). Paper (rule C): det-all 0.659, det-ratio 0.912.
+# Pairs with a CogVideoX bundle. Run with determinism ON (STEER_DETERMINISTIC=1). ~477 s/clip.
+model_type: cogvideox
+model_extraction_overrides:
+  attn_spatial_downsample: 2              # capture 30x45/frame, pool to 15x22 (extraction_config Lq=4290)
+steering:
+  seed: 42
+  sample_steps: 50
+  guidance_scale: 6.0
+  steps_to_steer: [0, 1, 4, 7, 10, 15]
+  grad_aggregate: gated0.95_mutual_zero   # zero fallback (as WAN)
+  mutual_order: worst_first
+  mutual_fold: anchor
+  optimization:
+    n_iters: 5
+    optimizer: simple
+    lr: 5.0
+    magnitude_reg: 0.0
+    anchor_reg: 0.0
+    pred_reg: 0.0
+    kl_reg: 0.0
+    entropy_reg: 0.0
+  model:
+    mode: per_step
+    nearest_probe: true
+    checkpoints_dir: /path/to/attnsteer-bundle/checkpoints
+    extraction_config: /path/to/attnsteer-bundle/extraction_config.yaml
+  objective:
+    target: 1.0
+    weight: 0.5
+    balance_weight: 0.0
+    loss_type: mean
