@@ -1,0 +1,83 @@
+prompt,target_words,timelines
+a bird and a cat,"bird,cat",bird:1111111111111;cat:1111111111111
+a cat and a dog,"cat,dog",cat:1111111111111;dog:1111111111111
+a dog and a horse,"dog,horse",dog:1111111111111;horse:1111111111111
+a horse and a sheep,"horse,sheep",horse:1111111111111;sheep:1111111111111
+a sheep and a cow,"sheep,cow",sheep:1111111111111;cow:1111111111111
+a cow and an elephant,"cow,elephant",cow:1111111111111;elephant:1111111111111
+an elephant and a bear,"elephant,bear",elephant:1111111111111;bear:1111111111111
+a bear and a zebra,"bear,zebra",bear:1111111111111;zebra:1111111111111
+a zebra and a giraffe,"zebra,giraffe",zebra:1111111111111;giraffe:1111111111111
+a giraffe and a bird,"giraffe,bird",giraffe:1111111111111;bird:1111111111111
+a chair and a couch,"chair,couch",chair:1111111111111;couch:1111111111111
+a couch and a potted plant,"couch,potted plant",couch:1111111111111;potted plant:1111111111111
+a potted plant and a tv,"potted plant,tv",potted plant:1111111111111;tv:1111111111111
+a tv and a laptop,"tv,laptop",tv:1111111111111;laptop:1111111111111
+a laptop and a remote,"laptop,remote",laptop:1111111111111;remote:1111111111111
+a remote and a keyboard,"remote,keyboard",remote:1111111111111;keyboard:1111111111111
+a keyboard and a cell phone,"keyboard,cell phone",keyboard:1111111111111;cell phone:1111111111111
+a cell phone and a book,"cell phone,book",cell phone:1111111111111;book:1111111111111
+a book and a clock,"book,clock",book:1111111111111;clock:1111111111111
+a clock and a backpack,"clock,backpack",clock:1111111111111;backpack:1111111111111
+a backpack and an umbrella,"backpack,umbrella",backpack:1111111111111;umbrella:1111111111111
+an umbrella and a handbag,"umbrella,handbag",umbrella:1111111111111;handbag:1111111111111
+a handbag and a tie,"handbag,tie",handbag:1111111111111;tie:1111111111111
+a tie and a suitcase,"tie,suitcase",tie:1111111111111;suitcase:1111111111111
+a suitcase and a vase,"suitcase,vase",suitcase:1111111111111;vase:1111111111111
+a vase and scissors,"vase,scissors",vase:1111111111111;scissors:1111111111111
+scissors and a teddy bear,"scissors,teddy bear",scissors:1111111111111;teddy bear:1111111111111
+a teddy bear and a frisbee,"teddy bear,frisbee",teddy bear:1111111111111;frisbee:1111111111111
+a frisbee and skis,"frisbee,skis",frisbee:1111111111111;skis:1111111111111
+skis and a snowboard,"skis,snowboard",skis:1111111111111;snowboard:1111111111111
+a snowboard and a sports ball,"snowboard,sports ball",snowboard:1111111111111;sports ball:1111111111111
+a sports ball and a kite,"sports ball,kite",sports ball:1111111111111;kite:1111111111111
+a kite and a baseball bat,"kite,baseball bat",kite:1111111111111;baseball bat:1111111111111
+a baseball bat and a baseball glove,"baseball bat,baseball glove",baseball bat:1111111111111;baseball glove:1111111111111
+a baseball glove and a skateboard,"baseball glove,skateboard",baseball glove:1111111111111;skateboard:1111111111111
+a skateboard and a surfboard,"skateboard,surfboard",skateboard:1111111111111;surfboard:1111111111111
+a surfboard and a tennis racket,"surfboard,tennis racket",surfboard:1111111111111;tennis racket:1111111111111
+a tennis racket and a bottle,"tennis racket,bottle",tennis racket:1111111111111;bottle:1111111111111
+a bottle and a chair,"bottle,chair",bottle:1111111111111;chair:1111111111111
+an airplane and a train,"airplane,train",airplane:1111111111111;train:1111111111111
+a train and a boat,"train,boat",train:1111111111111;boat:1111111111111
+a boat and an airplane,"boat,airplane",boat:1111111111111;airplane:1111111111111
+a bicycle and a car,"bicycle,car",bicycle:1111111111111;car:1111111111111
+a car and a motorcycle,"car,motorcycle",car:1111111111111;motorcycle:1111111111111
+a motorcycle and a bus,"motorcycle,bus",motorcycle:1111111111111;bus:1111111111111
+a bus and a traffic light,"bus,traffic light",bus:1111111111111;traffic light:1111111111111
+a traffic light and a fire hydrant,"traffic light,fire hydrant",traffic light:1111111111111;fire hydrant:1111111111111
+a fire hydrant and a stop sign,"fire hydrant,stop sign",fire hydrant:1111111111111;stop sign:1111111111111
+a stop sign and a parking meter,"stop sign,parking meter",stop sign:1111111111111;parking meter:1111111111111
+a parking meter and a truck,"parking meter,truck",parking meter:1111111111111;truck:1111111111111
+a truck and a bicycle,"truck,bicycle",truck:1111111111111;bicycle:1111111111111
+a toilet and a hair drier,"toilet,hair drier",toilet:1111111111111;hair drier:1111111111111
+a hair drier and a toothbrush,"hair drier,toothbrush",hair drier:1111111111111;toothbrush:1111111111111
+a toothbrush and a sink,"toothbrush,sink",toothbrush:1111111111111;sink:1111111111111
+a sink and a toilet,"sink,toilet",sink:1111111111111;toilet:1111111111111
+a wine glass and a chair,"wine glass,chair",wine glass:1111111111111;chair:1111111111111
+a cup and a couch,"cup,couch",cup:1111111111111;couch:1111111111111
+a fork and a potted plant,"fork,potted plant",fork:1111111111111;potted plant:1111111111111
+a knife and a tv,"knife,tv",knife:1111111111111;tv:1111111111111
+a spoon and a laptop,"spoon,laptop",spoon:1111111111111;laptop:1111111111111
+a bowl and a remote,"bowl,remote",bowl:1111111111111;remote:1111111111111
+a banana and a keyboard,"banana,keyboard",banana:1111111111111;keyboard:1111111111111
+an apple and a cell phone,"apple,cell phone",apple:1111111111111;cell phone:1111111111111
+a sandwich and a book,"sandwich,book",sandwich:1111111111111;book:1111111111111
+an orange and a clock,"orange,clock",orange:1111111111111;clock:1111111111111
+broccoli and a backpack,"broccoli,backpack",broccoli:1111111111111;backpack:1111111111111
+a carrot and an umbrella,"carrot,umbrella",carrot:1111111111111;umbrella:1111111111111
+a hot dog and a handbag,"hot dog,handbag",hot dog:1111111111111;handbag:1111111111111
+a pizza and a tie,"pizza,tie",pizza:1111111111111;tie:1111111111111
+a donut and a suitcase,"donut,suitcase",donut:1111111111111;suitcase:1111111111111
+a cake and a vase,"cake,vase",cake:1111111111111;vase:1111111111111
+an oven and scissors,"oven,scissors",oven:1111111111111;scissors:1111111111111
+a toaster and a teddy bear,"toaster,teddy bear",toaster:1111111111111;teddy bear:1111111111111
+a microwave and a frisbee,"microwave,frisbee",microwave:1111111111111;frisbee:1111111111111
+a refrigerator and skis,"refrigerator,skis",refrigerator:1111111111111;skis:1111111111111
+a bicycle and an airplane,"bicycle,airplane",bicycle:1111111111111;airplane:1111111111111
+a car and a train,"car,train",car:1111111111111;train:1111111111111
+a motorcycle and a boat,"motorcycle,boat",motorcycle:1111111111111;boat:1111111111111
+a person and a toilet,"person,toilet",person:1111111111111;toilet:1111111111111
+a person and a hair drier,"person,hair drier",person:1111111111111;hair drier:1111111111111
+a person and a toothbrush,"person,toothbrush",person:1111111111111;toothbrush:1111111111111
+a person and a sink,"person,sink",person:1111111111111;sink:1111111111111

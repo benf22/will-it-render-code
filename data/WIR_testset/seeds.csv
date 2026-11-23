@@ -1,0 +1,474 @@
+prompt_idx,k,prompt,seed_main,seed_bon2,seed_bon3
+3,2,an orange and a clock,42770119,24860440,1143544998
+9,2,a sandwich and a book,1464835758,678691263,2134741046
+12,2,a knife and a tv,989657655,1278836708,641043647
+23,2,a couch and a potted plant,1831974845,1101961900,586433908
+26,2,a train and a boat,1709684620,538311678,405272639
+31,2,a giraffe and a bird,1430827345,225505930,976418575
+36,2,a donut and a suitcase,1803546775,1058338692,615228031
+44,2,a pizza and a tie,1513769341,2105826383,562838791
+46,2,a vase and scissors,329163262,1902077857,1078752809
+47,2,a fire hydrant and a stop sign,101342122,1468048599,768658206
+63,2,a cow and an elephant,86633207,2048153598,138484756
+65,2,skis and a snowboard,1182948014,1298288465,887305168
+70,2,an airplane and a train,1990877742,1087771683,723822230
+75,2,a bottle and a chair,1401930090,1067817931,1761337593
+76,2,a tie and a suitcase,315056714,143826663,1607518799
+80,2,a zebra and a giraffe,477274874,1462843215,474224557
+84,2,a toilet and a hair drier,449385220,1260009215,1463800582
+86,2,a sheep and a cow,1491014242,1047311432,360464857
+91,2,a person and a toilet,1330624301,601792594,853518850
+96,2,an apple and a cell phone,1446279676,125688895,1818670327
+100,2,a person and a toothbrush,643122103,1548988150,65421784
+102,2,a laptop and a remote,2118025574,86386149,457233062
+106,2,a potted plant and a tv,665107865,1152883964,845385173
+109,2,a hot dog and a handbag,366479735,458382003,101399276
+120,2,a bear and a zebra,1047644293,74169935,424646421
+123,2,a snowboard and a sports ball,1318781985,806726091,536763235
+136,2,a surfboard and a tennis racket,377676659,1701162420,1730372504
+138,2,a keyboard and a cell phone,743960003,1098448107,1540881540
+157,2,a stop sign and a parking meter,323729505,1198952610,301694372
+160,2,a tennis racket and a bottle,128787859,2142369053,1787668734
+165,2,a banana and a keyboard,1228809238,834041726,1019054480
+172,2,a bicycle and an airplane,316480326,123247995,901782582
+173,2,a parking meter and a truck,1095443128,798836911,498217714
+185,2,a bird and a cat,839296557,1248422597,2129515925
+189,2,a cat and a dog,1002079288,1903952316,1771532763
+192,2,a frisbee and skis,769038743,78995917,2022008123
+193,2,a traffic light and a fire hydrant,724306056,1190190572,636063103
+200,2,a microwave and a frisbee,363336989,1855094788,873589623
+202,2,a book and a clock,705919952,385901018,1875793679
+204,2,a toaster and a teddy bear,1153378296,1091530135,1207421640
+207,2,a sports ball and a kite,1511988795,354448551,519087268
+209,2,a boat and an airplane,310960596,1401626702,1542713717
+210,2,a car and a motorcycle,1463293323,912198768,392398295
+213,2,a motorcycle and a boat,523987031,18026958,248057560
+222,2,broccoli and a backpack,988332696,881961734,1463837334
+224,2,a dog and a horse,1991682291,1417156765,302449498
+227,2,an umbrella and a handbag,1795228082,384855818,1303655329
+230,2,a motorcycle and a bus,1818609165,609772173,1017402922
+237,2,a cell phone and a book,692580746,2000297590,1250906935
+244,2,a bicycle and a car,1031915660,2057010501,465693682
+252,2,a tv and a laptop,2068319907,338829514,999922774
+263,2,a skateboard and a surfboard,881026406,1637293034,1189009361
+266,2,a sink and a toilet,58095437,1314274992,1919420662
+270,2,a chair and a couch,1557512228,1842620318,980858322
+276,2,a bowl and a remote,2059014566,158648999,1006423974
+278,2,a hair drier and a toothbrush,1102119195,1672532603,1648260148
+281,2,a kite and a baseball bat,1892721232,606655093,1677239284
+282,2,a truck and a bicycle,1219724233,408270362,491184
+283,2,a suitcase and a vase,1584640596,1402027542,1358596903
+290,2,an elephant and a bear,1456829889,1714324064,78600942
+312,2,a cake and a vase,85331950,566777976,1467587898
+314,2,a baseball bat and a baseball glove,1326823247,1996938396,1989421760
+317,2,a car and a train,1643985210,164615794,529216749
+323,2,a backpack and an umbrella,1553903695,383531625,1939960725
+324,2,a horse and a sheep,294103721,154071434,249103156
+335,2,a refrigerator and skis,106374675,1563207881,949861761
+339,2,scissors and a teddy bear,1125281543,864243331,1893584898
+341,2,a toothbrush and a sink,1768878512,1134958343,1517242857
+347,2,a carrot and an umbrella,1572772762,912000258,925712116
+354,2,a handbag and a tie,949402206,299870442,2096770566
+384,2,a cup and a couch,259666676,1719007571,1082152973
+396,2,a spoon and a laptop,1507602973,2073951132,168863062
+414,2,a person and a sink,1137132124,988587254,171982475
+417,2,a baseball glove and a skateboard,206126198,1504823842,1421621808
+432,2,a clock and a backpack,270372541,265622853,1952454554
+438,2,a wine glass and a chair,268048181,354590426,1508289432
+439,2,a teddy bear and a frisbee,159018729,311673128,1643011867
+450,2,an oven and scissors,1244918694,989059205,1206917968
+457,2,a person and a hair drier,1595946587,1435679481,454315357
+471,2,a bus and a traffic light,195821412,1549790557,1510514485
+1,3,a pizza and a vase and a snowboard,1351968391,765122980,1950972539
+14,3,a keyboard and a donut and a teddy bear,417397560,833272095,769252136
+17,3,a pizza and a book and a bus,1172398731,20677192,393600481
+21,3,a car and a motorcycle and a fire hydrant,968765031,290184277,884501187
+24,3,a tennis racket and a tie and a dog,282549157,1908197325,1472284389
+25,3,skis and a handbag and broccoli,1269801146,262938392,1623896479
+52,3,a donut and an umbrella and a sink,1393641349,1652920788,1053559495
+53,3,skis and a toaster and a backpack,903334662,1419895078,674899659
+71,3,a sports ball and a keyboard and a suitcase,1760641705,996510877,1797754152
+89,3,a bear and a carrot and a sink,498958561,1232962363,373630189
+90,3,a remote and a zebra and a bear,563732313,61923661,1415077674
+98,3,a dog and a bowl and a baseball bat,1444865018,1686073049,597893806
+103,3,a car and a cat and a remote,1536390709,472482936,552611181
+108,3,a sheep and a dog and a truck,1089418635,244108629,1935424402
+116,3,a suitcase and a car and a horse,1578480100,449761304,1866017088
+121,3,a teddy bear and skis and a cow,1463804016,847948912,1424258590
+131,3,a boat and a zebra and a surfboard,1196595695,845341212,920561361
+135,3,a banana and skis and a traffic light,818350534,931259142,1824714574
+141,3,an umbrella and a pizza and a carrot,1550464179,1315794863,1707202591
+142,3,a potted plant and a car and a baseball glove,822680331,549703475,1738781414
+143,3,a knife and a tie and an oven,113894060,2060166852,1063788230
+148,3,a wine glass and a toaster and a sandwich,316764117,347497034,1835522949
+149,3,a keyboard and a knife and a parking meter,345379018,1318167163,2047403414
+154,3,a giraffe and a surfboard and a suitcase,1768587837,297764491,16614174
+167,3,a skateboard and scissors and a bowl,654757169,30238988,270864426
+168,3,a refrigerator and an elephant and a kite,1356492204,853145515,73089305
+171,3,a truck and a bird and a cow,1065593806,556941619,534473806
+179,3,a boat and a clock and a keyboard,428836519,928948022,1278250661
+187,3,a bicycle and a backpack and a laptop,853564825,2069223294,2093990586
+205,3,an orange and a cup and a sandwich,1847295685,1147018875,1276203250
+220,3,a horse and an oven and a snowboard,346873411,1441244794,1643051229
+233,3,a tv and a vase and a teddy bear,1543986878,540877125,830949432
+238,3,a stop sign and a toilet and a motorcycle,2015476135,971268111,1726191967
+239,3,a sheep and a pizza and a sandwich,992771847,1475390716,486094669
+242,3,a cow and an orange and a kite,1472069472,1517230014,847725504
+246,3,a frisbee and a donut and a remote,70163891,117483199,2109481234
+254,3,a book and a stop sign and a cell phone,1324270297,747658017,764423676
+261,3,a sheep and a clock and a motorcycle,1384738675,1742105785,707470243
+269,3,a cell phone and a backpack and a couch,1804419273,1834154721,345834461
+280,3,an airplane and a person and a fork,1427221599,1194175855,1289607763
+287,3,a laptop and a traffic light and a tennis racket,249251649,228834068,1755416649
+292,3,a toothbrush and a frisbee and a stop sign,2078676077,1708976843,563887940
+293,3,an apple and a teddy bear and a frisbee,1905334104,814547074,1577677497
+296,3,a tennis racket and a chair and a hair drier,1348921045,396840180,1948789469
+297,3,a sheep and scissors and a boat,1751273760,79778055,1398161318
+298,3,a truck and a bicycle and a sink,1596048618,1203777237,1017399157
+301,3,a motorcycle and a train and a hot dog,1056376602,962240063,1631165069
+315,3,a cow and a banana and broccoli,1891600844,1636981022,1939313487
+320,3,a potted plant and a remote and a suitcase,1739344526,1355625488,1851542141
+321,3,a skateboard and a vase and a toaster,931776807,1022926172,2036305692
+326,3,a cake and a laptop and a snowboard,956101748,529389105,653307116
+330,3,a sports ball and a giraffe and a refrigerator,828189423,1963499025,971871949
+338,3,a bus and a bird and a tie,1788996784,1758483480,2975414
+342,3,a dog and a tv and a boat,479104921,1391217488,70228805
+343,3,a kite and skis and a wine glass,1639532388,582070743,819624634
+346,3,a cup and a motorcycle and a chair,1568600080,1174720670,1025427285
+353,3,a cake and a train and skis,913070690,1276104681,950938036
+356,3,a kite and a bus and a surfboard,1462028833,1540420871,1055594812
+359,3,a baseball bat and an elephant and a pizza,433897101,2008373816,1138669170
+369,3,a refrigerator and a banana and a cat,156564284,1730302033,1407701283
+370,3,a spoon and a remote and a sandwich,1721673092,805371496,1346727248
+371,3,an umbrella and a skateboard and a sports ball,141447149,1872396420,1633395702
+375,3,a snowboard and a car and a refrigerator,2102239827,1591258621,971286576
+378,3,a baseball bat and a bear and a hot dog,354456654,330012276,1427865574
+386,3,a suitcase and a tennis racket and skis,1869144207,1502537854,919004835
+392,3,a microwave and a toothbrush and a cup,1958294684,666380420,1917128885
+394,3,an oven and a cell phone and a motorcycle,661812711,254741815,865130281
+405,3,a car and skis and a skateboard,1848722943,1917459163,1530268607
+418,3,a chair and a hot dog and a cat,668290778,441041128,1518077157
+419,3,a traffic light and a pizza and a motorcycle,722962718,630550920,291207318
+434,3,broccoli and a toilet and a car,613545180,264118728,1321497008
+436,3,a teddy bear and a chair and broccoli,1391174867,1857396306,1531412648
+437,3,a train and a giraffe and a stop sign,792080307,935136274,2118081902
+452,3,an oven and a baseball bat and broccoli,1480382353,1290882536,1742000766
+455,3,a bus and a keyboard and a sandwich,1847000559,579080707,1406704632
+458,3,a train and a snowboard and a parking meter,763157340,225434461,2037053665
+459,3,a pizza and a boat and a fork,111699363,809684224,1880834257
+463,3,a chair and a remote and a cell phone,732170864,1367858051,1192828877
+467,3,a potted plant and broccoli and a wine glass,1613362561,2145053336,1648883901
+468,3,a bowl and a laptop and a keyboard,214533902,1285170955,1922249036
+7,4,broccoli and a snowboard and a train and an elephant,580239352,1262634769,1480434579
+13,4,a zebra and a laptop and a bear and a bottle,1381958092,1651825536,1413790751
+22,4,a pizza and a remote and a kite and a toilet,1049204477,565544011,2142742749
+28,4,a clock and a handbag and a tennis racket and a snowboard,909936755,953198202,652796753
+39,4,a kite and a baseball bat and a bowl and a bear,461081455,1274958626,559714261
+45,4,a bird and a traffic light and a toilet and an airplane,1991288575,268114035,1499794658
+50,4,a stop sign and a vase and a banana and a frisbee,190226501,826800826,1136833886
+51,4,a kite and broccoli and a zebra and a donut,9395120,728759281,90011727
+54,4,a clock and a baseball bat and a stop sign and a cake,1504914447,273493500,1003089877
+57,4,a pizza and an umbrella and an apple and a surfboard,75999080,926470758,280458005
+61,4,a sports ball and a bus and a bird and a wine glass,149858488,1062554892,1591569768
+62,4,a surfboard and a toilet and a baseball bat and a baseball glove,355656761,484218949,949916646
+66,4,a surfboard and a spoon and an oven and a sandwich,1051729560,1934055924,283753801
+67,4,a bus and a tennis racket and a carrot and a vase,891723590,1641800730,1337260183
+69,4,a truck and a wine glass and a refrigerator and a spoon,1389114517,1611067000,450898428
+72,4,an oven and a hot dog and a bear and a carrot,1086799607,2131727325,951716958
+74,4,a carrot and scissors and a truck and a chair,249557168,1710412011,1782525755
+88,4,a fire hydrant and a wine glass and an airplane and a car,1767836743,1163297689,1150319968
+105,4,a cup and a bicycle and a toilet and a tennis racket,1635832252,323466982,9260938
+111,4,a car and a microwave and a person and a bird,1269777908,235115619,2049468182
+115,4,a bicycle and an airplane and a zebra and a chair,1760017037,1716366064,49016805
+128,4,a cat and a bear and a remote and a sports ball,2058471576,224084053,1847380199
+130,4,an elephant and a cat and a cup and a vase,421235478,1613607150,2020817490
+134,4,a bowl and a sports ball and a hair drier and a horse,132224613,134899821,1093043304
+140,4,a cake and a bear and a skateboard and a refrigerator,1030661851,1878477068,1528225278
+144,4,a zebra and an elephant and a fire hydrant and skis,437134111,1977250470,1857841652
+146,4,broccoli and skis and a fork and a spoon,646054571,1054487009,260289070
+150,4,a snowboard and a dog and a spoon and a car,1845128704,530058034,1459059040
+151,4,a couch and a bird and a motorcycle and a pizza,871662743,580272484,1526410788
+156,4,an umbrella and a keyboard and a person and a parking meter,1575298985,54350212,795837288
+163,4,a traffic light and a person and a tennis racket and skis,202715577,848143841,874079426
+170,4,a motorcycle and a parking meter and a sports ball and a snowboard,1153381717,1665160833,224430126
+176,4,an oven and a motorcycle and an airplane and a stop sign,1428935039,79796705,1684226368
+191,4,a toilet and a bowl and a donut and a snowboard,826413263,2081472068,511533452
+196,4,a keyboard and a fork and a banana and a train,621917570,774738324,1217765816
+198,4,a wine glass and a toothbrush and a fork and a stop sign,1672892709,482657809,1013718780
+201,4,a skateboard and a handbag and a giraffe and an umbrella,1136706625,1013424374,305108270
+206,4,a cup and a zebra and a tv and a stop sign,761130391,1887097948,1078552927
+212,4,a tie and a giraffe and a refrigerator and a cat,1323272539,83488421,68487915
+226,4,a person and a bicycle and a toaster and a bowl,1020023488,11352457,943020832
+236,4,broccoli and a surfboard and a laptop and scissors,1387358687,1434232778,2016759546
+245,4,skis and a surfboard and a chair and a kite,795634959,1349246493,315807064
+248,4,a clock and a chair and a spoon and a laptop,971512988,271996633,462510518
+259,4,a tie and a cow and a dog and a boat,1547425198,2045158555,1614055164
+262,4,a snowboard and a giraffe and a laptop and a wine glass,935693839,1191761374,1668809729
+267,4,a clock and a cat and a truck and a knife,2076186545,53310863,1039502940
+274,4,a person and a vase and a toilet and an orange,1991049012,1051011159,849258521
+285,4,a tie and a sink and a clock and a teddy bear,231139734,1353102441,1833497894
+291,4,a keyboard and a bicycle and a wine glass and a surfboard,990486139,465466696,1320613933
+299,4,a cake and a giraffe and a truck and an orange,177763126,741752219,1636996446
+302,4,a knife and a bus and skis and a backpack,1376685342,1805026926,956525644
+304,4,a carrot and a laptop and a bird and a parking meter,771161226,2032828996,2098060682
+307,4,a surfboard and a bear and a snowboard and a horse,571903611,2068754409,61204058
+318,4,a bus and a teddy bear and a pizza and broccoli,363949293,1739416229,2144000619
+322,4,a keyboard and a book and a laptop and an oven,2086343317,596512406,949210272
+329,4,a hair drier and a bus and a frisbee and a refrigerator,2083592891,537388767,2072441057
+333,4,a cow and a bottle and a pizza and a sandwich,866143671,1381912143,1816200762
+334,4,a stop sign and a chair and a pizza and a bowl,1803963808,736045442,1176416605
+348,4,a train and a tennis racket and a bear and a hair drier,1968616014,329987516,709837455
+362,4,a clock and a pizza and a person and scissors,1652036397,234708,1126460528
+363,4,scissors and an oven and skis and a hair drier,267765672,206977956,943667944
+364,4,a sheep and a zebra and a person and a giraffe,1756445872,649781532,1427429084
+374,4,a train and a cup and a cow and a baseball glove,1440851751,194283441,1307708756
+380,4,a cell phone and a truck and a zebra and a sink,766649995,601239426,2104467975
+382,4,a toilet and a chair and a train and a knife,706283421,765522939,1932651740
+388,4,an umbrella and a hair drier and a toaster and a baseball glove,869654518,1671464017,354392625
+389,4,a snowboard and a knife and a sheep and a baseball glove,1916781825,1014014227,1230159532
+390,4,a fire hydrant and a sink and a hair drier and a couch,459356895,1504169869,381705780
+403,4,a clock and broccoli and a sandwich and a bird,1406131724,826763216,2121395794
+404,4,a baseball bat and an umbrella and a car and a banana,110369154,667683169,171182967
+421,4,a fork and a frisbee and a sandwich and a kite,1572727504,1821608127,401845919
+425,4,a cat and a kite and a hair drier and an airplane,213473804,1812417264,967809101
+426,4,a handbag and a suitcase and a person and a laptop,1588420027,439003987,1903814251
+429,4,a cell phone and a laptop and an elephant and a boat,1428481960,1767752178,1673222331
+430,4,a suitcase and a carrot and a wine glass and a cup,557468812,1793917845,860310297
+440,4,a bicycle and a handbag and a teddy bear and a baseball glove,986844742,1624911126,163974525
+453,4,a vase and an oven and a bottle and a refrigerator,1606685578,224779132,1694412960
+454,4,a fire hydrant and a spoon and a train and a cake,1974012806,600650214,1479587261
+464,4,a toothbrush and a snowboard and a cow and a bird,677822483,823920665,1416904887
+465,4,a stop sign and a cell phone and a spoon and an umbrella,2036877895,1800938778,901469652
+2,5,a cell phone and a surfboard and a traffic light and a potted plant and a skateboard,212195248,1004950507,817595558
+4,5,a sandwich and a book and a stop sign and a truck and a banana,2105765209,1670388262,737906228
+10,5,a wine glass and a truck and a parking meter and a clock and a traffic light,1901097732,1424386957,73653919
+11,5,a cow and a fire hydrant and a motorcycle and a vase and a clock,2075723487,786844558,2074464449
+15,5,a hair drier and a hot dog and scissors and a cell phone and a handbag,1005954583,2087872613,1412159547
+19,5,a sports ball and a couch and a dog and a cup and a teddy bear,843708311,548023931,1576582003
+27,5,a parking meter and a hot dog and a tennis racket and a kite and a bird,989900137,347798429,1499564796
+29,5,a sports ball and a sink and a chair and a clock and a person,348238488,592643755,1281078862
+32,5,a fire hydrant and a sink and skis and a handbag and a bear,709600030,2091245949,541324217
+37,5,a surfboard and an apple and a donut and a fork and a car,670438145,1291685506,758399266
+55,5,a tie and skis and a hot dog and a bottle and a refrigerator,52239468,1693963260,542756638
+64,5,a cell phone and a dog and a bicycle and a toilet and a kite,955665958,301137406,1273537860
+68,5,a suitcase and a frisbee and a sandwich and a sheep and a car,1079072386,1603219288,312570009
+77,5,a bicycle and a person and a car and skis and an oven,129692013,332508427,295714270
+81,5,a suitcase and a baseball glove and a baseball bat and a teddy bear and broccoli,502929125,1246194434,233294237
+83,5,a cell phone and a person and a frisbee and a giraffe and a teddy bear,1142871526,1942491902,2021334922
+94,5,a wine glass and a keyboard and a microwave and a bottle and a suitcase,582781609,1100821265,1432589924
+104,5,a bowl and a remote and a laptop and a kite and a tie,716383098,5841877,850003392
+117,5,a train and a couch and a horse and a wine glass and skis,1543568980,939227498,441740119
+122,5,a traffic light and a hot dog and a motorcycle and a train and a toothbrush,416259121,435666003,1018559159
+126,5,a kite and a sports ball and a car and a wine glass and a skateboard,937982130,1732855310,1223639864
+133,5,a book and a baseball bat and a keyboard and scissors and a backpack,990393046,240165152,17536675
+139,5,a hot dog and a banana and a microwave and a fork and a baseball glove,530590412,620647926,1362905244
+152,5,skis and a potted plant and a cake and a banana and a giraffe,1748112666,58452296,583768651
+153,5,a fork and a cup and a keyboard and a vase and a bus,1030230300,752657511,1887478979
+159,5,a toaster and a frisbee and a cow and a cake and a pizza,2030457247,634806262,471066432
+161,5,a hair drier and a carrot and a keyboard and skis and a dog,1185402300,1422018547,895962342
+175,5,a bus and a refrigerator and an elephant and a baseball bat and a handbag,1565854074,771853828,972829503
+178,5,a boat and a fork and skis and a teddy bear and a parking meter,548523914,1060604182,1310152964
+184,5,scissors and a laptop and a frisbee and a truck and an oven,1197388168,2070227556,1695069371
+186,5,a sandwich and broccoli and a person and a train and a fire hydrant,1123790631,264135859,1847620897
+190,5,a book and a cell phone and a vase and a chair and an airplane,640047544,1064419042,1615053915
+195,5,a bear and a sports ball and a bicycle and a microwave and an orange,291561106,1178067773,332729891
+208,5,a train and a cup and a laptop and a car and a book,1783288485,1524615169,1088985816
+214,5,a sink and a toaster and a bottle and a skateboard and a teddy bear,1049696861,2020307614,180271209
+216,5,a dog and a wine glass and a giraffe and a donut and a handbag,1750306556,1449052185,772845801
+225,5,a snowboard and a cat and a tennis racket and a giraffe and a book,898538282,937804415,1983720733
+228,5,a hair drier and a cow and a bicycle and a couch and a bottle,1166217391,260542011,1800568319
+231,5,a tie and a book and a dog and a frisbee and a fork,1373273833,1023985325,436425988
+232,5,a cow and an apple and a kite and a carrot and a train,441515226,1558899118,47387677
+240,5,a bear and a boat and a cow and a knife and an oven,2117110258,514379910,473995805
+243,5,a chair and a toothbrush and a remote and a banana and a couch,1708676620,1294498495,660814317
+249,5,a baseball bat and an umbrella and a car and a banana and a vase,2071828767,72856614,1881654861
+255,5,broccoli and a stop sign and a cow and a dog and an orange,555532708,1672952674,1572713288
+257,5,a book and a bear and a toilet and a pizza and a tv,1383976406,291718501,124956868
+260,5,a motorcycle and a toilet and a spoon and a parking meter and a knife,348141398,1913117568,115527258
+264,5,a tennis racket and a boat and an elephant and a truck and a zebra,1131677805,1120649188,5045609
+284,5,a bird and a baseball bat and a motorcycle and a zebra and a couch,2106445312,989602953,895411580
+294,5,a hot dog and a cake and broccoli and a laptop and a sports ball,1249923949,183781053,1464967594
+305,5,a vase and a surfboard and a toothbrush and a toaster and a horse,1185701394,1642367832,1372535732
+308,5,a donut and a cake and a backpack and a skateboard and a microwave,1005343661,940280188,1974561205
+309,5,a person and a toilet and a boat and a banana and a cup,1983860391,2089245678,1992840371
+310,5,a bottle and a spoon and a person and a fork and a stop sign,1289318615,37668920,693309308
+311,5,a bottle and scissors and a cake and a kite and a cat,1886239570,1497635070,42902351
+316,5,a snowboard and a potted plant and a remote and a train and a handbag,1759799349,728113172,46851294
+319,5,a bowl and broccoli and a bird and a skateboard and a bicycle,504767192,462563060,355922003
+328,5,a toaster and a tennis racket and a banana and an orange and a train,1157575178,235100517,1268529343
+331,5,an orange and a couch and a refrigerator and scissors and a giraffe,1085929408,450427388,1809850561
+336,5,an orange and a carrot and a laptop and a person and a motorcycle,1210680441,279557200,194028578
+337,5,a boat and a traffic light and a cake and a keyboard and a bird,1271434555,1942842610,1074104860
+349,5,a banana and a bicycle and a sheep and a keyboard and a snowboard,1115150776,373794975,516342482
+352,5,a backpack and a hot dog and a surfboard and a bicycle and a wine glass,1980271320,1794429888,812384355
+357,5,a potted plant and a bird and a frisbee and a vase and a wine glass,402633717,1297974472,482098028
+367,5,a toilet and a traffic light and a toaster and a couch and a bowl,2035494621,1803921029,1179534933
+373,5,a fire hydrant and a boat and scissors and a skateboard and a stop sign,69348072,365437010,1543151846
+376,5,a remote and a carrot and a cup and a toaster and scissors,440648707,1210858603,997552458
+377,5,an apple and a cup and an oven and a tennis racket and a bottle,254423222,1017481447,1744401253
+385,5,a tie and a toaster and a giraffe and a baseball bat and a sports ball,1533455832,1149992515,558048540
+393,5,a donut and a laptop and a spoon and a baseball bat and a traffic light,1585802705,1465953587,1022045673
+399,5,a sink and a surfboard and an umbrella and a tennis racket and scissors,635273242,1527735424,795626048
+411,5,a remote and a cow and a parking meter and a giraffe and a surfboard,1731056896,126825271,409980627
+413,5,a pizza and a refrigerator and a motorcycle and a sink and a remote,38512384,1281485279,445875227
+420,5,a hair drier and an elephant and broccoli and a donut and a book,1629834155,400025587,668932719
+423,5,a giraffe and a kite and an elephant and a bear and a chair,963096052,1732521056,342625029
+424,5,a handbag and a boat and a carrot and a bottle and a car,978731531,585459562,434847002
+431,5,a train and a bowl and a bus and scissors and a bear,33867335,53410351,419869848
+435,5,a microwave and a giraffe and an oven and a train and an umbrella,1055870161,1243901033,538396651
+441,5,a person and a tie and a baseball glove and a knife and an apple,1852860968,289263570,1353945815
+445,5,a surfboard and a boat and a sports ball and a hair drier and a frisbee,1661763584,734589813,450417554
+469,5,a bear and a car and a spoon and a tennis racket and a keyboard,2068365576,1851695188,622632010
+0,6,a parking meter and a zebra and a bird and a suitcase and a couch and broccoli,1300759088,1689920128,794637162
+5,6,a sports ball and a snowboard and broccoli and a hot dog and a banana and a cow,2080013099,1357430066,1638252740
+8,6,a refrigerator and a dog and a snowboard and a suitcase and a toaster and a sheep,564218933,215520376,1223986247
+16,6,a hot dog and a bus and a cat and a book and a toilet and a potted plant,2052517190,907170205,158766447
+18,6,a couch and a bus and a handbag and skis and a donut and a sandwich,88350508,140140990,1989300424
+30,6,a surfboard and skis and a tv and an elephant and a hot dog and a kite,90514057,801597146,1635321253
+33,6,an airplane and a person and a suitcase and a backpack and a sports ball and a train,1482175095,968013237,921751673
+35,6,a car and a tie and a fork and a wine glass and a remote and an apple,1635578069,217783312,604328538
+38,6,an oven and a dog and a giraffe and a bicycle and a bear and a surfboard,1222291398,2111473794,460924372
+40,6,a sandwich and a traffic light and a tie and a baseball bat and a surfboard and a suitcase,1061159672,841836246,981589219
+43,6,a carrot and a baseball bat and a sheep and skis and a pizza and a potted plant,1703913370,1659869982,1621584079
+48,6,an apple and a train and a zebra and a cake and a bear and a microwave,104961563,1820288728,1641772774
+58,6,a handbag and a cow and an airplane and a hair drier and an orange and a bear,438163224,409572773,1740216330
+60,6,a refrigerator and a zebra and a keyboard and an airplane and a pizza and a tennis racket,165605861,870196212,342480519
+73,6,a banana and a handbag and a bowl and an elephant and a bicycle and a person,664565148,265797184,540613168
+85,6,a sports ball and a tennis racket and a clock and scissors and a bicycle and a remote,444753576,196827811,2095733117
+87,6,a giraffe and an umbrella and a fork and a bottle and a clock and a horse,1480072738,870560753,1515785302
+92,6,an orange and a surfboard and an umbrella and a tennis racket and a bird and a motorcycle,90011745,1924424287,817426276
+93,6,a wine glass and a donut and a dog and a toothbrush and a tv and a person,1209732000,2105713756,1476252038
+119,6,a donut and a tennis racket and a frisbee and a boat and a hot dog and a vase,1989810593,261053772,434961478
+125,6,a parking meter and a remote and a bottle and a hair drier and a stop sign and a traffic light,134455233,664729260,72196973
+132,6,a spoon and a hair drier and a sink and a bus and a toothbrush and a kite,1806755020,587892590,818475705
+145,6,a bicycle and a vase and a cup and a toaster and a microwave and a horse,372581924,1927270094,311342156
+147,6,a hair drier and a backpack and a fire hydrant and a book and a donut and a baseball glove,1379034697,517352633,1798114941
+158,6,a baseball bat and an umbrella and a car and a banana and a vase and a parking meter,1913970229,768897898,1288706544
+162,6,a sheep and a truck and broccoli and a boat and a train and an umbrella,1419055236,539692054,1264864522
+166,6,a teddy bear and a cow and a bowl and a fire hydrant and a bird and a dog,779000655,154004047,1282044560
+169,6,a cup and a teddy bear and an umbrella and a tv and a cat and a tie,1520503945,1070933777,796053565
+174,6,a baseball bat and a knife and a hair drier and an elephant and a bird and an apple,828512365,422213501,1381137555
+177,6,scissors and a giraffe and a wine glass and a vase and a kite and a traffic light,682647592,464700812,1875915829
+180,6,a train and a refrigerator and a chair and a car and an oven and a knife,1337694741,1297967870,736846589
+182,6,a parking meter and a backpack and a handbag and a giraffe and an apple and a toilet,1311269031,420103946,1752726337
+194,6,a bus and scissors and a chair and a suitcase and a cup and a cake,1261425010,344400709,1381347598
+203,6,a book and a banana and a truck and a zebra and a tie and scissors,1511354179,76688952,1930043218
+211,6,a surfboard and a cup and a backpack and a knife and a snowboard and a spoon,247907820,1852813239,1888506887
+215,6,an umbrella and a carrot and a skateboard and a cake and a knife and a couch,1654901833,1259089404,1038740960
+219,6,a laptop and a snowboard and a cell phone and a tennis racket and a cake and a toothbrush,1095262906,444983760,898066425
+223,6,a sports ball and a bowl and a horse and a knife and a book and a toothbrush,677837977,8323545,1900095848
+229,6,a horse and a refrigerator and skis and a bear and a cat and a backpack,1903350467,1395956472,1567051462
+234,6,a clock and a snowboard and a tie and a bear and a pizza and a kite,992353762,68903022,368497030
+247,6,an orange and a sink and a bicycle and a keyboard and a cat and a snowboard,1401644288,787009279,64262806
+250,6,a hot dog and a person and a skateboard and scissors and a stop sign and an apple,620963565,2081109298,1754882338
+251,6,a person and an umbrella and a bear and a spoon and a chair and a traffic light,1254688386,1308908981,457201436
+253,6,a parking meter and a keyboard and a chair and a frisbee and a teddy bear and a sandwich,1937464542,836433594,2047978251
+258,6,a baseball bat and a teddy bear and a skateboard and a horse and a spoon and a tennis racket,1509904979,1570079300,1908786097
+265,6,a stop sign and a knife and a wine glass and a handbag and a truck and a teddy bear,1200109331,197515888,352883757
+268,6,a sheep and a frisbee and a tv and a bottle and a sink and a skateboard,715057686,322344559,1869647941
+272,6,a fire hydrant and a tennis racket and a microwave and a fork and a toilet and a banana,1595328862,1985324295,1928306443
+275,6,a toaster and a boat and a teddy bear and a clock and a carrot and a hair drier,383743905,947702838,1550155633
+277,6,a suitcase and a car and a donut and a bear and a keyboard and a carrot,1020328079,1330086631,756669453
+279,6,a cow and a suitcase and a bottle and a tennis racket and an apple and a book,535774235,1016865136,803165764
+286,6,a knife and a person and a potted plant and a baseball glove and broccoli and a keyboard,1404361225,129929019,1585501338
+289,6,a skateboard and broccoli and an airplane and a toaster and a wine glass and a book,1731661730,2131874519,21839079
+300,6,a donut and a train and a banana and a giraffe and a potted plant and a cup,513811020,765209889,1690566254
+306,6,a toilet and a chair and a cow and a horse and a remote and a cell phone,1614667617,1567810756,1567194681
+313,6,a person and a tennis racket and a kite and a cup and a parking meter and a truck,284269093,80687372,708054913
+325,6,a bus and a carrot and a backpack and an orange and a dog and a truck,1574391322,739202835,1772885049
+332,6,a bicycle and a laptop and a hair drier and a zebra and an umbrella and a wine glass,1786863049,1555812280,1251966565
+344,6,a bicycle and a skateboard and a parking meter and a pizza and a donut and a fork,336124541,1544077714,932655162
+345,6,a keyboard and a tie and a hot dog and a bird and a train and a spoon,130314092,1390080697,1935414040
+350,6,a book and a tv and a fork and a cake and a stop sign and an orange,2018797604,1602779778,725007125
+351,6,a cow and a backpack and a zebra and a sheep and a vase and a stop sign,567102413,1990054343,1357719466
+360,6,a cat and a wine glass and a surfboard and a banana and a sheep and a chair,1295968008,115231525,85508086
+365,6,a toaster and a bowl and an umbrella and a stop sign and a kite and a frisbee,1350002473,527026491,426336744
+379,6,a hair drier and a car and a giraffe and a sheep and a bowl and a tennis racket,283172427,503785666,1895113508
+387,6,a baseball bat and a clock and a cell phone and a tv and a bus and a zebra,1050255510,504470512,1439309701
+391,6,a toilet and a baseball glove and a suitcase and an oven and a spoon and skis,564898581,1230212164,1125106004
+397,6,a tie and a skateboard and a cell phone and an orange and an elephant and a vase,724741881,740360045,1784039850
+401,6,scissors and a surfboard and a fire hydrant and a pizza and a toothbrush and a train,2090237843,1528881563,1608637721
+406,6,a dog and a handbag and a chair and a fork and a kite and a boat,1079110562,297050281,46479419
+407,6,a truck and a surfboard and a bottle and a toilet and a donut and a laptop,273797587,1017997697,1869727276
+408,6,a cake and a baseball glove and an airplane and a hot dog and a parking meter and a bowl,1682715373,2069100501,1594004974
+409,6,a microwave and an orange and a knife and a clock and skis and a traffic light,840331444,1081451509,268581066
+410,6,a couch and a hot dog and a baseball bat and an orange and a wine glass and a fire hydrant,484470901,1870576113,1952567964
+416,6,a toilet and a boat and a car and a sports ball and a skateboard and a traffic light,1478077652,216929716,1850575587
+428,6,a kite and an airplane and a sandwich and a sheep and a bicycle and a knife,451220945,1001765158,528275460
+443,6,a laptop and a stop sign and a chair and skis and a giraffe and a tie,1210777047,396312891,880793726
+446,6,an orange and a banana and a bottle and a boat and a baseball glove and a toothbrush,1721439143,1424794552,440773009
+449,6,a toothbrush and an oven and a motorcycle and a baseball bat and a frisbee and a backpack,132711116,1228178119,1247602954
+456,6,a sandwich and a laptop and a sink and a backpack and a fork and scissors,214882814,1822236906,890595290
+6,7,a sandwich and an elephant and a tie and a bottle and a hair drier and a spoon and a potted plant,2116165499,767744191,1180996589
+20,7,an orange and a baseball glove and a traffic light and a teddy bear and a stop sign and a banana and a snowboard,2000501307,2015837894,1583973343
+34,7,a remote and an airplane and a suitcase and an apple and a zebra and skis and a sports ball,1060449467,874586906,1483707352
+41,7,a remote and a hot dog and a tie and a bicycle and an orange and a fork and a truck,1109031077,1628699733,1420986870
+42,7,an oven and skis and a toilet and a chair and a person and a tie and a cell phone,1029298087,1636183029,947339778
+49,7,a backpack and a cup and a baseball glove and a parking meter and a bicycle and an apple and a hair drier,1221550976,1225437956,553994195
+56,7,a tv and an umbrella and a baseball glove and a cell phone and a spoon and a boat and a fork,1769631540,700573548,1543541807
+59,7,a refrigerator and a sheep and a hair drier and a laptop and a tv and a remote and a cow,2033596616,1896327444,397115894
+78,7,a cup and a couch and a cell phone and a giraffe and a donut and a handbag and a toothbrush,1366044255,1166238084,1561837771
+79,7,a boat and a surfboard and an oven and a fire hydrant and a teddy bear and a toothbrush and a suitcase,1851730153,1826265801,30602679
+82,7,a cake and a baseball bat and a baseball glove and a fire hydrant and a giraffe and a sheep and scissors,369050682,1523005421,1325156000
+95,7,a bicycle and an elephant and a motorcycle and an umbrella and a toothbrush and skis and a laptop,583429536,188990551,1206973770
+97,7,a horse and a hair drier and a fork and a stop sign and a bird and a microwave and a bear,866109954,1361143653,819651017
+99,7,a sink and a microwave and a zebra and a bicycle and a frisbee and a toaster and a traffic light,1463229788,1148438021,1582973527
+101,7,a sheep and a clock and a person and a sink and a backpack and a hot dog and a teddy bear,1673736656,2092724040,2128150894
+107,7,a clock and a tie and a donut and a book and a pizza and a cow and a tennis racket,655018276,1816288055,331951853
+110,7,a cell phone and an elephant and a dog and a bus and a suitcase and a sheep and a tennis racket,743584652,1300183930,1094375602
+112,7,skis and a kite and a train and a teddy bear and a cake and a dog and a cup,1171331207,1137305738,618780072
+113,7,a couch and a stop sign and a spoon and a dog and a chair and a remote and a book,605478788,616395880,1652368319
+114,7,a horse and a baseball bat and an apple and a couch and a traffic light and a surfboard and a tie,1387207346,768187837,953060138
+118,7,a laptop and a handbag and a sink and a horse and a keyboard and a bottle and a toilet,202773183,1109603907,1683757286
+124,7,a giraffe and a pizza and a person and a bus and a bear and a sandwich and a boat,2079580058,309746053,1956836419
+127,7,a backpack and a wine glass and a refrigerator and a skateboard and a traffic light and a cell phone and scissors,1132415515,1025926361,1396558812
+129,7,an oven and a sink and a sports ball and a tv and a stop sign and a kite and a pizza,1234729529,214150594,1356869222
+137,7,a fire hydrant and a kite and an elephant and a chair and a fork and a clock and a traffic light,2114417619,2046990748,992947737
+155,7,a bowl and a bus and a horse and a potted plant and a train and a car and a clock,1625925474,475226291,804158551
+164,7,a baseball bat and a cat and a potted plant and a knife and a suitcase and a cup and a keyboard,416520954,685614230,622790111
+181,7,a handbag and an oven and a cake and a truck and an apple and broccoli and a bus,1032690397,1126365366,1728400287
+183,7,a suitcase and a baseball glove and a skateboard and a bird and a laptop and a chair and a truck,2001074126,1818318415,1277187058
+188,7,a skateboard and a car and a giraffe and a motorcycle and a hair drier and a frisbee and a knife,269431977,620199561,774579817
+197,7,a cake and a chair and a sink and a hair drier and a cat and a carrot and a toothbrush,1313809544,1419509485,1013809339
+199,7,a motorcycle and a toaster and a cell phone and an airplane and a clock and a truck and a surfboard,1699449406,1649432472,4746502
+217,7,a cow and a cat and a bird and a motorcycle and a bus and a vase and a traffic light,271786726,1002970815,804213655
+218,7,a microwave and a couch and skis and a fire hydrant and a bottle and a bus and a backpack,1418701999,111988153,1799458281
+221,7,a sheep and an oven and a carrot and an orange and a couch and a knife and a sandwich,310580638,1345214527,636386912
+235,7,a hot dog and a car and a toothbrush and a pizza and a bird and an apple and a bottle,860985456,1503557022,2099552404
+241,7,a handbag and a backpack and a bowl and a knife and a vase and a tie and a sports ball,1965768766,731633752,914645671
+256,7,broccoli and a bowl and a zebra and a skateboard and a banana and a toothbrush and a dog,903171012,356729982,41878724
+271,7,an umbrella and an airplane and a bowl and a bottle and a chair and a bear and a teddy bear,263596248,709713366,126780109
+273,7,a hot dog and a toaster and a cake and a toilet and a skateboard and a potted plant and a stop sign,491194406,1952849454,2145604622
+288,7,a giraffe and an oven and an elephant and a cow and a toaster and a backpack and a horse,770514427,1682985304,1052024801
+295,7,a sink and a cell phone and a train and a fire hydrant and a banana and a bear and an apple,10199374,102524432,375596646
+303,7,a boat and a microwave and a dog and a donut and a refrigerator and a vase and a truck,410940584,610988776,537542977
+327,7,a zebra and a train and a keyboard and a hot dog and a book and a boat and a hair drier,2099435463,1404606205,2003248306
+340,7,a bowl and a refrigerator and a pizza and a bicycle and a snowboard and a cat and a surfboard,1806670224,497079302,1466011988
+355,7,a skateboard and a person and a cow and a train and a baseball bat and an orange and a bottle,76306435,245817412,1756505016
+358,7,a sandwich and a fork and a toilet and a book and an airplane and a car and a wine glass,1008468833,2044568880,1835640238
+361,7,a handbag and a surfboard and a sandwich and a dog and a hot dog and a cow and a baseball glove,152159710,553144301,1246780761
+366,7,a baseball bat and an umbrella and a car and a banana and a vase and a parking meter and an oven,1254734994,1500438804,228010547
+368,7,a sandwich and a snowboard and a horse and a fire hydrant and a remote and broccoli and a donut,1147649669,280999599,663392937
+372,7,a frisbee and a carrot and a bus and an airplane and a tie and a tv and a cup,2110593482,1548399058,1292261395
+381,7,a wine glass and a suitcase and a snowboard and a couch and a hair drier and a vase and a person,516849731,1233066978,1524784172
+383,7,a bear and a baseball bat and a frisbee and a toilet and a toothbrush and a refrigerator and a clock,1188071655,445628367,1899820577
+395,7,a hot dog and a bus and a banana and a knife and a laptop and a kite and scissors,385536995,1083681526,1393860257
+398,7,a zebra and a carrot and a baseball bat and a handbag and a snowboard and a motorcycle and a kite,1100283001,713988448,462174227
+400,7,a cat and a handbag and a parking meter and an airplane and a skateboard and a boat and a sheep,1771604887,66252341,593598044
+402,7,a tennis racket and a cup and a laptop and broccoli and a boat and a car and a stop sign,1488163854,278244476,840031376
+412,7,a donut and a fork and a cake and a banana and a keyboard and a person and a motorcycle,165698,141106240,1000379111
+415,7,an orange and skis and a tv and scissors and a donut and a bowl and a bird,1686897199,1847369622,136030852
+422,7,a traffic light and a bowl and a remote and a keyboard and a carrot and a parking meter and a giraffe,571710969,851124846,1502064410
+427,7,broccoli and a suitcase and a toilet and a carrot and a spoon and a train and a backpack,608435320,173925147,948289625
+433,7,a microwave and a train and a remote and a wine glass and an umbrella and a pizza and a knife,2012453904,1622209144,1433879308
+442,7,a teddy bear and a bicycle and a giraffe and a wine glass and a tennis racket and a potted plant and a bird,1328878485,257902967,1557541656
+444,7,a sandwich and a chair and a keyboard and a sports ball and a toaster and a refrigerator and a tennis racket,569259390,1160142404,1362132062
+447,7,a keyboard and a frisbee and a sheep and a wine glass and a stop sign and skis and a surfboard,755750061,817765883,958473322
+448,7,a bottle and a snowboard and an oven and scissors and a fork and a dog and a frisbee,1422585832,1864991115,131875664
+451,7,a baseball glove and skis and a book and a potted plant and a bear and a vase and a carrot,95510834,353080231,1430210851
+460,7,a horse and a spoon and an orange and a kite and a wine glass and a parking meter and a toothbrush,1193422974,1186207900,1880139709
+461,7,broccoli and a chair and a parking meter and a tv and a motorcycle and a microwave and a potted plant,1750937531,852944222,1213538152
+462,7,a laptop and a frisbee and a person and a fire hydrant and a cat and a spoon and a sports ball,1030749602,148182127,525785662
+466,7,a snowboard and a sports ball and an umbrella and a cup and a truck and a book and a sheep,47469717,770143147,1803403300
+470,7,an orange and a bear and a car and a zebra and a backpack and a surfboard and a cake,1132362520,49766723,470994104
+472,7,a parking meter and a couch and a teddy bear and a toilet and a truck and a cow and scissors,857242094,1850165941,721362655

@@ -4,9 +4,9 @@
         --manual_prompts_csv my_prompts.csv \
         --output validated_prompts.csv
 
-The input CSV needs `prompt`, `object_name`, `target_words` columns (see data/d473/ for the
+The input CSV needs `prompt`, `object_name`, `target_words` columns (see data/WIR_testset/ for the
 paper benchmark format). The LLM prompt-enrichment path (Llama-3) from the research repo is not
-part of this release — author prompt CSVs directly (or reuse data/d473/).
+part of this release — author prompt CSVs directly (or reuse data/WIR_testset/).
 """
 from __future__ import annotations
 
