@@ -49,12 +49,13 @@ def _load_labels(args) -> pd.DataFrame:
         return pd.read_csv(args.labels)
     if not args.videos:
         sys.exit("provide --labels <csv> or --videos <dir> (see --help)")
-    # videos -> labels via the object detectors (heavy; needs the [detectors] extra)
-    from will_it_render.datasets.video_object_labeler import run_labeling  # noqa
+    # Labeling a videos dir runs the object detectors — that lives in will_it_render.datasets
+    # (evaluation stays independent of datasets per the module contract). Run it there first:
     sys.exit(
-        "video labeling from --videos is run via will_it_render.datasets.video_object_labeler "
-        "(torchrun, [detectors] extra); produce labels.csv there, then re-run with --labels. "
-        "See src/will_it_render/evaluation/README.md."
+        "to score raw videos, first label them with the detectors:\n"
+        "    python -m will_it_render.datasets.video_object_labeler --root <videos> --out labels.csv\n"
+        "then: python -m will_it_render.evaluation.run --labels labels.csv  "
+        "(see src/will_it_render/evaluation/README.md)."
     )
 
 
