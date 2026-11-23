@@ -10,12 +10,12 @@ Backends: **LTX-2**, **WAN (Wan2.1)**, **CogVideoX**.
 > **Status: migrated, GPU-validated, pre-release.** The full module tree (common / backends /
 > inference / datasets / training / evaluation + baselines), configs, packaging, docs, tests,
 > and CI are in place; the whole package imports cleanly and the CPU suite is green.
-> **GPU-verified on an L40S:** WAN runs end-to-end — `wir-run` produces a steered video (both
-> `steer.py` and the bundle entry point, determinism on and off), and the 7 WAN capture-hook
-> tests pass against the real engine. The LTX env-var path resolution and the CogVideoX
-> attention hook + backend are validated; a *complete* steered LTX/CogVideoX clip needs a
-> larger card (both are B200/H200-class — the 48 GB L40S OOMs on their steering grad). Probe
-> weights / bundles are not yet uploaded. See `WILL_IT_RENDER_PLAN.md` in the source repo.
+> **All three backends run end-to-end on GPU with real trained AttnSteer weights:** WAN (L40S)
+> via both `steer.py` and the `wir-run` bundle entry point (determinism on and off) plus 7/7
+> capture-hook tests against the real engine; **LTX** (H100) — the 48-layer conv_k champion
+> steering a video+audio clip, probe score rising 0.48→0.99 across steps; **CogVideoX** (H100)
+> — a steered clip across two steered steps. Probe weights / bundles are not yet uploaded. See
+> `WILL_IT_RENDER_PLAN.md` in the source repo.
 
 ## Why "will it render"
 
