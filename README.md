@@ -2,7 +2,7 @@
 
 Ben Fishman¹ · Dvir Samuel² · Gal Chechik¹² · Idan Schwartz¹ — ¹Bar-Ilan University, ²NVIDIA
 
-**[Project page](https://benf22.github.io/will-it-render/)** · Paper (coming soon)
+**[Project page](https://benf22.github.io/will-it-render/)** · **[Models 🤗](https://huggingface.co/benf22/will-it-render)** · Paper (coming soon)
 
 > **TL;DR** — **The problem:** not all requested objects are rendered by text-to-video models.
 > **Our solution:** train a tiny model (37k parameters) on the generator's attention maps that
@@ -40,7 +40,9 @@ Four independent uses — each is standalone with its own README, entry point, a
 > and CI are in place; the whole package imports cleanly and the CPU suite is green.
 > **All three backends run end-to-end on GPU with real trained AttnSteer weights** (WAN on L40S;
 > LTX + CogVideoX on H100), and the migrated code is **bit-identical** to the original research
-> code on a matched prompt/seed. Probe weights / bundles are not yet uploaded.
+> code on a matched prompt/seed. AttnSteer bundles are published at
+> [huggingface.co/benf22/will-it-render](https://huggingface.co/benf22/will-it-render) (private
+> until the paper is public).
 
 ## Why "will it render"
 
@@ -76,7 +78,7 @@ Model weights (point `configs/models/<backbone>.yaml` at your paths): LTX
 ```bash
 export VP_WAN_ROOT=/path/to/Wan2.1
 # fetch a trained AttnSteer bundle (checkpoints + extraction_config + seed latent) from HF…
-python -m scripts.download_artifacts --repo <hf-user>/attnsteer-bundles --bundle wan --quiet
+python -m scripts.download_artifacts --repo benf22/will-it-render --bundle wan --quiet
 # …then steer one prompt → a video
 wir-run --bundle <bundle-dir> --prompt "a dog on a beach" --seed 42
 ```
