@@ -1,0 +1,16 @@
+# Baseline: TempoControl on CogVideoX-5B, per-frame temporal control.
+model_type: cogvideox
+model_extraction_overrides: {attn_spatial_downsample: 2}
+steering:
+  seed: 42
+  sample_steps: 50
+  steps_to_steer: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  guidance_scale: 6.0
+  optimization: {n_iters: 10, optimizer: adamw, lr: 0.0005, magnitude_reg: 0.0, anchor_reg: 0.0, pred_reg: 0.0, kl_reg: 0.0}
+  model: {mode: tempo_control}
+  objective:
+    control_signal: all_ones
+    energy_weight: 0.3
+    entropy_weight: 10
+    pearson_weight: 0.0
+    weakest_weight: 0.0

@@ -1,0 +1,22 @@
+# Baseline: Attend-and-Excite (Chefer et al. 2023) on LTX-2, per-clip induction.
+# Paper main-table A&E column (LTX). Parameter-free (no AttnSteer probe). lr 20 = their scale_factor
+# (confirmed from the 2026-10-30 seed-matched "night ae" run the 4-method report consumed).
+model_type: ltx
+steering:
+  seed: 42
+  sample_steps: 50
+  steps_to_steer: null
+  guidance_scale: 5.0
+  optimization: {n_iters: 1, optimizer: simple, lr: 20.0, magnitude_reg: 0.0, anchor_reg: 0.0, pred_reg: 0.0, kl_reg: 0.0}
+  model: {mode: attend_excite}        # -> evaluation/baselines/attend_excite/loss.py
+  objective:
+    max_step: 25
+    thresholds: {0: 0.05, 10: 0.5, 20: 0.8}
+    max_refinement_steps: 20
+    scale_range: [1.0, 0.5]
+    frame_reduce: global
+    word_reduce: mean
+    smooth_attentions: true
+    sigma: 0.5
+    kernel_size: 3
+    softmax_temp: 100.0

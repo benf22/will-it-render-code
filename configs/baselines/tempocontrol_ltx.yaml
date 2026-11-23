@@ -1,0 +1,17 @@
+# Baseline: TempoControl (arXiv:2510.02226) on LTX-2, per-frame temporal control.
+# Paper temporal-table baseline (vs LTX_perframe_v3). Parameter-free. lr 0.0005 = their one-object
+# rate (two-object / action use 0.001). Each prompt supplies a `control_signal` / `timelines` schedule.
+model_type: ltx
+steering:
+  seed: 42
+  sample_steps: 50
+  steps_to_steer: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  guidance_scale: 5.0
+  optimization: {n_iters: 10, optimizer: adamw, lr: 0.0005, magnitude_reg: 0.0, anchor_reg: 0.0, pred_reg: 0.0, kl_reg: 0.0}
+  model: {mode: tempo_control}        # -> evaluation/baselines/tempocontrol/loss.py
+  objective:
+    control_signal: all_ones
+    energy_weight: 0.3                 # their magnitude_weight (eq. 5/6)
+    entropy_weight: 10                 # their entropy_weight (eq. 8)
+    pearson_weight: 0.0
+    weakest_weight: 0.0
