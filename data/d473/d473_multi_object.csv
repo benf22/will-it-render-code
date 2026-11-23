@@ -1,0 +1,474 @@
+prompt,object_name,target_words,seed
+a parking meter and a zebra and a bird and a suitcase and a couch and broccoli,parking_meter_zebra_bird_suitcase_couch_broccoli,"parking meter,zebra,bird,suitcase,couch,broccoli",42
+a pizza and a vase and a snowboard,pizza_vase_snowboard,"pizza,vase,snowboard",42
+a cell phone and a surfboard and a traffic light and a potted plant and a skateboard,cell_phone_surfboard_traffic_light_potted_plant_skateboard,"cell phone,surfboard,traffic light,potted plant,skateboard",42
+an orange and a clock,orange_clock,"orange,clock",42
+a sandwich and a book and a stop sign and a truck and a banana,sandwich_book_stop_sign_truck_banana,"sandwich,book,stop sign,truck,banana",42
+a sports ball and a snowboard and broccoli and a hot dog and a banana and a cow,sports_ball_snowboard_broccoli_hot_dog_banana_cow,"sports ball,snowboard,broccoli,hot dog,banana,cow",42
+a sandwich and an elephant and a tie and a bottle and a hair drier and a spoon and a potted plant,sandwich_elephant_tie_bottle_hair_drier_spoon_potted_plant,"sandwich,elephant,tie,bottle,hair drier,spoon,potted plant",42
+broccoli and a snowboard and a train and an elephant,broccoli_snowboard_train_elephant,"broccoli,snowboard,train,elephant",42
+a refrigerator and a dog and a snowboard and a suitcase and a toaster and a sheep,refrigerator_dog_snowboard_suitcase_toaster_sheep,"refrigerator,dog,snowboard,suitcase,toaster,sheep",42
+a sandwich and a book,sandwich_book,"sandwich,book",42
+a wine glass and a truck and a parking meter and a clock and a traffic light,wine_glass_truck_parking_meter_clock_traffic_light,"wine glass,truck,parking meter,clock,traffic light",42
+a cow and a fire hydrant and a motorcycle and a vase and a clock,cow_fire_hydrant_motorcycle_vase_clock,"cow,fire hydrant,motorcycle,vase,clock",42
+a knife and a tv,knife_tv,"knife,tv",42
+a zebra and a laptop and a bear and a bottle,zebra_laptop_bear_bottle,"zebra,laptop,bear,bottle",42
+a keyboard and a donut and a teddy bear,keyboard_donut_teddy_bear,"keyboard,donut,teddy bear",42
+a hair drier and a hot dog and scissors and a cell phone and a handbag,hair_drier_hot_dog_scissors_cell_phone_handbag,"hair drier,hot dog,scissors,cell phone,handbag",42
+a hot dog and a bus and a cat and a book and a toilet and a potted plant,hot_dog_bus_cat_book_toilet_potted_plant,"hot dog,bus,cat,book,toilet,potted plant",42
+a pizza and a book and a bus,pizza_book_bus,"pizza,book,bus",42
+a couch and a bus and a handbag and skis and a donut and a sandwich,couch_bus_handbag_skis_donut_sandwich,"couch,bus,handbag,skis,donut,sandwich",42
+a sports ball and a couch and a dog and a cup and a teddy bear,sports_ball_couch_dog_cup_teddy_bear,"sports ball,couch,dog,cup,teddy bear",42
+an orange and a baseball glove and a traffic light and a teddy bear and a stop sign and a banana and a snowboard,orange_baseball_glove_traffic_light_teddy_bear_stop_sign_banana_snowboard,"orange,baseball glove,traffic light,teddy bear,stop sign,banana,snowboard",42
+a car and a motorcycle and a fire hydrant,car_motorcycle_fire_hydrant,"car,motorcycle,fire hydrant",42
+a pizza and a remote and a kite and a toilet,pizza_remote_kite_toilet,"pizza,remote,kite,toilet",42
+a couch and a potted plant,couch_potted_plant,"couch,potted plant",42
+a tennis racket and a tie and a dog,tennis_racket_tie_dog,"tennis racket,tie,dog",42
+skis and a handbag and broccoli,skis_handbag_broccoli,"skis,handbag,broccoli",42
+a train and a boat,train_boat,"train,boat",42
+a parking meter and a hot dog and a tennis racket and a kite and a bird,parking_meter_hot_dog_tennis_racket_kite_bird,"parking meter,hot dog,tennis racket,kite,bird",42
+a clock and a handbag and a tennis racket and a snowboard,clock_handbag_tennis_racket_snowboard,"clock,handbag,tennis racket,snowboard",42
+a sports ball and a sink and a chair and a clock and a person,sports_ball_sink_chair_clock_person,"sports ball,sink,chair,clock,person",42
+a surfboard and skis and a tv and an elephant and a hot dog and a kite,surfboard_skis_tv_elephant_hot_dog_kite,"surfboard,skis,tv,elephant,hot dog,kite",42
+a giraffe and a bird,giraffe_bird,"giraffe,bird",42
+a fire hydrant and a sink and skis and a handbag and a bear,fire_hydrant_sink_skis_handbag_bear,"fire hydrant,sink,skis,handbag,bear",42
+an airplane and a person and a suitcase and a backpack and a sports ball and a train,airplane_person_suitcase_backpack_sports_ball_train,"airplane,person,suitcase,backpack,sports ball,train",42
+a remote and an airplane and a suitcase and an apple and a zebra and skis and a sports ball,remote_airplane_suitcase_apple_zebra_skis_sports_ball,"remote,airplane,suitcase,apple,zebra,skis,sports ball",42
+a car and a tie and a fork and a wine glass and a remote and an apple,car_tie_fork_wine_glass_remote_apple,"car,tie,fork,wine glass,remote,apple",42
+a donut and a suitcase,donut_suitcase,"donut,suitcase",42
+a surfboard and an apple and a donut and a fork and a car,surfboard_apple_donut_fork_car,"surfboard,apple,donut,fork,car",42
+an oven and a dog and a giraffe and a bicycle and a bear and a surfboard,oven_dog_giraffe_bicycle_bear_surfboard,"oven,dog,giraffe,bicycle,bear,surfboard",42
+a kite and a baseball bat and a bowl and a bear,kite_baseball_bat_bowl_bear,"kite,baseball bat,bowl,bear",42
+a sandwich and a traffic light and a tie and a baseball bat and a surfboard and a suitcase,sandwich_traffic_light_tie_baseball_bat_surfboard_suitcase,"sandwich,traffic light,tie,baseball bat,surfboard,suitcase",42
+a remote and a hot dog and a tie and a bicycle and an orange and a fork and a truck,remote_hot_dog_tie_bicycle_orange_fork_truck,"remote,hot dog,tie,bicycle,orange,fork,truck",42
+an oven and skis and a toilet and a chair and a person and a tie and a cell phone,oven_skis_toilet_chair_person_tie_cell_phone,"oven,skis,toilet,chair,person,tie,cell phone",42
+a carrot and a baseball bat and a sheep and skis and a pizza and a potted plant,carrot_baseball_bat_sheep_skis_pizza_potted_plant,"carrot,baseball bat,sheep,skis,pizza,potted plant",42
+a pizza and a tie,pizza_tie,"pizza,tie",42
+a bird and a traffic light and a toilet and an airplane,bird_traffic_light_toilet_airplane,"bird,traffic light,toilet,airplane",42
+a vase and scissors,vase_scissors,"vase,scissors",42
+a fire hydrant and a stop sign,fire_hydrant_stop_sign,"fire hydrant,stop sign",42
+an apple and a train and a zebra and a cake and a bear and a microwave,apple_train_zebra_cake_bear_microwave,"apple,train,zebra,cake,bear,microwave",42
+a backpack and a cup and a baseball glove and a parking meter and a bicycle and an apple and a hair drier,backpack_cup_baseball_glove_parking_meter_bicycle_apple_hair_drier,"backpack,cup,baseball glove,parking meter,bicycle,apple,hair drier",42
+a stop sign and a vase and a banana and a frisbee,stop_sign_vase_banana_frisbee,"stop sign,vase,banana,frisbee",42
+a kite and broccoli and a zebra and a donut,kite_broccoli_zebra_donut,"kite,broccoli,zebra,donut",42
+a donut and an umbrella and a sink,donut_umbrella_sink,"donut,umbrella,sink",42
+skis and a toaster and a backpack,skis_toaster_backpack,"skis,toaster,backpack",42
+a clock and a baseball bat and a stop sign and a cake,clock_baseball_bat_stop_sign_cake,"clock,baseball bat,stop sign,cake",42
+a tie and skis and a hot dog and a bottle and a refrigerator,tie_skis_hot_dog_bottle_refrigerator,"tie,skis,hot dog,bottle,refrigerator",42
+a tv and an umbrella and a baseball glove and a cell phone and a spoon and a boat and a fork,tv_umbrella_baseball_glove_cell_phone_spoon_boat_fork,"tv,umbrella,baseball glove,cell phone,spoon,boat,fork",42
+a pizza and an umbrella and an apple and a surfboard,pizza_umbrella_apple_surfboard,"pizza,umbrella,apple,surfboard",42
+a handbag and a cow and an airplane and a hair drier and an orange and a bear,handbag_cow_airplane_hair_drier_orange_bear,"handbag,cow,airplane,hair drier,orange,bear",42
+a refrigerator and a sheep and a hair drier and a laptop and a tv and a remote and a cow,refrigerator_sheep_hair_drier_laptop_tv_remote_cow,"refrigerator,sheep,hair drier,laptop,tv,remote,cow",42
+a refrigerator and a zebra and a keyboard and an airplane and a pizza and a tennis racket,refrigerator_zebra_keyboard_airplane_pizza_tennis_racket,"refrigerator,zebra,keyboard,airplane,pizza,tennis racket",42
+a sports ball and a bus and a bird and a wine glass,sports_ball_bus_bird_wine_glass,"sports ball,bus,bird,wine glass",42
+a surfboard and a toilet and a baseball bat and a baseball glove,surfboard_toilet_baseball_bat_baseball_glove,"surfboard,toilet,baseball bat,baseball glove",42
+a cow and an elephant,cow_elephant,"cow,elephant",42
+a cell phone and a dog and a bicycle and a toilet and a kite,cell_phone_dog_bicycle_toilet_kite,"cell phone,dog,bicycle,toilet,kite",42
+skis and a snowboard,skis_snowboard,"skis,snowboard",42
+a surfboard and a spoon and an oven and a sandwich,surfboard_spoon_oven_sandwich,"surfboard,spoon,oven,sandwich",42
+a bus and a tennis racket and a carrot and a vase,bus_tennis_racket_carrot_vase,"bus,tennis racket,carrot,vase",42
+a suitcase and a frisbee and a sandwich and a sheep and a car,suitcase_frisbee_sandwich_sheep_car,"suitcase,frisbee,sandwich,sheep,car",42
+a truck and a wine glass and a refrigerator and a spoon,truck_wine_glass_refrigerator_spoon,"truck,wine glass,refrigerator,spoon",42
+an airplane and a train,airplane_train,"airplane,train",42
+a sports ball and a keyboard and a suitcase,sports_ball_keyboard_suitcase,"sports ball,keyboard,suitcase",42
+an oven and a hot dog and a bear and a carrot,oven_hot_dog_bear_carrot,"oven,hot dog,bear,carrot",42
+a banana and a handbag and a bowl and an elephant and a bicycle and a person,banana_handbag_bowl_elephant_bicycle_person,"banana,handbag,bowl,elephant,bicycle,person",42
+a carrot and scissors and a truck and a chair,carrot_scissors_truck_chair,"carrot,scissors,truck,chair",42
+a bottle and a chair,bottle_chair,"bottle,chair",42
+a tie and a suitcase,tie_suitcase,"tie,suitcase",42
+a bicycle and a person and a car and skis and an oven,bicycle_person_car_skis_oven,"bicycle,person,car,skis,oven",42
+a cup and a couch and a cell phone and a giraffe and a donut and a handbag and a toothbrush,cup_couch_cell_phone_giraffe_donut_handbag_toothbrush,"cup,couch,cell phone,giraffe,donut,handbag,toothbrush",42
+a boat and a surfboard and an oven and a fire hydrant and a teddy bear and a toothbrush and a suitcase,boat_surfboard_oven_fire_hydrant_teddy_bear_toothbrush_suitcase,"boat,surfboard,oven,fire hydrant,teddy bear,toothbrush,suitcase",42
+a zebra and a giraffe,zebra_giraffe,"zebra,giraffe",42
+a suitcase and a baseball glove and a baseball bat and a teddy bear and broccoli,suitcase_baseball_glove_baseball_bat_teddy_bear_broccoli,"suitcase,baseball glove,baseball bat,teddy bear,broccoli",42
+a cake and a baseball bat and a baseball glove and a fire hydrant and a giraffe and a sheep and scissors,cake_baseball_bat_baseball_glove_fire_hydrant_giraffe_sheep_scissors,"cake,baseball bat,baseball glove,fire hydrant,giraffe,sheep,scissors",42
+a cell phone and a person and a frisbee and a giraffe and a teddy bear,cell_phone_person_frisbee_giraffe_teddy_bear,"cell phone,person,frisbee,giraffe,teddy bear",42
+a toilet and a hair drier,toilet_hair_drier,"toilet,hair drier",42
+a sports ball and a tennis racket and a clock and scissors and a bicycle and a remote,sports_ball_tennis_racket_clock_scissors_bicycle_remote,"sports ball,tennis racket,clock,scissors,bicycle,remote",42
+a sheep and a cow,sheep_cow,"sheep,cow",42
+a giraffe and an umbrella and a fork and a bottle and a clock and a horse,giraffe_umbrella_fork_bottle_clock_horse,"giraffe,umbrella,fork,bottle,clock,horse",42
+a fire hydrant and a wine glass and an airplane and a car,fire_hydrant_wine_glass_airplane_car,"fire hydrant,wine glass,airplane,car",42
+a bear and a carrot and a sink,bear_carrot_sink,"bear,carrot,sink",42
+a remote and a zebra and a bear,remote_zebra_bear,"remote,zebra,bear",42
+a person and a toilet,person_toilet,"person,toilet",42
+an orange and a surfboard and an umbrella and a tennis racket and a bird and a motorcycle,orange_surfboard_umbrella_tennis_racket_bird_motorcycle,"orange,surfboard,umbrella,tennis racket,bird,motorcycle",42
+a wine glass and a donut and a dog and a toothbrush and a tv and a person,wine_glass_donut_dog_toothbrush_tv_person,"wine glass,donut,dog,toothbrush,tv,person",42
+a wine glass and a keyboard and a microwave and a bottle and a suitcase,wine_glass_keyboard_microwave_bottle_suitcase,"wine glass,keyboard,microwave,bottle,suitcase",42
+a bicycle and an elephant and a motorcycle and an umbrella and a toothbrush and skis and a laptop,bicycle_elephant_motorcycle_umbrella_toothbrush_skis_laptop,"bicycle,elephant,motorcycle,umbrella,toothbrush,skis,laptop",42
+an apple and a cell phone,apple_cell_phone,"apple,cell phone",42
+a horse and a hair drier and a fork and a stop sign and a bird and a microwave and a bear,horse_hair_drier_fork_stop_sign_bird_microwave_bear,"horse,hair drier,fork,stop sign,bird,microwave,bear",42
+a dog and a bowl and a baseball bat,dog_bowl_baseball_bat,"dog,bowl,baseball bat",42
+a sink and a microwave and a zebra and a bicycle and a frisbee and a toaster and a traffic light,sink_microwave_zebra_bicycle_frisbee_toaster_traffic_light,"sink,microwave,zebra,bicycle,frisbee,toaster,traffic light",42
+a person and a toothbrush,person_toothbrush,"person,toothbrush",42
+a sheep and a clock and a person and a sink and a backpack and a hot dog and a teddy bear,sheep_clock_person_sink_backpack_hot_dog_teddy_bear,"sheep,clock,person,sink,backpack,hot dog,teddy bear",42
+a laptop and a remote,laptop_remote,"laptop,remote",42
+a car and a cat and a remote,car_cat_remote,"car,cat,remote",42
+a bowl and a remote and a laptop and a kite and a tie,bowl_remote_laptop_kite_tie,"bowl,remote,laptop,kite,tie",42
+a cup and a bicycle and a toilet and a tennis racket,cup_bicycle_toilet_tennis_racket,"cup,bicycle,toilet,tennis racket",42
+a potted plant and a tv,potted_plant_tv,"potted plant,tv",42
+a clock and a tie and a donut and a book and a pizza and a cow and a tennis racket,clock_tie_donut_book_pizza_cow_tennis_racket,"clock,tie,donut,book,pizza,cow,tennis racket",42
+a sheep and a dog and a truck,sheep_dog_truck,"sheep,dog,truck",42
+a hot dog and a handbag,hot_dog_handbag,"hot dog,handbag",42
+a cell phone and an elephant and a dog and a bus and a suitcase and a sheep and a tennis racket,cell_phone_elephant_dog_bus_suitcase_sheep_tennis_racket,"cell phone,elephant,dog,bus,suitcase,sheep,tennis racket",42
+a car and a microwave and a person and a bird,car_microwave_person_bird,"car,microwave,person,bird",42
+skis and a kite and a train and a teddy bear and a cake and a dog and a cup,skis_kite_train_teddy_bear_cake_dog_cup,"skis,kite,train,teddy bear,cake,dog,cup",42
+a couch and a stop sign and a spoon and a dog and a chair and a remote and a book,couch_stop_sign_spoon_dog_chair_remote_book,"couch,stop sign,spoon,dog,chair,remote,book",42
+a horse and a baseball bat and an apple and a couch and a traffic light and a surfboard and a tie,horse_baseball_bat_apple_couch_traffic_light_surfboard_tie,"horse,baseball bat,apple,couch,traffic light,surfboard,tie",42
+a bicycle and an airplane and a zebra and a chair,bicycle_airplane_zebra_chair,"bicycle,airplane,zebra,chair",42
+a suitcase and a car and a horse,suitcase_car_horse,"suitcase,car,horse",42
+a train and a couch and a horse and a wine glass and skis,train_couch_horse_wine_glass_skis,"train,couch,horse,wine glass,skis",42
+a laptop and a handbag and a sink and a horse and a keyboard and a bottle and a toilet,laptop_handbag_sink_horse_keyboard_bottle_toilet,"laptop,handbag,sink,horse,keyboard,bottle,toilet",42
+a donut and a tennis racket and a frisbee and a boat and a hot dog and a vase,donut_tennis_racket_frisbee_boat_hot_dog_vase,"donut,tennis racket,frisbee,boat,hot dog,vase",42
+a bear and a zebra,bear_zebra,"bear,zebra",42
+a teddy bear and skis and a cow,teddy_bear_skis_cow,"teddy bear,skis,cow",42
+a traffic light and a hot dog and a motorcycle and a train and a toothbrush,traffic_light_hot_dog_motorcycle_train_toothbrush,"traffic light,hot dog,motorcycle,train,toothbrush",42
+a snowboard and a sports ball,snowboard_sports_ball,"snowboard,sports ball",42
+a giraffe and a pizza and a person and a bus and a bear and a sandwich and a boat,giraffe_pizza_person_bus_bear_sandwich_boat,"giraffe,pizza,person,bus,bear,sandwich,boat",42
+a parking meter and a remote and a bottle and a hair drier and a stop sign and a traffic light,parking_meter_remote_bottle_hair_drier_stop_sign_traffic_light,"parking meter,remote,bottle,hair drier,stop sign,traffic light",42
+a kite and a sports ball and a car and a wine glass and a skateboard,kite_sports_ball_car_wine_glass_skateboard,"kite,sports ball,car,wine glass,skateboard",42
+a backpack and a wine glass and a refrigerator and a skateboard and a traffic light and a cell phone and scissors,backpack_wine_glass_refrigerator_skateboard_traffic_light_cell_phone_scissors,"backpack,wine glass,refrigerator,skateboard,traffic light,cell phone,scissors",42
+a cat and a bear and a remote and a sports ball,cat_bear_remote_sports_ball,"cat,bear,remote,sports ball",42
+an oven and a sink and a sports ball and a tv and a stop sign and a kite and a pizza,oven_sink_sports_ball_tv_stop_sign_kite_pizza,"oven,sink,sports ball,tv,stop sign,kite,pizza",42
+an elephant and a cat and a cup and a vase,elephant_cat_cup_vase,"elephant,cat,cup,vase",42
+a boat and a zebra and a surfboard,boat_zebra_surfboard,"boat,zebra,surfboard",42
+a spoon and a hair drier and a sink and a bus and a toothbrush and a kite,spoon_hair_drier_sink_bus_toothbrush_kite,"spoon,hair drier,sink,bus,toothbrush,kite",42
+a book and a baseball bat and a keyboard and scissors and a backpack,book_baseball_bat_keyboard_scissors_backpack,"book,baseball bat,keyboard,scissors,backpack",42
+a bowl and a sports ball and a hair drier and a horse,bowl_sports_ball_hair_drier_horse,"bowl,sports ball,hair drier,horse",42
+a banana and skis and a traffic light,banana_skis_traffic_light,"banana,skis,traffic light",42
+a surfboard and a tennis racket,surfboard_tennis_racket,"surfboard,tennis racket",42
+a fire hydrant and a kite and an elephant and a chair and a fork and a clock and a traffic light,fire_hydrant_kite_elephant_chair_fork_clock_traffic_light,"fire hydrant,kite,elephant,chair,fork,clock,traffic light",42
+a keyboard and a cell phone,keyboard_cell_phone,"keyboard,cell phone",42
+a hot dog and a banana and a microwave and a fork and a baseball glove,hot_dog_banana_microwave_fork_baseball_glove,"hot dog,banana,microwave,fork,baseball glove",42
+a cake and a bear and a skateboard and a refrigerator,cake_bear_skateboard_refrigerator,"cake,bear,skateboard,refrigerator",42
+an umbrella and a pizza and a carrot,umbrella_pizza_carrot,"umbrella,pizza,carrot",42
+a potted plant and a car and a baseball glove,potted_plant_car_baseball_glove,"potted plant,car,baseball glove",42
+a knife and a tie and an oven,knife_tie_oven,"knife,tie,oven",42
+a zebra and an elephant and a fire hydrant and skis,zebra_elephant_fire_hydrant_skis,"zebra,elephant,fire hydrant,skis",42
+a bicycle and a vase and a cup and a toaster and a microwave and a horse,bicycle_vase_cup_toaster_microwave_horse,"bicycle,vase,cup,toaster,microwave,horse",42
+broccoli and skis and a fork and a spoon,broccoli_skis_fork_spoon,"broccoli,skis,fork,spoon",42
+a hair drier and a backpack and a fire hydrant and a book and a donut and a baseball glove,hair_drier_backpack_fire_hydrant_book_donut_baseball_glove,"hair drier,backpack,fire hydrant,book,donut,baseball glove",42
+a wine glass and a toaster and a sandwich,wine_glass_toaster_sandwich,"wine glass,toaster,sandwich",42
+a keyboard and a knife and a parking meter,keyboard_knife_parking_meter,"keyboard,knife,parking meter",42
+a snowboard and a dog and a spoon and a car,snowboard_dog_spoon_car,"snowboard,dog,spoon,car",42
+a couch and a bird and a motorcycle and a pizza,couch_bird_motorcycle_pizza,"couch,bird,motorcycle,pizza",42
+skis and a potted plant and a cake and a banana and a giraffe,skis_potted_plant_cake_banana_giraffe,"skis,potted plant,cake,banana,giraffe",42
+a fork and a cup and a keyboard and a vase and a bus,fork_cup_keyboard_vase_bus,"fork,cup,keyboard,vase,bus",42
+a giraffe and a surfboard and a suitcase,giraffe_surfboard_suitcase,"giraffe,surfboard,suitcase",42
+a bowl and a bus and a horse and a potted plant and a train and a car and a clock,bowl_bus_horse_potted_plant_train_car_clock,"bowl,bus,horse,potted plant,train,car,clock",42
+an umbrella and a keyboard and a person and a parking meter,umbrella_keyboard_person_parking_meter,"umbrella,keyboard,person,parking meter",42
+a stop sign and a parking meter,stop_sign_parking_meter,"stop sign,parking meter",42
+a baseball bat and an umbrella and a car and a banana and a vase and a parking meter,baseball_bat_umbrella_car_banana_vase_parking_meter,"baseball bat,umbrella,car,banana,vase,parking meter",42
+a toaster and a frisbee and a cow and a cake and a pizza,toaster_frisbee_cow_cake_pizza,"toaster,frisbee,cow,cake,pizza",42
+a tennis racket and a bottle,tennis_racket_bottle,"tennis racket,bottle",42
+a hair drier and a carrot and a keyboard and skis and a dog,hair_drier_carrot_keyboard_skis_dog,"hair drier,carrot,keyboard,skis,dog",42
+a sheep and a truck and broccoli and a boat and a train and an umbrella,sheep_truck_broccoli_boat_train_umbrella,"sheep,truck,broccoli,boat,train,umbrella",42
+a traffic light and a person and a tennis racket and skis,traffic_light_person_tennis_racket_skis,"traffic light,person,tennis racket,skis",42
+a baseball bat and a cat and a potted plant and a knife and a suitcase and a cup and a keyboard,baseball_bat_cat_potted_plant_knife_suitcase_cup_keyboard,"baseball bat,cat,potted plant,knife,suitcase,cup,keyboard",42
+a banana and a keyboard,banana_keyboard,"banana,keyboard",42
+a teddy bear and a cow and a bowl and a fire hydrant and a bird and a dog,teddy_bear_cow_bowl_fire_hydrant_bird_dog,"teddy bear,cow,bowl,fire hydrant,bird,dog",42
+a skateboard and scissors and a bowl,skateboard_scissors_bowl,"skateboard,scissors,bowl",42
+a refrigerator and an elephant and a kite,refrigerator_elephant_kite,"refrigerator,elephant,kite",42
+a cup and a teddy bear and an umbrella and a tv and a cat and a tie,cup_teddy_bear_umbrella_tv_cat_tie,"cup,teddy bear,umbrella,tv,cat,tie",42
+a motorcycle and a parking meter and a sports ball and a snowboard,motorcycle_parking_meter_sports_ball_snowboard,"motorcycle,parking meter,sports ball,snowboard",42
+a truck and a bird and a cow,truck_bird_cow,"truck,bird,cow",42
+a bicycle and an airplane,bicycle_airplane,"bicycle,airplane",42
+a parking meter and a truck,parking_meter_truck,"parking meter,truck",42
+a baseball bat and a knife and a hair drier and an elephant and a bird and an apple,baseball_bat_knife_hair_drier_elephant_bird_apple,"baseball bat,knife,hair drier,elephant,bird,apple",42
+a bus and a refrigerator and an elephant and a baseball bat and a handbag,bus_refrigerator_elephant_baseball_bat_handbag,"bus,refrigerator,elephant,baseball bat,handbag",42
+an oven and a motorcycle and an airplane and a stop sign,oven_motorcycle_airplane_stop_sign,"oven,motorcycle,airplane,stop sign",42
+scissors and a giraffe and a wine glass and a vase and a kite and a traffic light,scissors_giraffe_wine_glass_vase_kite_traffic_light,"scissors,giraffe,wine glass,vase,kite,traffic light",42
+a boat and a fork and skis and a teddy bear and a parking meter,boat_fork_skis_teddy_bear_parking_meter,"boat,fork,skis,teddy bear,parking meter",42
+a boat and a clock and a keyboard,boat_clock_keyboard,"boat,clock,keyboard",42
+a train and a refrigerator and a chair and a car and an oven and a knife,train_refrigerator_chair_car_oven_knife,"train,refrigerator,chair,car,oven,knife",42
+a handbag and an oven and a cake and a truck and an apple and broccoli and a bus,handbag_oven_cake_truck_apple_broccoli_bus,"handbag,oven,cake,truck,apple,broccoli,bus",42
+a parking meter and a backpack and a handbag and a giraffe and an apple and a toilet,parking_meter_backpack_handbag_giraffe_apple_toilet,"parking meter,backpack,handbag,giraffe,apple,toilet",42
+a suitcase and a baseball glove and a skateboard and a bird and a laptop and a chair and a truck,suitcase_baseball_glove_skateboard_bird_laptop_chair_truck,"suitcase,baseball glove,skateboard,bird,laptop,chair,truck",42
+scissors and a laptop and a frisbee and a truck and an oven,scissors_laptop_frisbee_truck_oven,"scissors,laptop,frisbee,truck,oven",42
+a bird and a cat,bird_cat,"bird,cat",42
+a sandwich and broccoli and a person and a train and a fire hydrant,sandwich_broccoli_person_train_fire_hydrant,"sandwich,broccoli,person,train,fire hydrant",42
+a bicycle and a backpack and a laptop,bicycle_backpack_laptop,"bicycle,backpack,laptop",42
+a skateboard and a car and a giraffe and a motorcycle and a hair drier and a frisbee and a knife,skateboard_car_giraffe_motorcycle_hair_drier_frisbee_knife,"skateboard,car,giraffe,motorcycle,hair drier,frisbee,knife",42
+a cat and a dog,cat_dog,"cat,dog",42
+a book and a cell phone and a vase and a chair and an airplane,book_cell_phone_vase_chair_airplane,"book,cell phone,vase,chair,airplane",42
+a toilet and a bowl and a donut and a snowboard,toilet_bowl_donut_snowboard,"toilet,bowl,donut,snowboard",42
+a frisbee and skis,frisbee_skis,"frisbee,skis",42
+a traffic light and a fire hydrant,traffic_light_fire_hydrant,"traffic light,fire hydrant",42
+a bus and scissors and a chair and a suitcase and a cup and a cake,bus_scissors_chair_suitcase_cup_cake,"bus,scissors,chair,suitcase,cup,cake",42
+a bear and a sports ball and a bicycle and a microwave and an orange,bear_sports_ball_bicycle_microwave_orange,"bear,sports ball,bicycle,microwave,orange",42
+a keyboard and a fork and a banana and a train,keyboard_fork_banana_train,"keyboard,fork,banana,train",42
+a cake and a chair and a sink and a hair drier and a cat and a carrot and a toothbrush,cake_chair_sink_hair_drier_cat_carrot_toothbrush,"cake,chair,sink,hair drier,cat,carrot,toothbrush",42
+a wine glass and a toothbrush and a fork and a stop sign,wine_glass_toothbrush_fork_stop_sign,"wine glass,toothbrush,fork,stop sign",42
+a motorcycle and a toaster and a cell phone and an airplane and a clock and a truck and a surfboard,motorcycle_toaster_cell_phone_airplane_clock_truck_surfboard,"motorcycle,toaster,cell phone,airplane,clock,truck,surfboard",42
+a microwave and a frisbee,microwave_frisbee,"microwave,frisbee",42
+a skateboard and a handbag and a giraffe and an umbrella,skateboard_handbag_giraffe_umbrella,"skateboard,handbag,giraffe,umbrella",42
+a book and a clock,book_clock,"book,clock",42
+a book and a banana and a truck and a zebra and a tie and scissors,book_banana_truck_zebra_tie_scissors,"book,banana,truck,zebra,tie,scissors",42
+a toaster and a teddy bear,toaster_teddy_bear,"toaster,teddy bear",42
+an orange and a cup and a sandwich,orange_cup_sandwich,"orange,cup,sandwich",42
+a cup and a zebra and a tv and a stop sign,cup_zebra_tv_stop_sign,"cup,zebra,tv,stop sign",42
+a sports ball and a kite,sports_ball_kite,"sports ball,kite",42
+a train and a cup and a laptop and a car and a book,train_cup_laptop_car_book,"train,cup,laptop,car,book",42
+a boat and an airplane,boat_airplane,"boat,airplane",42
+a car and a motorcycle,car_motorcycle,"car,motorcycle",42
+a surfboard and a cup and a backpack and a knife and a snowboard and a spoon,surfboard_cup_backpack_knife_snowboard_spoon,"surfboard,cup,backpack,knife,snowboard,spoon",42
+a tie and a giraffe and a refrigerator and a cat,tie_giraffe_refrigerator_cat,"tie,giraffe,refrigerator,cat",42
+a motorcycle and a boat,motorcycle_boat,"motorcycle,boat",42
+a sink and a toaster and a bottle and a skateboard and a teddy bear,sink_toaster_bottle_skateboard_teddy_bear,"sink,toaster,bottle,skateboard,teddy bear",42
+an umbrella and a carrot and a skateboard and a cake and a knife and a couch,umbrella_carrot_skateboard_cake_knife_couch,"umbrella,carrot,skateboard,cake,knife,couch",42
+a dog and a wine glass and a giraffe and a donut and a handbag,dog_wine_glass_giraffe_donut_handbag,"dog,wine glass,giraffe,donut,handbag",42
+a cow and a cat and a bird and a motorcycle and a bus and a vase and a traffic light,cow_cat_bird_motorcycle_bus_vase_traffic_light,"cow,cat,bird,motorcycle,bus,vase,traffic light",42
+a microwave and a couch and skis and a fire hydrant and a bottle and a bus and a backpack,microwave_couch_skis_fire_hydrant_bottle_bus_backpack,"microwave,couch,skis,fire hydrant,bottle,bus,backpack",42
+a laptop and a snowboard and a cell phone and a tennis racket and a cake and a toothbrush,laptop_snowboard_cell_phone_tennis_racket_cake_toothbrush,"laptop,snowboard,cell phone,tennis racket,cake,toothbrush",42
+a horse and an oven and a snowboard,horse_oven_snowboard,"horse,oven,snowboard",42
+a sheep and an oven and a carrot and an orange and a couch and a knife and a sandwich,sheep_oven_carrot_orange_couch_knife_sandwich,"sheep,oven,carrot,orange,couch,knife,sandwich",42
+broccoli and a backpack,broccoli_backpack,"broccoli,backpack",42
+a sports ball and a bowl and a horse and a knife and a book and a toothbrush,sports_ball_bowl_horse_knife_book_toothbrush,"sports ball,bowl,horse,knife,book,toothbrush",42
+a dog and a horse,dog_horse,"dog,horse",42
+a snowboard and a cat and a tennis racket and a giraffe and a book,snowboard_cat_tennis_racket_giraffe_book,"snowboard,cat,tennis racket,giraffe,book",42
+a person and a bicycle and a toaster and a bowl,person_bicycle_toaster_bowl,"person,bicycle,toaster,bowl",42
+an umbrella and a handbag,umbrella_handbag,"umbrella,handbag",42
+a hair drier and a cow and a bicycle and a couch and a bottle,hair_drier_cow_bicycle_couch_bottle,"hair drier,cow,bicycle,couch,bottle",42
+a horse and a refrigerator and skis and a bear and a cat and a backpack,horse_refrigerator_skis_bear_cat_backpack,"horse,refrigerator,skis,bear,cat,backpack",42
+a motorcycle and a bus,motorcycle_bus,"motorcycle,bus",42
+a tie and a book and a dog and a frisbee and a fork,tie_book_dog_frisbee_fork,"tie,book,dog,frisbee,fork",42
+a cow and an apple and a kite and a carrot and a train,cow_apple_kite_carrot_train,"cow,apple,kite,carrot,train",42
+a tv and a vase and a teddy bear,tv_vase_teddy_bear,"tv,vase,teddy bear",42
+a clock and a snowboard and a tie and a bear and a pizza and a kite,clock_snowboard_tie_bear_pizza_kite,"clock,snowboard,tie,bear,pizza,kite",42
+a hot dog and a car and a toothbrush and a pizza and a bird and an apple and a bottle,hot_dog_car_toothbrush_pizza_bird_apple_bottle,"hot dog,car,toothbrush,pizza,bird,apple,bottle",42
+broccoli and a surfboard and a laptop and scissors,broccoli_surfboard_laptop_scissors,"broccoli,surfboard,laptop,scissors",42
+a cell phone and a book,cell_phone_book,"cell phone,book",42
+a stop sign and a toilet and a motorcycle,stop_sign_toilet_motorcycle,"stop sign,toilet,motorcycle",42
+a sheep and a pizza and a sandwich,sheep_pizza_sandwich,"sheep,pizza,sandwich",42
+a bear and a boat and a cow and a knife and an oven,bear_boat_cow_knife_oven,"bear,boat,cow,knife,oven",42
+a handbag and a backpack and a bowl and a knife and a vase and a tie and a sports ball,handbag_backpack_bowl_knife_vase_tie_sports_ball,"handbag,backpack,bowl,knife,vase,tie,sports ball",42
+a cow and an orange and a kite,cow_orange_kite,"cow,orange,kite",42
+a chair and a toothbrush and a remote and a banana and a couch,chair_toothbrush_remote_banana_couch,"chair,toothbrush,remote,banana,couch",42
+a bicycle and a car,bicycle_car,"bicycle,car",42
+skis and a surfboard and a chair and a kite,skis_surfboard_chair_kite,"skis,surfboard,chair,kite",42
+a frisbee and a donut and a remote,frisbee_donut_remote,"frisbee,donut,remote",42
+an orange and a sink and a bicycle and a keyboard and a cat and a snowboard,orange_sink_bicycle_keyboard_cat_snowboard,"orange,sink,bicycle,keyboard,cat,snowboard",42
+a clock and a chair and a spoon and a laptop,clock_chair_spoon_laptop,"clock,chair,spoon,laptop",42
+a baseball bat and an umbrella and a car and a banana and a vase,baseball_bat_umbrella_car_banana_vase,"baseball bat,umbrella,car,banana,vase",42
+a hot dog and a person and a skateboard and scissors and a stop sign and an apple,hot_dog_person_skateboard_scissors_stop_sign_apple,"hot dog,person,skateboard,scissors,stop sign,apple",42
+a person and an umbrella and a bear and a spoon and a chair and a traffic light,person_umbrella_bear_spoon_chair_traffic_light,"person,umbrella,bear,spoon,chair,traffic light",42
+a tv and a laptop,tv_laptop,"tv,laptop",42
+a parking meter and a keyboard and a chair and a frisbee and a teddy bear and a sandwich,parking_meter_keyboard_chair_frisbee_teddy_bear_sandwich,"parking meter,keyboard,chair,frisbee,teddy bear,sandwich",42
+a book and a stop sign and a cell phone,book_stop_sign_cell_phone,"book,stop sign,cell phone",42
+broccoli and a stop sign and a cow and a dog and an orange,broccoli_stop_sign_cow_dog_orange,"broccoli,stop sign,cow,dog,orange",42
+broccoli and a bowl and a zebra and a skateboard and a banana and a toothbrush and a dog,broccoli_bowl_zebra_skateboard_banana_toothbrush_dog,"broccoli,bowl,zebra,skateboard,banana,toothbrush,dog",42
+a book and a bear and a toilet and a pizza and a tv,book_bear_toilet_pizza_tv,"book,bear,toilet,pizza,tv",42
+a baseball bat and a teddy bear and a skateboard and a horse and a spoon and a tennis racket,baseball_bat_teddy_bear_skateboard_horse_spoon_tennis_racket,"baseball bat,teddy bear,skateboard,horse,spoon,tennis racket",42
+a tie and a cow and a dog and a boat,tie_cow_dog_boat,"tie,cow,dog,boat",42
+a motorcycle and a toilet and a spoon and a parking meter and a knife,motorcycle_toilet_spoon_parking_meter_knife,"motorcycle,toilet,spoon,parking meter,knife",42
+a sheep and a clock and a motorcycle,sheep_clock_motorcycle,"sheep,clock,motorcycle",42
+a snowboard and a giraffe and a laptop and a wine glass,snowboard_giraffe_laptop_wine_glass,"snowboard,giraffe,laptop,wine glass",42
+a skateboard and a surfboard,skateboard_surfboard,"skateboard,surfboard",42
+a tennis racket and a boat and an elephant and a truck and a zebra,tennis_racket_boat_elephant_truck_zebra,"tennis racket,boat,elephant,truck,zebra",42
+a stop sign and a knife and a wine glass and a handbag and a truck and a teddy bear,stop_sign_knife_wine_glass_handbag_truck_teddy_bear,"stop sign,knife,wine glass,handbag,truck,teddy bear",42
+a sink and a toilet,sink_toilet,"sink,toilet",42
+a clock and a cat and a truck and a knife,clock_cat_truck_knife,"clock,cat,truck,knife",42
+a sheep and a frisbee and a tv and a bottle and a sink and a skateboard,sheep_frisbee_tv_bottle_sink_skateboard,"sheep,frisbee,tv,bottle,sink,skateboard",42
+a cell phone and a backpack and a couch,cell_phone_backpack_couch,"cell phone,backpack,couch",42
+a chair and a couch,chair_couch,"chair,couch",42
+an umbrella and an airplane and a bowl and a bottle and a chair and a bear and a teddy bear,umbrella_airplane_bowl_bottle_chair_bear_teddy_bear,"umbrella,airplane,bowl,bottle,chair,bear,teddy bear",42
+a fire hydrant and a tennis racket and a microwave and a fork and a toilet and a banana,fire_hydrant_tennis_racket_microwave_fork_toilet_banana,"fire hydrant,tennis racket,microwave,fork,toilet,banana",42
+a hot dog and a toaster and a cake and a toilet and a skateboard and a potted plant and a stop sign,hot_dog_toaster_cake_toilet_skateboard_potted_plant_stop_sign,"hot dog,toaster,cake,toilet,skateboard,potted plant,stop sign",42
+a person and a vase and a toilet and an orange,person_vase_toilet_orange,"person,vase,toilet,orange",42
+a toaster and a boat and a teddy bear and a clock and a carrot and a hair drier,toaster_boat_teddy_bear_clock_carrot_hair_drier,"toaster,boat,teddy bear,clock,carrot,hair drier",42
+a bowl and a remote,bowl_remote,"bowl,remote",42
+a suitcase and a car and a donut and a bear and a keyboard and a carrot,suitcase_car_donut_bear_keyboard_carrot,"suitcase,car,donut,bear,keyboard,carrot",42
+a hair drier and a toothbrush,hair_drier_toothbrush,"hair drier,toothbrush",42
+a cow and a suitcase and a bottle and a tennis racket and an apple and a book,cow_suitcase_bottle_tennis_racket_apple_book,"cow,suitcase,bottle,tennis racket,apple,book",42
+an airplane and a person and a fork,airplane_person_fork,"airplane,person,fork",42
+a kite and a baseball bat,kite_baseball_bat,"kite,baseball bat",42
+a truck and a bicycle,truck_bicycle,"truck,bicycle",42
+a suitcase and a vase,suitcase_vase,"suitcase,vase",42
+a bird and a baseball bat and a motorcycle and a zebra and a couch,bird_baseball_bat_motorcycle_zebra_couch,"bird,baseball bat,motorcycle,zebra,couch",42
+a tie and a sink and a clock and a teddy bear,tie_sink_clock_teddy_bear,"tie,sink,clock,teddy bear",42
+a knife and a person and a potted plant and a baseball glove and broccoli and a keyboard,knife_person_potted_plant_baseball_glove_broccoli_keyboard,"knife,person,potted plant,baseball glove,broccoli,keyboard",42
+a laptop and a traffic light and a tennis racket,laptop_traffic_light_tennis_racket,"laptop,traffic light,tennis racket",42
+a giraffe and an oven and an elephant and a cow and a toaster and a backpack and a horse,giraffe_oven_elephant_cow_toaster_backpack_horse,"giraffe,oven,elephant,cow,toaster,backpack,horse",42
+a skateboard and broccoli and an airplane and a toaster and a wine glass and a book,skateboard_broccoli_airplane_toaster_wine_glass_book,"skateboard,broccoli,airplane,toaster,wine glass,book",42
+an elephant and a bear,elephant_bear,"elephant,bear",42
+a keyboard and a bicycle and a wine glass and a surfboard,keyboard_bicycle_wine_glass_surfboard,"keyboard,bicycle,wine glass,surfboard",42
+a toothbrush and a frisbee and a stop sign,toothbrush_frisbee_stop_sign,"toothbrush,frisbee,stop sign",42
+an apple and a teddy bear and a frisbee,apple_teddy_bear_frisbee,"apple,teddy bear,frisbee",42
+a hot dog and a cake and broccoli and a laptop and a sports ball,hot_dog_cake_broccoli_laptop_sports_ball,"hot dog,cake,broccoli,laptop,sports ball",42
+a sink and a cell phone and a train and a fire hydrant and a banana and a bear and an apple,sink_cell_phone_train_fire_hydrant_banana_bear_apple,"sink,cell phone,train,fire hydrant,banana,bear,apple",42
+a tennis racket and a chair and a hair drier,tennis_racket_chair_hair_drier,"tennis racket,chair,hair drier",42
+a sheep and scissors and a boat,sheep_scissors_boat,"sheep,scissors,boat",42
+a truck and a bicycle and a sink,truck_bicycle_sink,"truck,bicycle,sink",42
+a cake and a giraffe and a truck and an orange,cake_giraffe_truck_orange,"cake,giraffe,truck,orange",42
+a donut and a train and a banana and a giraffe and a potted plant and a cup,donut_train_banana_giraffe_potted_plant_cup,"donut,train,banana,giraffe,potted plant,cup",42
+a motorcycle and a train and a hot dog,motorcycle_train_hot_dog,"motorcycle,train,hot dog",42
+a knife and a bus and skis and a backpack,knife_bus_skis_backpack,"knife,bus,skis,backpack",42
+a boat and a microwave and a dog and a donut and a refrigerator and a vase and a truck,boat_microwave_dog_donut_refrigerator_vase_truck,"boat,microwave,dog,donut,refrigerator,vase,truck",42
+a carrot and a laptop and a bird and a parking meter,carrot_laptop_bird_parking_meter,"carrot,laptop,bird,parking meter",42
+a vase and a surfboard and a toothbrush and a toaster and a horse,vase_surfboard_toothbrush_toaster_horse,"vase,surfboard,toothbrush,toaster,horse",42
+a toilet and a chair and a cow and a horse and a remote and a cell phone,toilet_chair_cow_horse_remote_cell_phone,"toilet,chair,cow,horse,remote,cell phone",42
+a surfboard and a bear and a snowboard and a horse,surfboard_bear_snowboard_horse,"surfboard,bear,snowboard,horse",42
+a donut and a cake and a backpack and a skateboard and a microwave,donut_cake_backpack_skateboard_microwave,"donut,cake,backpack,skateboard,microwave",42
+a person and a toilet and a boat and a banana and a cup,person_toilet_boat_banana_cup,"person,toilet,boat,banana,cup",42
+a bottle and a spoon and a person and a fork and a stop sign,bottle_spoon_person_fork_stop_sign,"bottle,spoon,person,fork,stop sign",42
+a bottle and scissors and a cake and a kite and a cat,bottle_scissors_cake_kite_cat,"bottle,scissors,cake,kite,cat",42
+a cake and a vase,cake_vase,"cake,vase",42
+a person and a tennis racket and a kite and a cup and a parking meter and a truck,person_tennis_racket_kite_cup_parking_meter_truck,"person,tennis racket,kite,cup,parking meter,truck",42
+a baseball bat and a baseball glove,baseball_bat_baseball_glove,"baseball bat,baseball glove",42
+a cow and a banana and broccoli,cow_banana_broccoli,"cow,banana,broccoli",42
+a snowboard and a potted plant and a remote and a train and a handbag,snowboard_potted_plant_remote_train_handbag,"snowboard,potted plant,remote,train,handbag",42
+a car and a train,car_train,"car,train",42
+a bus and a teddy bear and a pizza and broccoli,bus_teddy_bear_pizza_broccoli,"bus,teddy bear,pizza,broccoli",42
+a bowl and broccoli and a bird and a skateboard and a bicycle,bowl_broccoli_bird_skateboard_bicycle,"bowl,broccoli,bird,skateboard,bicycle",42
+a potted plant and a remote and a suitcase,potted_plant_remote_suitcase,"potted plant,remote,suitcase",42
+a skateboard and a vase and a toaster,skateboard_vase_toaster,"skateboard,vase,toaster",42
+a keyboard and a book and a laptop and an oven,keyboard_book_laptop_oven,"keyboard,book,laptop,oven",42
+a backpack and an umbrella,backpack_umbrella,"backpack,umbrella",42
+a horse and a sheep,horse_sheep,"horse,sheep",42
+a bus and a carrot and a backpack and an orange and a dog and a truck,bus_carrot_backpack_orange_dog_truck,"bus,carrot,backpack,orange,dog,truck",42
+a cake and a laptop and a snowboard,cake_laptop_snowboard,"cake,laptop,snowboard",42
+a zebra and a train and a keyboard and a hot dog and a book and a boat and a hair drier,zebra_train_keyboard_hot_dog_book_boat_hair_drier,"zebra,train,keyboard,hot dog,book,boat,hair drier",42
+a toaster and a tennis racket and a banana and an orange and a train,toaster_tennis_racket_banana_orange_train,"toaster,tennis racket,banana,orange,train",42
+a hair drier and a bus and a frisbee and a refrigerator,hair_drier_bus_frisbee_refrigerator,"hair drier,bus,frisbee,refrigerator",42
+a sports ball and a giraffe and a refrigerator,sports_ball_giraffe_refrigerator,"sports ball,giraffe,refrigerator",42
+an orange and a couch and a refrigerator and scissors and a giraffe,orange_couch_refrigerator_scissors_giraffe,"orange,couch,refrigerator,scissors,giraffe",42
+a bicycle and a laptop and a hair drier and a zebra and an umbrella and a wine glass,bicycle_laptop_hair_drier_zebra_umbrella_wine_glass,"bicycle,laptop,hair drier,zebra,umbrella,wine glass",42
+a cow and a bottle and a pizza and a sandwich,cow_bottle_pizza_sandwich,"cow,bottle,pizza,sandwich",42
+a stop sign and a chair and a pizza and a bowl,stop_sign_chair_pizza_bowl,"stop sign,chair,pizza,bowl",42
+a refrigerator and skis,refrigerator_skis,"refrigerator,skis",42
+an orange and a carrot and a laptop and a person and a motorcycle,orange_carrot_laptop_person_motorcycle,"orange,carrot,laptop,person,motorcycle",42
+a boat and a traffic light and a cake and a keyboard and a bird,boat_traffic_light_cake_keyboard_bird,"boat,traffic light,cake,keyboard,bird",42
+a bus and a bird and a tie,bus_bird_tie,"bus,bird,tie",42
+scissors and a teddy bear,scissors_teddy_bear,"scissors,teddy bear",42
+a bowl and a refrigerator and a pizza and a bicycle and a snowboard and a cat and a surfboard,bowl_refrigerator_pizza_bicycle_snowboard_cat_surfboard,"bowl,refrigerator,pizza,bicycle,snowboard,cat,surfboard",42
+a toothbrush and a sink,toothbrush_sink,"toothbrush,sink",42
+a dog and a tv and a boat,dog_tv_boat,"dog,tv,boat",42
+a kite and skis and a wine glass,kite_skis_wine_glass,"kite,skis,wine glass",42
+a bicycle and a skateboard and a parking meter and a pizza and a donut and a fork,bicycle_skateboard_parking_meter_pizza_donut_fork,"bicycle,skateboard,parking meter,pizza,donut,fork",42
+a keyboard and a tie and a hot dog and a bird and a train and a spoon,keyboard_tie_hot_dog_bird_train_spoon,"keyboard,tie,hot dog,bird,train,spoon",42
+a cup and a motorcycle and a chair,cup_motorcycle_chair,"cup,motorcycle,chair",42
+a carrot and an umbrella,carrot_umbrella,"carrot,umbrella",42
+a train and a tennis racket and a bear and a hair drier,train_tennis_racket_bear_hair_drier,"train,tennis racket,bear,hair drier",42
+a banana and a bicycle and a sheep and a keyboard and a snowboard,banana_bicycle_sheep_keyboard_snowboard,"banana,bicycle,sheep,keyboard,snowboard",42
+a book and a tv and a fork and a cake and a stop sign and an orange,book_tv_fork_cake_stop_sign_orange,"book,tv,fork,cake,stop sign,orange",42
+a cow and a backpack and a zebra and a sheep and a vase and a stop sign,cow_backpack_zebra_sheep_vase_stop_sign,"cow,backpack,zebra,sheep,vase,stop sign",42
+a backpack and a hot dog and a surfboard and a bicycle and a wine glass,backpack_hot_dog_surfboard_bicycle_wine_glass,"backpack,hot dog,surfboard,bicycle,wine glass",42
+a cake and a train and skis,cake_train_skis,"cake,train,skis",42
+a handbag and a tie,handbag_tie,"handbag,tie",42
+a skateboard and a person and a cow and a train and a baseball bat and an orange and a bottle,skateboard_person_cow_train_baseball_bat_orange_bottle,"skateboard,person,cow,train,baseball bat,orange,bottle",42
+a kite and a bus and a surfboard,kite_bus_surfboard,"kite,bus,surfboard",42
+a potted plant and a bird and a frisbee and a vase and a wine glass,potted_plant_bird_frisbee_vase_wine_glass,"potted plant,bird,frisbee,vase,wine glass",42
+a sandwich and a fork and a toilet and a book and an airplane and a car and a wine glass,sandwich_fork_toilet_book_airplane_car_wine_glass,"sandwich,fork,toilet,book,airplane,car,wine glass",42
+a baseball bat and an elephant and a pizza,baseball_bat_elephant_pizza,"baseball bat,elephant,pizza",42
+a cat and a wine glass and a surfboard and a banana and a sheep and a chair,cat_wine_glass_surfboard_banana_sheep_chair,"cat,wine glass,surfboard,banana,sheep,chair",42
+a handbag and a surfboard and a sandwich and a dog and a hot dog and a cow and a baseball glove,handbag_surfboard_sandwich_dog_hot_dog_cow_baseball_glove,"handbag,surfboard,sandwich,dog,hot dog,cow,baseball glove",42
+a clock and a pizza and a person and scissors,clock_pizza_person_scissors,"clock,pizza,person,scissors",42
+scissors and an oven and skis and a hair drier,scissors_oven_skis_hair_drier,"scissors,oven,skis,hair drier",42
+a sheep and a zebra and a person and a giraffe,sheep_zebra_person_giraffe,"sheep,zebra,person,giraffe",42
+a toaster and a bowl and an umbrella and a stop sign and a kite and a frisbee,toaster_bowl_umbrella_stop_sign_kite_frisbee,"toaster,bowl,umbrella,stop sign,kite,frisbee",42
+a baseball bat and an umbrella and a car and a banana and a vase and a parking meter and an oven,baseball_bat_umbrella_car_banana_vase_parking_meter_oven,"baseball bat,umbrella,car,banana,vase,parking meter,oven",42
+a toilet and a traffic light and a toaster and a couch and a bowl,toilet_traffic_light_toaster_couch_bowl,"toilet,traffic light,toaster,couch,bowl",42
+a sandwich and a snowboard and a horse and a fire hydrant and a remote and broccoli and a donut,sandwich_snowboard_horse_fire_hydrant_remote_broccoli_donut,"sandwich,snowboard,horse,fire hydrant,remote,broccoli,donut",42
+a refrigerator and a banana and a cat,refrigerator_banana_cat,"refrigerator,banana,cat",42
+a spoon and a remote and a sandwich,spoon_remote_sandwich,"spoon,remote,sandwich",42
+an umbrella and a skateboard and a sports ball,umbrella_skateboard_sports_ball,"umbrella,skateboard,sports ball",42
+a frisbee and a carrot and a bus and an airplane and a tie and a tv and a cup,frisbee_carrot_bus_airplane_tie_tv_cup,"frisbee,carrot,bus,airplane,tie,tv,cup",42
+a fire hydrant and a boat and scissors and a skateboard and a stop sign,fire_hydrant_boat_scissors_skateboard_stop_sign,"fire hydrant,boat,scissors,skateboard,stop sign",42
+a train and a cup and a cow and a baseball glove,train_cup_cow_baseball_glove,"train,cup,cow,baseball glove",42
+a snowboard and a car and a refrigerator,snowboard_car_refrigerator,"snowboard,car,refrigerator",42
+a remote and a carrot and a cup and a toaster and scissors,remote_carrot_cup_toaster_scissors,"remote,carrot,cup,toaster,scissors",42
+an apple and a cup and an oven and a tennis racket and a bottle,apple_cup_oven_tennis_racket_bottle,"apple,cup,oven,tennis racket,bottle",42
+a baseball bat and a bear and a hot dog,baseball_bat_bear_hot_dog,"baseball bat,bear,hot dog",42
+a hair drier and a car and a giraffe and a sheep and a bowl and a tennis racket,hair_drier_car_giraffe_sheep_bowl_tennis_racket,"hair drier,car,giraffe,sheep,bowl,tennis racket",42
+a cell phone and a truck and a zebra and a sink,cell_phone_truck_zebra_sink,"cell phone,truck,zebra,sink",42
+a wine glass and a suitcase and a snowboard and a couch and a hair drier and a vase and a person,wine_glass_suitcase_snowboard_couch_hair_drier_vase_person,"wine glass,suitcase,snowboard,couch,hair drier,vase,person",42
+a toilet and a chair and a train and a knife,toilet_chair_train_knife,"toilet,chair,train,knife",42
+a bear and a baseball bat and a frisbee and a toilet and a toothbrush and a refrigerator and a clock,bear_baseball_bat_frisbee_toilet_toothbrush_refrigerator_clock,"bear,baseball bat,frisbee,toilet,toothbrush,refrigerator,clock",42
+a cup and a couch,cup_couch,"cup,couch",42
+a tie and a toaster and a giraffe and a baseball bat and a sports ball,tie_toaster_giraffe_baseball_bat_sports_ball,"tie,toaster,giraffe,baseball bat,sports ball",42
+a suitcase and a tennis racket and skis,suitcase_tennis_racket_skis,"suitcase,tennis racket,skis",42
+a baseball bat and a clock and a cell phone and a tv and a bus and a zebra,baseball_bat_clock_cell_phone_tv_bus_zebra,"baseball bat,clock,cell phone,tv,bus,zebra",42
+an umbrella and a hair drier and a toaster and a baseball glove,umbrella_hair_drier_toaster_baseball_glove,"umbrella,hair drier,toaster,baseball glove",42
+a snowboard and a knife and a sheep and a baseball glove,snowboard_knife_sheep_baseball_glove,"snowboard,knife,sheep,baseball glove",42
+a fire hydrant and a sink and a hair drier and a couch,fire_hydrant_sink_hair_drier_couch,"fire hydrant,sink,hair drier,couch",42
+a toilet and a baseball glove and a suitcase and an oven and a spoon and skis,toilet_baseball_glove_suitcase_oven_spoon_skis,"toilet,baseball glove,suitcase,oven,spoon,skis",42
+a microwave and a toothbrush and a cup,microwave_toothbrush_cup,"microwave,toothbrush,cup",42
+a donut and a laptop and a spoon and a baseball bat and a traffic light,donut_laptop_spoon_baseball_bat_traffic_light,"donut,laptop,spoon,baseball bat,traffic light",42
+an oven and a cell phone and a motorcycle,oven_cell_phone_motorcycle,"oven,cell phone,motorcycle",42
+a hot dog and a bus and a banana and a knife and a laptop and a kite and scissors,hot_dog_bus_banana_knife_laptop_kite_scissors,"hot dog,bus,banana,knife,laptop,kite,scissors",42
+a spoon and a laptop,spoon_laptop,"spoon,laptop",42
+a tie and a skateboard and a cell phone and an orange and an elephant and a vase,tie_skateboard_cell_phone_orange_elephant_vase,"tie,skateboard,cell phone,orange,elephant,vase",42
+a zebra and a carrot and a baseball bat and a handbag and a snowboard and a motorcycle and a kite,zebra_carrot_baseball_bat_handbag_snowboard_motorcycle_kite,"zebra,carrot,baseball bat,handbag,snowboard,motorcycle,kite",42
+a sink and a surfboard and an umbrella and a tennis racket and scissors,sink_surfboard_umbrella_tennis_racket_scissors,"sink,surfboard,umbrella,tennis racket,scissors",42
+a cat and a handbag and a parking meter and an airplane and a skateboard and a boat and a sheep,cat_handbag_parking_meter_airplane_skateboard_boat_sheep,"cat,handbag,parking meter,airplane,skateboard,boat,sheep",42
+scissors and a surfboard and a fire hydrant and a pizza and a toothbrush and a train,scissors_surfboard_fire_hydrant_pizza_toothbrush_train,"scissors,surfboard,fire hydrant,pizza,toothbrush,train",42
+a tennis racket and a cup and a laptop and broccoli and a boat and a car and a stop sign,tennis_racket_cup_laptop_broccoli_boat_car_stop_sign,"tennis racket,cup,laptop,broccoli,boat,car,stop sign",42
+a clock and broccoli and a sandwich and a bird,clock_broccoli_sandwich_bird,"clock,broccoli,sandwich,bird",42
+a baseball bat and an umbrella and a car and a banana,baseball_bat_umbrella_car_banana,"baseball bat,umbrella,car,banana",42
+a car and skis and a skateboard,car_skis_skateboard,"car,skis,skateboard",42
+a dog and a handbag and a chair and a fork and a kite and a boat,dog_handbag_chair_fork_kite_boat,"dog,handbag,chair,fork,kite,boat",42
+a truck and a surfboard and a bottle and a toilet and a donut and a laptop,truck_surfboard_bottle_toilet_donut_laptop,"truck,surfboard,bottle,toilet,donut,laptop",42
+a cake and a baseball glove and an airplane and a hot dog and a parking meter and a bowl,cake_baseball_glove_airplane_hot_dog_parking_meter_bowl,"cake,baseball glove,airplane,hot dog,parking meter,bowl",42
+a microwave and an orange and a knife and a clock and skis and a traffic light,microwave_orange_knife_clock_skis_traffic_light,"microwave,orange,knife,clock,skis,traffic light",42
+a couch and a hot dog and a baseball bat and an orange and a wine glass and a fire hydrant,couch_hot_dog_baseball_bat_orange_wine_glass_fire_hydrant,"couch,hot dog,baseball bat,orange,wine glass,fire hydrant",42
+a remote and a cow and a parking meter and a giraffe and a surfboard,remote_cow_parking_meter_giraffe_surfboard,"remote,cow,parking meter,giraffe,surfboard",42
+a donut and a fork and a cake and a banana and a keyboard and a person and a motorcycle,donut_fork_cake_banana_keyboard_person_motorcycle,"donut,fork,cake,banana,keyboard,person,motorcycle",42
+a pizza and a refrigerator and a motorcycle and a sink and a remote,pizza_refrigerator_motorcycle_sink_remote,"pizza,refrigerator,motorcycle,sink,remote",42
+a person and a sink,person_sink,"person,sink",42
+an orange and skis and a tv and scissors and a donut and a bowl and a bird,orange_skis_tv_scissors_donut_bowl_bird,"orange,skis,tv,scissors,donut,bowl,bird",42
+a toilet and a boat and a car and a sports ball and a skateboard and a traffic light,toilet_boat_car_sports_ball_skateboard_traffic_light,"toilet,boat,car,sports ball,skateboard,traffic light",42
+a baseball glove and a skateboard,baseball_glove_skateboard,"baseball glove,skateboard",42
+a chair and a hot dog and a cat,chair_hot_dog_cat,"chair,hot dog,cat",42
+a traffic light and a pizza and a motorcycle,traffic_light_pizza_motorcycle,"traffic light,pizza,motorcycle",42
+a hair drier and an elephant and broccoli and a donut and a book,hair_drier_elephant_broccoli_donut_book,"hair drier,elephant,broccoli,donut,book",42
+a fork and a frisbee and a sandwich and a kite,fork_frisbee_sandwich_kite,"fork,frisbee,sandwich,kite",42
+a traffic light and a bowl and a remote and a keyboard and a carrot and a parking meter and a giraffe,traffic_light_bowl_remote_keyboard_carrot_parking_meter_giraffe,"traffic light,bowl,remote,keyboard,carrot,parking meter,giraffe",42
+a giraffe and a kite and an elephant and a bear and a chair,giraffe_kite_elephant_bear_chair,"giraffe,kite,elephant,bear,chair",42
+a handbag and a boat and a carrot and a bottle and a car,handbag_boat_carrot_bottle_car,"handbag,boat,carrot,bottle,car",42
+a cat and a kite and a hair drier and an airplane,cat_kite_hair_drier_airplane,"cat,kite,hair drier,airplane",42
+a handbag and a suitcase and a person and a laptop,handbag_suitcase_person_laptop,"handbag,suitcase,person,laptop",42
+broccoli and a suitcase and a toilet and a carrot and a spoon and a train and a backpack,broccoli_suitcase_toilet_carrot_spoon_train_backpack,"broccoli,suitcase,toilet,carrot,spoon,train,backpack",42
+a kite and an airplane and a sandwich and a sheep and a bicycle and a knife,kite_airplane_sandwich_sheep_bicycle_knife,"kite,airplane,sandwich,sheep,bicycle,knife",42
+a cell phone and a laptop and an elephant and a boat,cell_phone_laptop_elephant_boat,"cell phone,laptop,elephant,boat",42
+a suitcase and a carrot and a wine glass and a cup,suitcase_carrot_wine_glass_cup,"suitcase,carrot,wine glass,cup",42
+a train and a bowl and a bus and scissors and a bear,train_bowl_bus_scissors_bear,"train,bowl,bus,scissors,bear",42
+a clock and a backpack,clock_backpack,"clock,backpack",42
+a microwave and a train and a remote and a wine glass and an umbrella and a pizza and a knife,microwave_train_remote_wine_glass_umbrella_pizza_knife,"microwave,train,remote,wine glass,umbrella,pizza,knife",42
+broccoli and a toilet and a car,broccoli_toilet_car,"broccoli,toilet,car",42
+a microwave and a giraffe and an oven and a train and an umbrella,microwave_giraffe_oven_train_umbrella,"microwave,giraffe,oven,train,umbrella",42
+a teddy bear and a chair and broccoli,teddy_bear_chair_broccoli,"teddy bear,chair,broccoli",42
+a train and a giraffe and a stop sign,train_giraffe_stop_sign,"train,giraffe,stop sign",42
+a wine glass and a chair,wine_glass_chair,"wine glass,chair",42
+a teddy bear and a frisbee,teddy_bear_frisbee,"teddy bear,frisbee",42
+a bicycle and a handbag and a teddy bear and a baseball glove,bicycle_handbag_teddy_bear_baseball_glove,"bicycle,handbag,teddy bear,baseball glove",42
+a person and a tie and a baseball glove and a knife and an apple,person_tie_baseball_glove_knife_apple,"person,tie,baseball glove,knife,apple",42
+a teddy bear and a bicycle and a giraffe and a wine glass and a tennis racket and a potted plant and a bird,teddy_bear_bicycle_giraffe_wine_glass_tennis_racket_potted_plant_bird,"teddy bear,bicycle,giraffe,wine glass,tennis racket,potted plant,bird",42
+a laptop and a stop sign and a chair and skis and a giraffe and a tie,laptop_stop_sign_chair_skis_giraffe_tie,"laptop,stop sign,chair,skis,giraffe,tie",42
+a sandwich and a chair and a keyboard and a sports ball and a toaster and a refrigerator and a tennis racket,sandwich_chair_keyboard_sports_ball_toaster_refrigerator_tennis_racket,"sandwich,chair,keyboard,sports ball,toaster,refrigerator,tennis racket",42
+a surfboard and a boat and a sports ball and a hair drier and a frisbee,surfboard_boat_sports_ball_hair_drier_frisbee,"surfboard,boat,sports ball,hair drier,frisbee",42
+an orange and a banana and a bottle and a boat and a baseball glove and a toothbrush,orange_banana_bottle_boat_baseball_glove_toothbrush,"orange,banana,bottle,boat,baseball glove,toothbrush",42
+a keyboard and a frisbee and a sheep and a wine glass and a stop sign and skis and a surfboard,keyboard_frisbee_sheep_wine_glass_stop_sign_skis_surfboard,"keyboard,frisbee,sheep,wine glass,stop sign,skis,surfboard",42
+a bottle and a snowboard and an oven and scissors and a fork and a dog and a frisbee,bottle_snowboard_oven_scissors_fork_dog_frisbee,"bottle,snowboard,oven,scissors,fork,dog,frisbee",42
+a toothbrush and an oven and a motorcycle and a baseball bat and a frisbee and a backpack,toothbrush_oven_motorcycle_baseball_bat_frisbee_backpack,"toothbrush,oven,motorcycle,baseball bat,frisbee,backpack",42
+an oven and scissors,oven_scissors,"oven,scissors",42
+a baseball glove and skis and a book and a potted plant and a bear and a vase and a carrot,baseball_glove_skis_book_potted_plant_bear_vase_carrot,"baseball glove,skis,book,potted plant,bear,vase,carrot",42
+an oven and a baseball bat and broccoli,oven_baseball_bat_broccoli,"oven,baseball bat,broccoli",42
+a vase and an oven and a bottle and a refrigerator,vase_oven_bottle_refrigerator,"vase,oven,bottle,refrigerator",42
+a fire hydrant and a spoon and a train and a cake,fire_hydrant_spoon_train_cake,"fire hydrant,spoon,train,cake",42
+a bus and a keyboard and a sandwich,bus_keyboard_sandwich,"bus,keyboard,sandwich",42
+a sandwich and a laptop and a sink and a backpack and a fork and scissors,sandwich_laptop_sink_backpack_fork_scissors,"sandwich,laptop,sink,backpack,fork,scissors",42
+a person and a hair drier,person_hair_drier,"person,hair drier",42
+a train and a snowboard and a parking meter,train_snowboard_parking_meter,"train,snowboard,parking meter",42
+a pizza and a boat and a fork,pizza_boat_fork,"pizza,boat,fork",42
+a horse and a spoon and an orange and a kite and a wine glass and a parking meter and a toothbrush,horse_spoon_orange_kite_wine_glass_parking_meter_toothbrush,"horse,spoon,orange,kite,wine glass,parking meter,toothbrush",42
+broccoli and a chair and a parking meter and a tv and a motorcycle and a microwave and a potted plant,broccoli_chair_parking_meter_tv_motorcycle_microwave_potted_plant,"broccoli,chair,parking meter,tv,motorcycle,microwave,potted plant",42
+a laptop and a frisbee and a person and a fire hydrant and a cat and a spoon and a sports ball,laptop_frisbee_person_fire_hydrant_cat_spoon_sports_ball,"laptop,frisbee,person,fire hydrant,cat,spoon,sports ball",42
+a chair and a remote and a cell phone,chair_remote_cell_phone,"chair,remote,cell phone",42
+a toothbrush and a snowboard and a cow and a bird,toothbrush_snowboard_cow_bird,"toothbrush,snowboard,cow,bird",42
+a stop sign and a cell phone and a spoon and an umbrella,stop_sign_cell_phone_spoon_umbrella,"stop sign,cell phone,spoon,umbrella",42
+a snowboard and a sports ball and an umbrella and a cup and a truck and a book and a sheep,snowboard_sports_ball_umbrella_cup_truck_book_sheep,"snowboard,sports ball,umbrella,cup,truck,book,sheep",42
+a potted plant and broccoli and a wine glass,potted_plant_broccoli_wine_glass,"potted plant,broccoli,wine glass",42
+a bowl and a laptop and a keyboard,bowl_laptop_keyboard,"bowl,laptop,keyboard",42
+a bear and a car and a spoon and a tennis racket and a keyboard,bear_car_spoon_tennis_racket_keyboard,"bear,car,spoon,tennis racket,keyboard",42
+an orange and a bear and a car and a zebra and a backpack and a surfboard and a cake,orange_bear_car_zebra_backpack_surfboard_cake,"orange,bear,car,zebra,backpack,surfboard,cake",42
+a bus and a traffic light,bus_traffic_light,"bus,traffic light",42
+a parking meter and a couch and a teddy bear and a toilet and a truck and a cow and scissors,parking_meter_couch_teddy_bear_toilet_truck_cow_scissors,"parking meter,couch,teddy bear,toilet,truck,cow,scissors",42

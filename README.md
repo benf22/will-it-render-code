@@ -1,21 +1,32 @@
-# will-it-render
+# Will It Render? Learned Attention Steering for Object Presence in Text-to-Video
 
-**AttnSteer** — train light **attention-steering models** (linear / MLP / conv) on a video
-diffusion transformer's cross-attention maps to predict whether a target class (e.g. a
-barking dog) will appear in the generated video, then use those models to **steer**
-generation at inference time so the class *does* render.
+Ben Fishman¹ · Dvir Samuel² · Gal Chechik¹² · Idan Schwartz¹ — ¹Bar-Ilan University, ²NVIDIA
 
-Backends: **LTX-2**, **WAN (Wan2.1)**, **CogVideoX**.
+**[Project page](https://benf22.github.io/will-it-render/)** · Paper (coming soon)
+
+> **TL;DR** — **The problem:** not all requested objects are rendered by text-to-video models.
+> **Our solution:** train a tiny model (37k parameters) on the generator's attention maps that
+> predicts whether each requested object will render; then use it as a differentiable steering
+> signal at inference time — no model retraining, no hand-crafted objectives needed.
+
+We call the tiny model **AttnSteer**. Backends: **LTX-2**, **WAN (Wan2.1)**, **CogVideoX**.
+
+### How it works
+
+**Training** — one AttnSteer model per denoising step, on cross-attention maps toward each word:
+
+![Training](docs/fig_training.png)
+
+**Inference** — backpropagate the AttnSteer loss into the latent to make the object render:
+
+![Inference](docs/fig_inference.png)
 
 > **Status: migrated, GPU-validated, pre-release.** The full module tree (common / backends /
 > inference / datasets / training / evaluation + baselines), configs, packaging, docs, tests,
 > and CI are in place; the whole package imports cleanly and the CPU suite is green.
-> **All three backends run end-to-end on GPU with real trained AttnSteer weights:** WAN (L40S)
-> via both `steer.py` and the `wir-run` bundle entry point (determinism on and off) plus 7/7
-> capture-hook tests against the real engine; **LTX** (H100) — the 48-layer conv_k champion
-> steering a video+audio clip, probe score rising 0.48→0.99 across steps; **CogVideoX** (H100)
-> — a steered clip across two steered steps. Probe weights / bundles are not yet uploaded. See
-> `WILL_IT_RENDER_PLAN.md` in the source repo.
+> **All three backends run end-to-end on GPU with real trained AttnSteer weights** (WAN on L40S;
+> LTX + CogVideoX on H100), and the migrated code is **bit-identical** to the original research
+> code on a matched prompt/seed. Probe weights / bundles are not yet uploaded.
 
 ## Why "will it render"
 

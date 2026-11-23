@@ -1,0 +1,7 @@
+prompt,object_name,target_words,seed
+an orange and a clock,orange_clock,"orange,clock",42
+a pizza and a vase and a snowboard,pizza_vase_snowboard,"pizza,vase,snowboard",42
+broccoli and a snowboard and a train and an elephant,broccoli_snowboard_train_elephant,"broccoli,snowboard,train,elephant",42
+a cell phone and a surfboard and a traffic light and a potted plant and a skateboard,cell_phone_surfboard_traffic_light_potted_plant_skateboard,"cell phone,surfboard,traffic light,potted plant,skateboard",42
+a parking meter and a zebra and a bird and a suitcase and a couch and broccoli,parking_meter_zebra_bird_suitcase_couch_broccoli,"parking meter,zebra,bird,suitcase,couch,broccoli",42
+a sandwich and an elephant and a tie and a bottle and a hair drier and a spoon and a potted plant,sandwich_elephant_tie_bottle_hair_drier_spoon_potted_plant,"sandwich,elephant,tie,bottle,hair drier,spoon,potted plant",42

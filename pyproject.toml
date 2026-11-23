@@ -28,14 +28,12 @@ dependencies = [
 [project.optional-dependencies]
 # Object/visual detectors used for video labeling (heavy, some AGPL — see THIRD_PARTY.md).
 detectors = ["ultralytics", "transformers", "pillow"]
-# PANNs audio tagging for audio labeling.
-audio = ["librosa", "soundfile"]
 # Baseline method extras (Attend-and-Excite / TempoControl reimplementations).
 baselines = []
 # VBench quality metrics (heavy; optional evaluation extra).
 vbench = ["vbench"]
 # Everything, for a full dev/eval environment.
-all = ["will-it-render[detectors,audio,baselines,vbench]"]
+all = ["will-it-render[detectors,baselines,vbench]"]
 dev = ["pytest", "ruff"]
 
 [project.scripts]

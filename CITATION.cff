@@ -1,10 +1,33 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite it as below."
-title: "will-it-render: attention-steering (AttnSteer) for controllable video diffusion"
+message: "If you use this software, please cite the paper below."
+title: "Will It Render? Learned Attention Steering for Object Presence in Text-to-Video"
 version: 0.1.0
 date-released: 2026-11-22
 license: MIT
 authors:
-  - name: "The will-it-render authors"   # TODO: fill in author list before release
-# TODO (before release): add the `preferred-citation:` block with the paper
-# (title, authors, venue/arXiv id, year) once finalized.
+  - family-names: Fishman
+    given-names: Ben
+    affiliation: Bar-Ilan University
+  - family-names: Samuel
+    given-names: Dvir
+    affiliation: NVIDIA
+  - family-names: Chechik
+    given-names: Gal
+    affiliation: "Bar-Ilan University; NVIDIA"
+  - family-names: Schwartz
+    given-names: Idan
+    affiliation: Bar-Ilan University
+preferred-citation:
+  type: article
+  title: "Will It Render? Learned Attention Steering for Object Presence in Text-to-Video"
+  authors:
+    - family-names: Fishman
+      given-names: Ben
+    - family-names: Samuel
+      given-names: Dvir
+    - family-names: Chechik
+      given-names: Gal
+    - family-names: Schwartz
+      given-names: Idan
+  year: 2026
+  # TODO: add venue / arXiv id / DOI once public.

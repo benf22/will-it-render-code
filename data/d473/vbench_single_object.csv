@@ -1,0 +1,80 @@
+prompt,object_name,target_words
+a person,person,person
+a bicycle,bicycle,bicycle
+a car,car,car
+a motorcycle,motorcycle,motorcycle
+an airplane,airplane,airplane
+a bus,bus,bus
+a train,train,train
+a truck,truck,truck
+a boat,boat,boat
+a traffic light,traffic_light,traffic light
+a fire hydrant,fire_hydrant,fire hydrant
+a stop sign,stop_sign,stop sign
+a parking meter,parking_meter,parking meter
+a bench,bench,bench
+a bird,bird,bird
+a cat,cat,cat
+a dog,dog,dog
+a horse,horse,horse
+a sheep,sheep,sheep
+a cow,cow,cow
+an elephant,elephant,elephant
+a bear,bear,bear
+a zebra,zebra,zebra
+a giraffe,giraffe,giraffe
+a backpack,backpack,backpack
+an umbrella,umbrella,umbrella
+a handbag,handbag,handbag
+a tie,tie,tie
+a suitcase,suitcase,suitcase
+a frisbee,frisbee,frisbee
+skis,skis,skis
+a snowboard,snowboard,snowboard
+a sports ball,sports_ball,sports ball
+a kite,kite,kite
+a baseball bat,baseball_bat,baseball bat
+a baseball glove,baseball_glove,baseball glove
+a skateboard,skateboard,skateboard
+a surfboard,surfboard,surfboard
+a tennis racket,tennis_racket,tennis racket
+a bottle,bottle,bottle
+a wine glass,wine_glass,wine glass
+a cup,cup,cup
+a fork,fork,fork
+a knife,knife,knife
+a spoon,spoon,spoon
+a bowl,bowl,bowl
+a banana,banana,banana
+an apple,apple,apple
+a sandwich,sandwich,sandwich
+an orange,orange,orange
+broccoli,broccoli,broccoli
+a carrot,carrot,carrot
+a hot dog,hot_dog,hot dog
+a pizza,pizza,pizza
+a donut,donut,donut
+a cake,cake,cake
+a chair,chair,chair
+a couch,couch,couch
+a potted plant,potted_plant,potted plant
+a bed,bed,bed
+a dining table,dining_table,dining table
+a toilet,toilet,toilet
+a tv,tv,tv
+a laptop,laptop,laptop
+a remote,remote,remote
+a keyboard,keyboard,keyboard
+a cell phone,cell_phone,cell phone
+a microwave,microwave,microwave
+an oven,oven,oven
+a toaster,toaster,toaster
+a sink,sink,sink
+a refrigerator,refrigerator,refrigerator
+a book,book,book
+a clock,clock,clock
+a vase,vase,vase
+scissors,scissors,scissors
+a teddy bear,teddy_bear,teddy bear
+a hair drier,hair_drier,hair drier
+a toothbrush,toothbrush,toothbrush
