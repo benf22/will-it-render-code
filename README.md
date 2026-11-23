@@ -35,15 +35,6 @@ Four independent uses — each is standalone with its own README, entry point, a
 4. **Use our evaluation** — det-all / det-ratio object-presence metrics on **any** model's videos.
    → [`evaluation/`](src/will_it_render/evaluation/README.md)
 
-> **Status: migrated, GPU-validated, pre-release.** The full module tree (common / backends /
-> inference / datasets / training / evaluation + baselines), configs, packaging, docs, tests,
-> and CI are in place; the whole package imports cleanly and the CPU suite is green.
-> **All three backends run end-to-end on GPU with real trained AttnSteer weights** (WAN on L40S;
-> LTX + CogVideoX on H100), and the migrated code is **bit-identical** to the original research
-> code on a matched prompt/seed. AttnSteer bundles are published at
-> [huggingface.co/benf22/will-it-render](https://huggingface.co/benf22/will-it-render) (private
-> until the paper is public).
-
 ## Why "will it render"
 
 An AttnSteer model reads one denoising step's cross-attention toward the target word and
