@@ -7,11 +7,14 @@ generation at inference time so the class *does* render.
 
 Backends: **LTX-2**, **WAN (Wan2.1)**, **CogVideoX**.
 
-> **Status: migrated, pre-release.** The full module tree (common / backends / inference /
-> datasets / training / evaluation + baselines), configs, packaging, docs, tests, and CI are
-> in place and the whole package imports cleanly. The CPU test suite (training/inference/
-> metrics/scanners) is green; **backends and end-to-end `wir-run` have not yet been
-> runtime-verified** (they need a GPU + a DiT engine checkout + an AttnSteer bundle). Probe
+> **Status: migrated, GPU-validated, pre-release.** The full module tree (common / backends /
+> inference / datasets / training / evaluation + baselines), configs, packaging, docs, tests,
+> and CI are in place; the whole package imports cleanly and the CPU suite is green.
+> **GPU-verified on an L40S:** WAN runs end-to-end — `wir-run` produces a steered video (both
+> `steer.py` and the bundle entry point, determinism on and off), and the 7 WAN capture-hook
+> tests pass against the real engine. The LTX env-var path resolution and the CogVideoX
+> attention hook + backend are validated; a *complete* steered LTX/CogVideoX clip needs a
+> larger card (both are B200/H200-class — the 48 GB L40S OOMs on their steering grad). Probe
 > weights / bundles are not yet uploaded. See `WILL_IT_RENDER_PLAN.md` in the source repo.
 
 ## Why "will it render"
