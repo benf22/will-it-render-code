@@ -1,29 +1,43 @@
 # evaluation
 
-Generation-quality metrics for steered video + baseline comparisons. (The *AttnSteer-model*
-quality metrics — AUROC/AP/F1 — live in `training/evaluation.py`, not here; plan §10c N3.)
+Measure **object presence** (and quality) in generated videos — the paper's headline metrics.
+Works on clips from **any** model, so you can evaluate your own generations, not just ours.
 
 **Standalone (N2):** imports only `common` and `backends`.
 
-## `metrics/` — the four shipped metrics (N3)
+## Entry point
 
-- **det-all** — `all_objects_present_rate` (every target object present in the clip).
-- **det-ratio** — `obj_level_detection_rate` (+ `clip_level_detection_rate`).
-- **VBench** — `vbench_eval` (optional `.[vbench]` extra; never import-time-required).
-- **runtime** — `runtime_bench` (NEW thin single-node timing collector; timing runs use
-  `STEER_DETERMINISTIC=0`, which is ~24% faster than the deterministic path).
+```bash
+# (A) you already have per-(clip, object) detector labels -> aggregate instantly (no heavy deps)
+python -m will_it_render.evaluation.run --labels labels.csv
 
-`temporal_accuracy` is kept here iff the TempoControl comparison numbers ship (baselines are
-in scope → likely kept). `photorealism_clip` / `semantic_drift` only if realism/OOD numbers
-appear on the project page.
+# (B) you have a directory of clips -> detect objects, then aggregate ([detectors] extra)
+python -m will_it_render.datasets.video_object_labeler --root out/clips --out labels.csv   # step 1: detect
+python -m will_it_render.evaluation.run --labels labels.csv                                 # step 2: metrics
+```
 
-## `baselines/` — runnable comparisons
+Prints **det-all** / **det-ratio** / clip-level detection rate, plus a per-k breakdown.
 
-Clean reimplementations driven through the same steering loop as AttnSteer, each with **one
-sanitized config** so the comparison is reproducible (plan §10c N5):
-- `attend_excite/` — Attend-and-Excite (`loss.py` + `selfcheck.py`).
-- `tempocontrol/` — TempoControl (`loss.py` + `selfcheck.py`); the upstream fork / `asis_shim`
-  is **not** ported — the README points to upstream for the authors' exact code.
-- `best_of_n/` — seed-search protocol.
+## Metrics (`metrics/metrics_utils.py` — single source of truth)
 
-> Scaffold — metrics + baselines ported in Phase 2b; `runtime_bench` is new work.
+| Name | Function | Meaning |
+|------|----------|---------|
+| **det-all** | `all_objects_present_rate` | fraction of clips where **every** requested object is present |
+| **det-ratio** | `obj_level_detection_rate` | fraction of (clip, object) pairs present (objects weighted equally) |
+| clip-level | `clip_level_detection_rate` | per-clip mean (clips weighted equally) |
+
+Labels are per-`(clip, object)` rows with `label` ∈ {1 present, 0 absent, −1 uncertain};
+`−1` is ignored. `extraction_dir` keys one clip.
+
+## Files
+
+| File | What it does | Entry point |
+|------|--------------|-------------|
+| `run.py` | aggregate labels → det-all / det-ratio (+ per-k) | `python -m will_it_render.evaluation.run --labels labels.csv` |
+| `metrics/metrics_utils.py` | the detection-metric definitions | library (`summarize(df)`) |
+| `metrics/temporal_accuracy.py` | temporal-control accuracy (TempoControl protocol) | library / per-frame eval |
+| `metrics/vbench_eval.py` | VBench quality dims (optional `[vbench]` extra) | `python -m will_it_render.evaluation.metrics.vbench_eval …` |
+| `baselines/` | runnable comparison methods (A&E, TempoControl, best-of-N) — see `configs/baselines/` | via `will_it_render.inference.steer` |
+
+> Runtime timing of steering (wall-clock/clip) is reported with `STEER_DETERMINISTIC=0`
+> (~24% faster than the deterministic path).

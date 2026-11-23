@@ -15,11 +15,25 @@ We call the tiny model **AttnSteer**. Backends: **LTX-2**, **WAN (Wan2.1)**, **C
 
 **Training** — one AttnSteer model per denoising step, on cross-attention maps toward each word:
 
-![Training](docs/fig_training.png)
+<img src="docs/fig_training.png" width="480">
 
 **Inference** — backpropagate the AttnSteer loss into the latent to make the object render:
 
-![Inference](docs/fig_inference.png)
+<img src="docs/fig_inference.png" width="480">
+
+## How can I use this repo?
+
+Four independent uses — each is standalone with its own README, entry point, and examples:
+
+1. **Run inference** — steer generation with our final algorithm so requested objects render.
+   → [`inference/`](src/will_it_render/inference/README.md) + [`configs/steering/`](configs/steering/README.md)
+2. **Train your own AttnSteer** — extract a backbone's cross-attention features and train a
+   steering model, then steer with it.
+   → [`datasets/`](src/will_it_render/datasets/README.md) + [`training/`](src/will_it_render/training/README.md)
+3. **Use our dataset** — the 473-prompt WIR test set (+ generation seeds) and the auxiliary benchmarks.
+   → [`data/`](data/README.md)
+4. **Use our evaluation** — det-all / det-ratio object-presence metrics on **any** model's videos.
+   → [`evaluation/`](src/will_it_render/evaluation/README.md)
 
 > **Status: migrated, GPU-validated, pre-release.** The full module tree (common / backends /
 > inference / datasets / training / evaluation + baselines), configs, packaging, docs, tests,
@@ -38,28 +52,38 @@ answer yes (induce the object) or no (suppress it).
 ## Install
 
 ```bash
-pip install -e .                 # core (AttnSteer + feature I/O + configs)
-pip install -e ".[all]"          # + detectors, audio, baselines, vbench (heavy)
+pip install -e .            # core (AttnSteer + feature I/O + configs)
+pip install -e ".[all]"     # + detectors, baselines, vbench (heavy, optional)
 ```
 
-The DiT engines are **not** pip dependencies — point the package at your local checkouts:
+### DiT engines (external — not pip deps)
+
+The backbones are local checkouts resolved via env vars (we ship only our hooks, not the
+engines). The versions we used:
+
+| Backbone | How to get it | Versions | Env var |
+|----------|---------------|----------|---------|
+| **LTX-2** | `git clone https://github.com/Lightricks/LTX-2` (commit `1799988`) | torch 2.9.1 (cu128) | `export VP_LTX_ROOT=/path/to/LTX-2` |
+| **WAN (Wan2.1)** | `git clone https://github.com/benf22/Wan2.1` (commit `7c81b2f`; SDPA-attention fork) | torch 2.9.1, diffusers 0.39 | `export VP_WAN_ROOT=/path/to/Wan2.1` |
+| **CogVideoX-5B** | `pip install "diffusers==0.39"` (no clone needed) | transformers 5.x, torch 2.11 | `VP_COGX_ROOT` optional |
+
+Model weights (point `configs/models/<backbone>.yaml` at your paths): LTX
+`ltx-2.3-22b-distilled-1.1` + the Gemma-3-12B text encoder; `Wan-AI/Wan2.1-T2V-1.3B`;
+`THUDM/CogVideoX-5b` (auto-downloaded by diffusers).
+
+## Quick start
 
 ```bash
-export VP_LTX_ROOT=/path/to/LTX-2
 export VP_WAN_ROOT=/path/to/Wan2.1
-export VP_COGX_ROOT=/path/to/CogVideoX     # or rely on pip `diffusers` for CogVideoX
+# fetch a trained AttnSteer bundle (checkpoints + extraction_config + seed latent) from HF…
+python -m scripts.download_artifacts --repo <hf-user>/attnsteer-bundles --bundle wan --quiet
+# …then steer one prompt → a video
+wir-run --bundle <bundle-dir> --prompt "a dog on a beach" --seed 42
 ```
 
-Pinned upstream commits are documented per backend in `src/will_it_render/backends/README.md`.
-
-## Quick start (planned)
-
-```bash
-# one prompt + one AttnSteer bundle (checkpoint + extraction config + seed latent) → steered video
-wir-run --backend wan --bundle <hf-bundle-or-path> --prompt "a dog on a beach" --seed 42
-```
-
-See `src/will_it_render/inference/README.md` for the bundle contract and determinism notes.
+See [`inference/`](src/will_it_render/inference/README.md) for the bundle contract and
+determinism notes, and [How can I use this repo?](#how-can-i-use-this-repo) above for the other
+three uses (train, dataset, evaluate).
 
 ## Layout
 

@@ -1,41 +1,53 @@
 # inference
 
-Inference-time attention steering: at chosen denoising steps, an AttnSteer model scores the
-live cross-attention and its loss gradient is backpropagated into the current-step latent to
-make the target class more (or less) likely to render.
+Inference-time attention steering: at chosen denoising steps, an AttnSteer model scores the live
+cross-attention and its loss gradient is backpropagated into the latent so the target object
+renders. **This is use #1 (run inference).**
 
 **Standalone (N2):** imports only `common` and `backends`.
 
-- `steering_core.py` — model-agnostic optimization loop (`run_steering_optimization`,
-  `SteeringBackendAdapter` ABC, regularizers, grad-aggregation rules).
-- `steering_model.py` — loads AttnSteer checkpoints, turns captures → steering loss.
-- `{ltx,wan,cogx}_adapter.py` — per-backend seams.
-- `steer.py` — config/CSV-driven entry point.
-- `run.py` — **the headline entry point**: one prompt + one AttnSteer bundle + `--seed` →
-  steered video.
+## Entry points
 
-## The bundle contract (plan §10b R2)
+```bash
+# headline: one prompt + one AttnSteer bundle -> a steered video
+wir-run --bundle <bundle-dir> --prompt "a dog on a beach" --seed 42
 
-`run.py` is not a zero-config one-liner. It consumes an **artifact bundle** (from Hugging Face
-Hub or a local path):
-
-```
-bundle/
-  attnsteer_step_NNN.pt     # per-step AttnSteer checkpoints
-  extraction_config.yaml    # capture layout the checkpoints were trained on (FULL-block extraction)
-  seed_latent.*             # a matched, GPU-tagged seed latent
+# config/CSV driven (whole test set); pick the recipe from configs/steering/
+python -m will_it_render.inference.steer \
+    --config configs/steering/wan.yaml \
+    --prompts_csv data/WIR_testset/wir_testset.csv --output_dir out/wir_wan
 ```
 
-`run.py` hardcodes sane determinism defaults (and must not trip the determinism guard when
-`STEER_DETERMINISTIC` is unset). The committed demo bundle reproduces exactly only on the GPU
-type its seed latent was tagged for; `--seed N` for any other seed regenerates noise on the
-fly (reproducible only on the same GPU type — CUDA RNG is architecture-dependent).
+## Files
 
-## Gradient-aggregation rules
+| File | What it does | Entry point |
+|------|--------------|-------------|
+| `run.py` | `wir-run` — load a bundle (checkpoints + `extraction_config.yaml` + seed latent) + one prompt → steered video | `wir-run --bundle … --prompt …` |
+| `steer.py` | config/CSV-driven steering over many prompts (`load_configs`/`build_backend`/`run_steering`) | `python -m will_it_render.inference.steer --config …` |
+| `steer_video_edit.py` | steer an EXISTING video (SDEdit-style, e.g. suppress an object) | `python -m will_it_render.inference.steer_video_edit --config …` |
+| `steering_core.py` | model-agnostic optimization loop (`run_steering_optimization`, `SteeringBackendAdapter`, regularizers, the `gated0.95_mutual[_zero]` grad-aggregation rule) | library |
+| `steering_model.py` | loads AttnSteer checkpoints, turns captures → steering loss (`build_steering_model`) | library |
+| `ltx_adapter.py` / `wan_adapter.py` / `cogx_adapter.py` | per-backend seams onto `steering_core` | library |
 
-`steering.grad_aggregate` selects how per-objective / per-step gradients are combined before
-the latent update (plain mean, mutual-agreement gating, worst-object fallback, flow-PCA
-projections, …). The rules are defined and documented in `steering_core.py`'s
-`GRAD_AGGREGATE_REGISTRY` — each registered rule carries a docstring describing its behavior.
+## The bundle contract (R2)
 
-> Scaffold — loop + `run.py` ported in Phases 2b / 4.
+`wir-run` is not zero-config — it consumes an **artifact bundle**:
+
+```
+bundle/  steering.yaml  checkpoints/attnsteer_step_NNN.pt  extraction_config.yaml  [seed_latents/]
+```
+
+Fetch one with `scripts/download_artifacts.py`, or build it from a training run. The committed
+demo seed latent reproduces exactly only on its tagged GPU type (CUDA RNG is architecture-
+dependent); `--seed N` regenerates noise on the fly for any other seed.
+
+## Gradient-aggregation rule
+
+The shipped recipe uses `grad_aggregate: gated0.95_mutual` (LTX) / `gated0.95_mutual_zero`
+(WAN/CogVideoX) — gate p≥0.95 + mutual-agree fold over survivors (worst-object / zero fallback).
+Defined in `steering_core.py`'s `GRAD_AGGREGATE_REGISTRY`.
+
+## Determinism
+
+On by default (bit-reproducible within a GPU type). `STEER_DETERMINISTIC=0` opts out (~24%
+faster; used for runtime timing).
