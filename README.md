@@ -44,21 +44,34 @@ answer yes (induce the object) or no (suppress it).
 
 ## Install
 
+We develop against **Python 3.10–3.12**. Generation needs a CUDA build of torch, so (for the
+LTX-2 / WAN backbones) install **torch 2.9.1 cu128** from the PyTorch index *before* the package:
+
 ```bash
+python -m venv .venv && source .venv/bin/activate          # or: uv venv --python 3.12 .venv
+pip install torch==2.9.1 --index-url https://download.pytorch.org/whl/cu128
 pip install -e .            # core (AttnSteer + feature I/O + configs)
 pip install -e ".[all]"     # + detectors, baselines, vbench (heavy, optional)
+pip install -e ".[dev]"     # + pytest/ruff, to run the test suite
 ```
+
+CPU-only use (tests, feature I/O — no video generation) works with just `pip install -e ".[dev]"`
+and any torch ≥ 2.4. CogVideoX wants a different stack (torch 2.11); use a separate venv for it.
 
 ### DiT engines (external — not pip deps)
 
 The backbones are local checkouts resolved via env vars (we ship only our hooks, not the
-engines). The versions we used:
+engines). Check out the **exact commits we used**:
 
 | Backbone | How to get it | Versions | Env var |
 |----------|---------------|----------|---------|
-| **LTX-2** | `git clone https://github.com/Lightricks/LTX-2` (commit `1799988`) | torch 2.9.1 (cu128) | `export VP_LTX_ROOT=/path/to/LTX-2` |
-| **WAN (Wan2.1)** | `git clone https://github.com/benf22/Wan2.1` (commit `7c81b2f`; SDPA-attention fork) | torch 2.9.1, diffusers 0.39 | `export VP_WAN_ROOT=/path/to/Wan2.1` |
+| **LTX-2** | `git clone https://github.com/Lightricks/LTX-2 && git -C LTX-2 checkout 1799988` | torch 2.9.1 (cu128) | `export VP_LTX_ROOT=$PWD/LTX-2` |
+| **WAN (Wan2.1)** | `git clone https://github.com/benf22/Wan2.1 && git -C Wan2.1 checkout 7c81b2f` (SDPA-attention fork) | torch 2.9.1, diffusers 0.39 | `export VP_WAN_ROOT=$PWD/Wan2.1` |
 | **CogVideoX-5B** | `pip install "diffusers==0.39"` (no clone needed) | transformers 5.x, torch 2.11 | `VP_COGX_ROOT` optional |
+
+Each engine also needs its own runtime deps. WAN's `requirements.txt` lists `flash_attn`, but
+this is the **SDPA fork** — it runs without it; the minimal set is:
+`pip install "diffusers==0.39" transformers accelerate imageio imageio-ffmpeg einops ftfy opencv-python-headless "numpy<2"`.
 
 Model weights (point `configs/models/<backbone>.yaml` at your paths): LTX
 `ltx-2.3-22b-distilled-1.1` + the Gemma-3-12B text encoder; `Wan-AI/Wan2.1-T2V-1.3B`;

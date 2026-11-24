@@ -47,7 +47,72 @@ The shipped recipe uses `grad_aggregate: gated0.95_mutual` (LTX) / `gated0.95_mu
 (WAN/CogVideoX) — gate p≥0.95 + mutual-agree fold over survivors (worst-object / zero fallback).
 Defined in `steering_core.py`'s `GRAD_AGGREGATE_REGISTRY`.
 
-## Determinism
+## Temporal control (control *when* an object is on screen)
 
-On by default (bit-reproducible within a GPU type). `STEER_DETERMINISTIC=0` opts out (~24%
-faster; used for runtime timing).
+The same steering loop can enforce a **per-frame** presence schedule — make an object appear only
+during part of the clip (the TempoControl protocol), not just "present somewhere". This uses a
+**distinct, per-frame AttnSteer bundle** (an adversarially-hardened per-frame probe) and the
+recipe in `configs/steering/ltx_timeline.yaml`. **LTX-2 only.**
+
+Each prompt row carries a `timelines` column: one `word:schedule` entry per object, entries joined
+by `;`, where the schedule is a bit-string (one `0`/`1` per frame, resampled to the probe's latent
+frames) — `0` = absent, `1` = present. Example: `cat:0000001111111;bird:1111111111111` (the bird
+throughout, the cat only in the second half). A target word with no entry defaults to all-ones
+(= the ordinary per-clip "make it render" objective).
+
+```bash
+# steer the shipped per-frame test set (one/two/multi-object schedules live in data/)
+python -m will_it_render.inference.steer \
+    --config configs/steering/ltx_timeline.yaml \
+    --prompts_csv data/other_benchmarks/tempocontrol/two_objects.csv \
+    --output_dir out/tempo_ltx
+```
+
+Score the result with the temporal-control metric (fraction of frames whose detected presence
+matches the requested schedule):
+
+```bash
+python -m will_it_render.datasets.video_object_labeler --root out/tempo_ltx --out tempo_labels.csv --per-frame
+python -c "from will_it_render.evaluation.metrics.temporal_accuracy import *"   # temporal-acc helpers
+```
+
+(`wir-run` is for the single-objective per-clip case and does not take `timelines` — use
+`inference.steer` for temporal control.)
+
+## Reproducibility: seeds, GPUs, and determinism
+
+There are **two** independent sources of run-to-run variation, handled separately.
+
+**1. The initial latent (generation).** A seed maps to a noise tensor through CUDA's RNG, which
+is **GPU-architecture dependent** — the *same* seed produces a *different* initial latent on an
+A100 vs an H100 vs an L40S, so "seed 42" alone does **not** reproduce a video across machines. We
+fix this by **precomputing** the noise once and *loading* it instead of sampling: the per-seed
+latent files (`seed_latents/`, see `backends/seed_latents_*.py`) make a given seed yield the same
+starting point on any GPU. A bundle ships the latent for its demo seed; for any other seed the
+backend samples on the fly (reproducible only *within* one GPU type — see `--seed`). Note this
+solves reproducibility of the **starting latent only** — it says nothing about the steering
+optimization below.
+
+**2. The steering optimization (inference-time).** Steering backpropagates the AttnSteer loss into
+the latent. Some CUDA ops (notably Flash-Attention's backward) are **non-deterministic**, so even
+with an identical starting latent the steered result can differ **across GPU types and between
+runs on the same GPU**. To reproduce a steered video *exactly* you therefore need **both**: the
+same GPU type **and** deterministic mode.
+
+**Deterministic mode** is built in and **on by default** (`enable_determinism()` sets
+`torch.use_deterministic_algorithms(True)`, `cudnn.deterministic=True`,
+`CUBLAS_WORKSPACE_CONFIG=:4096:8`). It makes steering bit-reproducible within a GPU type but costs
+**~+24% wall-clock**, so turn it off when you don't need exact reproduction (e.g. runtime timing or
+bulk generation):
+
+```bash
+# exact reproduction (default): just run on the same GPU type
+wir-run --bundle <dir> --prompt "a dog on a beach" --seed 42
+
+# faster, non-reproducible run-to-run:
+STEER_DETERMINISTIC=0 wir-run --bundle <dir> --prompt "a dog on a beach" --seed 42
+```
+
+(`STEER_DETERMINISTIC` accepts `0` / `off` / `false` to disable; anything else — or unset — keeps
+it on.) Rule of thumb: **leave determinism on only when you need bit-exact reproduction**; disable
+it for speed otherwise.
