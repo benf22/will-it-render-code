@@ -81,8 +81,9 @@ Model weights (point `configs/models/<backbone>.yaml` at your paths): LTX
 
 ```bash
 export VP_WAN_ROOT=/path/to/Wan2.1
-# fetch a trained AttnSteer bundle (checkpoints + extraction_config + seed latents) from HF…
-bundle=$(python -m scripts.download_artifacts --repo benf22/will-it-render --bundle wan --quiet)
+# fetch the WAN probe's artifacts from HF and assemble a bundle (checkpoints + extraction_config +
+# seed latents); the steering recipe comes from configs/steering/wan.yaml:
+bundle=$(python -m scripts.download_artifacts --backbone wan --quiet)
 # …then steer the requested objects so they render (WAN drops the kite; AttnSteer brings it back):
 wir-run --bundle "$bundle" --prompt "a kite and a baseball bat" \
     --target-words "kite,baseball bat" --seed 1892721232
@@ -93,27 +94,20 @@ to induce (e.g. `--target-words "kite"` for just the kite, or `"kite,baseball ba
 Multi-word objects are fine. Omit the flag to steer every noun in the prompt. (The config/CSV path
 uses a `target_words` column instead; see [`inference/`](src/will_it_render/inference/README.md).)
 
-These are project-page carousel prompts at their original seeds. For **bit-exact** reproduction of
-the paper clips, fetch those seeds' precomputed latents (hosted on HF under `examples/`) and point
-the backend at them before running — otherwise it samples noise on the fly (steering still works on
-any GPU, just not identical to the paper clip; see the [reproducibility
-notes](src/will_it_render/inference/README.md#reproducibility-seeds-gpus-and-determinism)):
-
-```bash
-export VP_SEED_LATENTS_DIR="$(python -m scripts.download_artifacts \
-    --repo benf22/will-it-render --bundle examples --quiet)/seed_latents"
-```
-
+These are project-page carousel prompts at their original seeds — the bundle ships each one's
+precomputed latent, so on its tagged GPU type they reproduce the paper clips exactly (any other
+seed samples noise on the fly; see the [reproducibility
+notes](src/will_it_render/inference/README.md#reproducibility-seeds-gpus-and-determinism)).
 Known-good carousel prompts on the other backbones:
 
 ```bash
 # LTX-2 (rescues the refrigerator)
-ltx=$(python -m scripts.download_artifacts --repo benf22/will-it-render --bundle ltx --quiet)
+ltx=$(python -m scripts.download_artifacts --backbone ltx --quiet)
 wir-run --bundle "$ltx" --prompt "a snowboard and a car and a refrigerator" \
     --target-words "snowboard,car,refrigerator" --seed 2102239827     # needs VP_LTX_ROOT
 
 # CogVideoX (rescues the refrigerator)
-cogx=$(python -m scripts.download_artifacts --repo benf22/will-it-render --bundle cogvideox --quiet)
+cogx=$(python -m scripts.download_artifacts --backbone cogvideox --quiet)
 wir-run --bundle "$cogx" --prompt "a refrigerator and an elephant and a kite" \
     --target-words "refrigerator,elephant,kite" --seed 1356492204
 ```

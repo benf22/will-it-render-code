@@ -16,7 +16,5 @@ components under other licenses. This file records their provenance and notices.
 | Dependency | Used by | License | Notes |
 |------------|---------|---------|-------|
 | YOLOv10 / ultralytics | detectors extra (labeling) | **AGPL-3.0** | AGPL is copyleft — flagged for users; isolated behind the `detectors` extra. |
-| PANNs (Cnn14) | audio extra (labeling) | (TODO confirm) | Audio tagging. |
-| VBench | vbench extra (evaluation) | (TODO confirm) | Video quality metrics. |
-| Llama-3 (prompt enrichment) | optional dataset enrichment | Llama-3 community license | Enrichment is optional; model weights not shipped. |
+| VBench | vbench extra (evaluation) | **Apache-2.0** | Video quality metrics. |
 | DiT engines: LTX-2 / Wan2.1 / CogVideoX | backends (external checkouts) | respective upstream | Resolved via `VP_*_ROOT`; not redistributed here. |

@@ -18,7 +18,7 @@ authors:
     given-names: Idan
     affiliation: Bar-Ilan University
 preferred-citation:
-  type: article
+  type: conference-paper
   title: "Will It Render? Learned Attention Steering for Object Presence in Text-to-Video"
   authors:
     - family-names: Fishman
@@ -29,5 +29,5 @@ preferred-citation:
       given-names: Gal
     - family-names: Schwartz
       given-names: Idan
-  year: 2026
-  # TODO: add venue / arXiv id / DOI once public.
+  collection-title: "Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision (WACV)"
+  year: 2027

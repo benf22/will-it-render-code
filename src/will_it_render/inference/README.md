@@ -39,9 +39,12 @@ python -m will_it_render.inference.steer \
 bundle/  steering.yaml  checkpoints/attnsteer_step_NNN.pt  extraction_config.yaml  [seed_latents/]
 ```
 
-Fetch one with `scripts/download_artifacts.py`, or build it from a training run. The committed
-demo seed latent reproduces exactly only on its tagged GPU type (CUDA RNG is architecture-
-dependent); `--seed N` regenerates noise on the fly for any other seed.
+Assemble one with `python -m scripts.download_artifacts --backbone <wan|ltx|cogvideox|ltx_timeline>`,
+or build it from a training run. On the Hub the artifacts are stored by type — `checkpoints/<backbone>/`
+(probe weights + `extraction_config.yaml`) and `seed_latents/<backbone>/` — and the steering recipe
+is the repo's `configs/steering/<backbone>.yaml`; `download_artifacts` fetches the two artifact dirs
+and copies the recipe in to form the bundle above. A bundled seed latent reproduces exactly only on
+its tagged GPU type (CUDA RNG is architecture-dependent); any other seed samples noise on the fly.
 
 ## Gradient-aggregation rule
 

@@ -12,8 +12,7 @@ Run it with::
 
     export VP_WAN_ROOT=/path/to/Wan2.1
     export VP_CONFIG_DIR=/path/to/configs        # configs/models/wan.yaml -> your WAN weights
-    export WIR_TEST_WAN_BUNDLE="$(python -m scripts.download_artifacts \
-        --repo benf22/will-it-render --bundle wan --quiet)"
+    export WIR_TEST_WAN_BUNDLE="$(python -m scripts.download_artifacts --backbone wan --quiet)"
     pytest tests/test_golden_steering.py -m gpu
 """
 from __future__ import annotations
