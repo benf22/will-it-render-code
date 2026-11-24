@@ -93,18 +93,24 @@ to induce (e.g. `--target-words "kite"` for just the kite, or `"kite,baseball ba
 Multi-word objects are fine. Omit the flag to steer every noun in the prompt. (The config/CSV path
 uses a `target_words` column instead; see [`inference/`](src/will_it_render/inference/README.md).)
 
-These are project-page carousel prompts at their original seeds. The demo bundle ships the
-latent for seed 42; for other seeds the backend samples noise on the fly — the steering still
-works on any GPU, but bit-exact reproduction of the paper clip needs that seed's precomputed
-latent run on its tagged GPU type (see the [reproducibility
-notes](src/will_it_render/inference/README.md#reproducibility-seeds-gpus-and-determinism)).
+These are project-page carousel prompts at their original seeds. For **bit-exact** reproduction of
+the paper clips, fetch those seeds' precomputed latents (hosted on HF under `examples/`) and point
+the backend at them before running — otherwise it samples noise on the fly (steering still works on
+any GPU, just not identical to the paper clip; see the [reproducibility
+notes](src/will_it_render/inference/README.md#reproducibility-seeds-gpus-and-determinism)):
+
+```bash
+export VP_SEED_LATENTS_DIR="$(python -m scripts.download_artifacts \
+    --repo benf22/will-it-render --bundle examples --quiet)/seed_latents"
+```
+
 Known-good carousel prompts on the other backbones:
 
 ```bash
-# LTX-2 (rescues cow + dog + boat)
+# LTX-2 (rescues the refrigerator)
 ltx=$(python -m scripts.download_artifacts --repo benf22/will-it-render --bundle ltx --quiet)
-wir-run --bundle "$ltx" --prompt "a tie and a cow and a dog and a boat" \
-    --target-words "cow,dog,boat" --seed 1547425198          # needs VP_LTX_ROOT
+wir-run --bundle "$ltx" --prompt "a snowboard and a car and a refrigerator" \
+    --target-words "snowboard,car,refrigerator" --seed 2102239827     # needs VP_LTX_ROOT
 
 # CogVideoX (rescues the refrigerator)
 cogx=$(python -m scripts.download_artifacts --repo benf22/will-it-render --bundle cogvideox --quiet)
