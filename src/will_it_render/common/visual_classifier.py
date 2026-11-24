@@ -26,11 +26,11 @@ LEGACY_NUM_FRAMES = 16
 # Frame-colour handling. VBench ``load_video`` returns float32 in [0, 255]; torchvision
 # ``ToPILImage`` treats float input as [0, 1] and does ``mul(255).byte()`` → 255·x mod 256,
 # i.e. an exact photographic NEGATIVE. Every PIL-based classifier (GDINO, OWLv2, YOLO, VLM)
-# has scored negatives since 2026-05-31; GRiT (tensor path) saw true colours. Both flags
+# historically scored negatives; GRiT (tensor path) saw true colours. Both flags
 # default OFF so existing runs/labels reproduce byte-for-byte. Set once per process via
 # ``set_frame_colour`` (the labelers read them from run_config.json / CLI).
 #   fix_pil_negation: cast to uint8 before ToPILImage → PIL classifiers see true colours.
-#   source_negated:   the mp4 itself is stored as a negative (CogX clips before 2026-10-09)
+#   source_negated:   the mp4 itself is stored as a negative (older CogX clips)
 #                     → invert on load, for every classifier (GRiT included).
 _FIX_PIL_NEGATION = False
 _SOURCE_NEGATED = False
@@ -312,7 +312,7 @@ class VLMClassifier(VisualClassifier):
     plugs into the existing majority / frames_final machinery.
 
     Default model: Qwen2.5-VL-32B-Instruct (bf16). Set ``model_id`` to the 72B for the most
-    reliable judge (needs ~145 GB → one B200/H200, or 2×80 GB with device_map="auto"), or to the
+    reliable judge (needs ~145 GB → one large card, or 2×80 GB with device_map="auto"), or to the
     7B for a fast pass. Frames are batched in one forward.
     """
 

@@ -1,6 +1,6 @@
 """Aggregation-flag derivation from a model extraction config.
 
-Hoisted out of ``data_extraction.model_backend`` (``WILL_IT_RENDER_PLAN.md`` §10b R1) so the
+Hoisted out of ``data_extraction.model_backend`` so the
 steering path can derive ``agg_kwargs`` without importing the full backend module.
 ``data_extraction.model_backend`` re-exports ``build_agg_kwargs`` (and keeps the historical
 private name ``_build_agg_kwargs``) for backwards compatibility.

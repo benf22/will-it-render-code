@@ -1,8 +1,8 @@
 """Per-frame control-signal resolution, shared by the TempoControl baseline and the
 inference-side timeline steerer.
 
-Hoisted to ``common`` so ``inference`` does not import ``evaluation.baselines`` (plan §10c
-N2): the timeline steerer and the baseline both build the same ``[T]`` activation signal.
+Hoisted to ``common`` so ``inference`` does not import ``evaluation.baselines`` (avoids a
+cycle): the timeline steerer and the baseline both build the same ``[T]`` activation signal.
 """
 from __future__ import annotations
 

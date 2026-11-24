@@ -1,7 +1,7 @@
 # AttnSteer — LTX-2, per-clip object induction. Paper "Ours" (main table).
-# Formal version: LTX_ours_mutualFix (FORMAL_VERSIONS.md). Paper (rule C): det-all 0.755, det-ratio 0.939.
+# Formal version: LTX_ours_mutualFix. Paper (rule C): det-all 0.755, det-ratio 0.939.
 # Pairs with an LTX AttnSteer bundle (checkpoints + extraction_config + seed latent) — supplied by
-# `wir-run --bundle ...` / scripts/download_artifacts.py. GPU: steered ~84 GB (H100-NVL / H200 / B200 / RTX-6000-Blackwell).
+# `wir-run --bundle ...` / scripts/download_artifacts.py. GPU: steered ~84 GB.
 model_type: ltx
 steering:
   seed: 42

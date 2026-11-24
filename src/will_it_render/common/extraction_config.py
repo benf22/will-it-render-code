@@ -1,6 +1,6 @@
 """Locate the per-extraction geometry config written at extraction time.
 
-Renamed ``probe_config.yaml`` → ``extraction_config.yaml`` (plan §10c N1: no "probe" on
+Renamed ``probe_config.yaml`` → ``extraction_config.yaml`` (no "probe" on
 public surfaces). Freshly written extractions / HF bundles use the new name; the resolver
 still accepts the legacy name so older extraction roots keep working.
 """

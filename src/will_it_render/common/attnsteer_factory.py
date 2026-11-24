@@ -1,8 +1,8 @@
 """``build_attnsteer`` — instantiate a probe architecture by name.
 
-Hoisted out of ``training.trainer`` (``WILL_IT_RENDER_PLAN.md`` §10b R1). The steering path
+Hoisted out of ``training.trainer``. The steering path
 needs only this factory, but importing it from ``training.trainer`` dragged in the whole
-training stack (adversarial, augment, evaluation, summarize_run, probe_dataset, hydra, wandb).
+training stack (augment, evaluation, summarize_run, probe_dataset, hydra).
 This module imports **only** the leaf probe-architecture classes, so ``import
 common.probe_factory`` is cheap. ``training.trainer`` re-exports ``build_attnsteer`` for
 backwards compatibility.
@@ -49,7 +49,6 @@ def build_attnsteer(
     resnet_layer_agg_init_random: bool = False,
     resnet_step_cond: bool = False,
     resnet_step_embed_dim: int = 64,
-    resnet_multitask: bool = False,
     resnet_perframe: bool = False,
     resnet_perframe_head: str = "shared",
     resnet_perframe_tap: str = "post_temporal",
@@ -126,7 +125,6 @@ def build_attnsteer(
             layer_agg_init_random=resnet_layer_agg_init_random,
             step_cond=resnet_step_cond,
             step_embed_dim=resnet_step_embed_dim,
-            multitask=resnet_multitask,
             perframe=resnet_perframe,
             perframe_head=resnet_perframe_head,
             perframe_tap=resnet_perframe_tap,

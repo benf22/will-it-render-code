@@ -200,12 +200,12 @@ def _token_cos(a: torch.Tensor, b: torch.Tensor) -> torch.Tensor:
 #: Order in which the mutual-agree fold visits the objects (config ``steering.mutual_order``).
 #: The fold is ORDER-DEPENDENT: the first object is kept as is (``MUTUAL_FOLD="anchor"``; the legacy fold
 #: masked the first two symmetrically), and every later object only enters on patches where it agrees
-#: with the running sum of the earlier ones, so a later object loses every patch-level conflict. Measured on CogVideoX (2026-10-21, k2-7): with
+#: with the running sum of the earlier ones, so a later object loses every patch-level conflict. Measured on CogVideoX (k2-7): with
 #: the prompt-text order, objects named 4th+ were lost 2.2x as often as with a plain unit-norm
 #: mean (15.5% vs 7.0% of unsteered-present objects) and their alignment with the update fell
-#: 0.61 -> 0.46. "worst_first" (default since 2026-10-21) folds the least-present object first
+#: 0.61 -> 0.46. "worst_first" (default) folds the least-present object first
 #: (ascending probe probability, ties keep text order), so the object that most needs the update
-#: is never the one overruled. "text" = the legacy prompt order (every run before 2026-10-21).
+#: is never the one overruled. "text" = the legacy prompt order.
 #: Needs per-object scores; callers without scores keep the order they pass in.
 MUTUAL_ORDER = "worst_first"
 
@@ -236,24 +236,24 @@ def _patch_cos(a: torch.Tensor, b: torch.Tensor) -> torch.Tensor:
     return (a * b).sum(d, keepdim=True) / (a.norm(dim=d, keepdim=True) * b.norm(dim=d, keepdim=True) + 1e-12)
 
 
-#: How the mutual-agree fold combines the objects (config ``steering.mutual_fold``; 2026-10-25):
+#: How the mutual-agree fold combines the objects (config ``steering.mutual_fold``):
 #:   "anchor" (default) — the first object in :data:`MUTUAL_ORDER` (the weakest, by default) is taken
 #:       AS IS; each next object is added only on the PATCHES where it agrees with the running sum
 #:       (``_patch_cos(g, agg) >= 0`` over the patch's channel vector); each patch is then divided by the
 #:       number of objects summed THERE (a per-patch mean of the contributors, 1..k).
-#:   "legacy" — every run before 2026-10-25: the first TWO objects share one mask (the weakest loses its
+#:   "legacy" — the first TWO objects share one mask (the weakest loses its
 #:       disagreeing slots too; those slots become 0, so later objects then enter there unopposed), and
 #:       the test is :func:`_token_cos`, i.e. per ELEMENT on LTX / CogVideoX, per patch only on WAN.
 MUTUAL_FOLD = "anchor"
 
-#: Denoising step indices at which the mutual-agree fold is SKIPPED (config ``steering.mutual_skip_steps``; 2026-10-26):
+#: Denoising step indices at which the mutual-agree fold is SKIPPED (config ``steering.mutual_skip_steps``):
 #: there :func:`agg_mutual_agree` returns the plain mean of the gradients it is given — for the gated rules that is the
 #: "-mutual" update (mean of the survivors' unit-normed grads). Empty (default) = never skipped, bit-identical.
 #: The step is read from :data:`AGG_STEP`, which the per-object GRAD_AGGREGATE loop sets next to AGG_ITER.
 MUTUAL_SKIP_STEPS: frozenset = frozenset()
 AGG_STEP = -1
 
-#: Diagnostics only (config ``steering.log_mask_stats``; 2026-10-26): when True, the "anchor" fold records how much it
+#: Diagnostics only (config ``steering.log_mask_stats``): when True, the "anchor" fold records how much it
 #: masks (+ a 40-bin histogram of the per-patch fold-test cosines and the sum / sum-sq / count of the negative ones)
 #: and the loop adds a ``mask_stats`` dict to that iteration's record in steering_metrics.json. Never changes
 #: the update. False (default) = nothing computed.
@@ -319,9 +319,7 @@ def agg_mutual_agree_unitnorm(pgrads: dict, flow=None, scores=None) -> torch.Ten
     The fold is identical; only the inputs are rescaled to unit norm, so an object whose
     gradient happens to be large cannot dominate the sum (the multi-object balancing that
     ``grad_balance: unitnorm`` performs on the timeline branch). This is the rule the
-    paper's LTX "+Ours" arm uses (#3 = mutual_agree + unitnorm, lr15, "a <noun>" spans);
-    it was previously only reachable from the scratch driver
-    ``_scratch/optrule/ltx_mutual_cfg_gen.py``, which defines the same aggregation inline.
+    paper's LTX "+Ours" arm uses (#3 = mutual_agree + unitnorm, lr15, "a <noun>" spans).
     Single-object prompts reduce to that object's (unit-normed) gradient.
     """
     g = {w: v / (v.norm() + 1e-12) for w, v in pgrads.items()}
@@ -398,7 +396,7 @@ def _probs_from_scores(scores: Optional[dict], ws: list) -> dict:
 
 def _make_gated_mutual(tau: float = 0.95, fallback: str = "worst", freeze: bool = False,
                        normalize: bool = True, budget_s: int = 0) -> Callable:
-    """Gate FIRST, then mutual-agree among the survivors (2026-09-14).
+    """Gate FIRST, then mutual-agree among the survivors.
 
     ``A+B`` chaining cannot express this: the chain hands rule B a single aggregated vector,
     while mutual agreement needs the per-object gradients. Fusing them in one rule keeps the
@@ -409,8 +407,8 @@ def _make_gated_mutual(tau: float = 0.95, fallback: str = "worst", freeze: bool 
          (:func:`agg_mutual_agree`), so objects that need help do not cancel each other.
 
     ``fallback`` decides what happens when every object is already above the gate — the case
-    that idles 62-91% of the plain gate's iterations (see the 2026_09_14 rule-mechanics
-    report). ``"worst"`` spends the iteration on the least-present object instead of emitting
+    that idles 62-91% of the plain gate's iterations (empirically). ``"worst"`` spends the
+    iteration on the least-present object instead of emitting
     a zero gradient; ``"zero"`` reproduces the plain gate's behaviour.
 
     ``budget_s``: minimum number of optimization iterations per denoising step (default 0 =
@@ -429,7 +427,7 @@ def _make_gated_mutual(tau: float = 0.95, fallback: str = "worst", freeze: bool 
 
     ``normalize``: unit-normalise each object's gradient before the gate/fold (default). ``False``
     runs the same gate + mutual fold (and fallback) on the RAW gradients — the "minus unitnorm"
-    ablation (2026-10-19); the fixed lr is then not matched to the normalised rule.
+    ablation; the fixed lr is then not matched to the normalised rule.
     """
     state = {"iter": None, "keep": None}
 
@@ -487,32 +485,29 @@ def _make_gated_mutual(tau: float = 0.95, fallback: str = "worst", freeze: bool 
 
 
 GRAD_AGGREGATE_REGISTRY = {
-    # The shipped per-clip "Ours" rule (FORMAL_VERSIONS): gate p>=0.95 + mutual-agree fold
+    # The shipped per-clip "Ours" rule: gate p>=0.95 + mutual-agree fold
     # over survivors, worst-object fallback (LTX/WAN) or zero fallback (CogVideoX).
     "gated0.95_mutual": _make_gated_mutual(0.95, "worst"),
     "gated0.95_mutual_zero": _make_gated_mutual(0.95, "zero"),
 }
 
 #: Capture-space mutual-agree (see :func:`_capture_space_mutual_grad`). OFF by default; set from config
-#: `steering.capture_space_mutual: true` (steer.py). Merged 2026-10-19 from the uncommitted
-#: feat+wan-backend worktree (original: origin/wan-mutual-batchgrad). When True *and*
+#: `steering.capture_space_mutual: true` (steer.py). When True *and*
 #: GRAD_AGGREGATE is set, per-object grads are aggregated at the attention captures and a SINGLE
 #: transformer backward produces the update — O(1) in K transformer backwards, fits a memory-bound
 #: GPU. A semantic variant of the injected latent-space rule (which is used only for the
-#: compare-log direction cosine). Ported from the ``wan-mutual-batchgrad`` branch.
+#: compare-log direction cosine).
 CAPTURE_SPACE_MUTUAL = False
 #: Config: `steering.compare_pobj_grad: true`. Diagnostic compare for the capture-space path: also compute the EXACT per-object loop gradient
 #: + the injected latent-space GRAD_AGGREGATE rule and log wall-time and the direction cosine
 #: between the two updates. Slow (K extra full backwards); leave False for real runs.
-#: Ported from the ``wan-mutual-batchgrad`` branch.
 COMPARE_POBJ_GRAD = False
 
 
 def _capture_space_mutual_grad(steering_model, captures, x_t, step_idx, target_words_indices):
     """Capture-space mutual-agree: O(1)-in-K transformer backwards (fits a memory-bound GPU).
 
-    Ported from the ``wan-mutual-batchgrad`` branch (``vp_batchgrad``), with the unit-norm
-    balancing of this branch's :func:`agg_mutual_agree_unitnorm` folded in (see below).
+    Uses the unit-norm balancing of :func:`agg_mutual_agree_unitnorm` (see below).
 
     The K per-object gradients all factor through the SAME transformer graph x_t → attention
     captures, differing only through the (tiny) probe head. So instead of K full backwards to
@@ -524,7 +519,7 @@ def _capture_space_mutual_grad(steering_model, captures, x_t, step_idx, target_w
          per video token Lq via cos over (block,head), the capture-space analogue of
          :func:`agg_mutual_agree`'s per-token cosine in latent space,
       3. ONE transformer backward: vJP of the summed masked attention cotangent to x_t.
-    Peak memory == one backward (fits H100); wall == 1 fwd + K cheap head-backwards + 1 bwd.
+    Peak memory == one backward; wall == 1 fwd + K cheap head-backwards + 1 bwd.
     Semantically a VARIANT of latent-space mutual-agree (agreement moved upstream to attention
     space), not bit-identical — validate it steers comparably. COMPARE_POBJ_GRAD also computes
     the exact loop grad + the injected GRAD_AGGREGATE rule and logs time + direction cosine.
@@ -592,7 +587,7 @@ def _capture_space_mutual_grad(steering_model, captures, x_t, step_idx, target_w
         # Every step here is IN PLACE. The natural comprehensions
         # (`[ub * mv ...]`, `[a + b ...]`, `[ub / K ...]`) each duplicate all ~48 attention
         # blocks at once; stacked on LTX's ~84GB steering peak that OOM'd 95GB cards even
-        # though a B200 was fine. `u` are fresh autograd.grad outputs and Uagg is ours, so
+        # though a ~180GB card was fine. `u` are fresh autograd.grad outputs and Uagg is ours, so
         # mutating both is safe.
         Uagg = None
         for w in words:
@@ -680,7 +675,7 @@ JUDGE_PROBES = None
 HINGE_JUDGE_MODEL = None
 
 #: PROBE_MIX (``steering.probe_mix``): use the held-out NEIGHBOUR probes DURING optimisation,
-#: not just as a diagnostic. The natural-data judge experiment (2026-09-16) found steering leaks
+#: not just as a diagnostic. The natural-data judge experiment found steering leaks
 #: into the optimised probe (≈99% of truly-absent objects read present) but NOT its neighbours
 #: (37-55%), so a loss built from the neighbours should buy a gain the neighbours also recognise.
 #: Both modes operate on the per-object BCE that GRAD_AGGREGATE consumes, so the objective
@@ -754,7 +749,7 @@ def _resolve_select_probe(steering_model, step_idx):
 #: the natural flow before any optimization. Config knob ``steering.flow_ref``.
 FLOW_REF = "iter"
 
-# --- WHERE the flow task is allowed to act. All three default to the pre-2026-09-20 behaviour
+# --- WHERE the flow task is allowed to act. All three default to the original behaviour
 # ("inside every optimisation iteration, nowhere else"), so an untouched config is bit-identical.
 # They are independent knobs, but 2 and 3 are alternatives to 1 rather than additions to it: both
 # assume the optimisation itself ran WITHOUT a flow task, so pair them with `flow_iters: []`.
@@ -789,7 +784,7 @@ FLOW_ON_TOTAL = False
 
 #: v3b — sample the flow at the PRE-optimisation latent ``x0`` instead of at the post-optimisation
 #: ``x^N``. The v3 site otherwise reads ``v`` where the latent is furthest off-manifold and uses it
-#: to correct a displacement that started somewhere else (report 2026-09-22 §5.1). This is the only
+#: to correct a displacement that started somewhere else. This is the only
 #: one of the three v3b changes that alters the step's DIRECTION. Config: ``steering.flow_on_total_k0``.
 FLOW_ON_TOTAL_K0 = False
 
@@ -872,7 +867,7 @@ VELOCITY_PROJ: Optional[dict] = None
 #: denoiser-visible change, which is the on-manifold notion of "moved".
 MOVE_BAND: Optional[dict] = None
 
-#: Persistence regularizers (2026-09-10 step-7 study) ``{"kind": "latent"|"flow"|"sawtooth",
+#: Persistence regularizers ``{"kind": "latent"|"flow"|"sawtooth",
 #: "weight": w, "steps": None | [step indices], "detach_flow": bool}`` — ONE extra term added to
 #: the BCE, loss = BCE + w·term, where (z_0 = the incoming latent of this step, z_i = the iterate,
 #: v = cond-only velocity of the iterate, as in the aggregation rules):
@@ -1022,7 +1017,7 @@ def _other_text_key_indices(
 ) -> list[int]:
     """Key positions for the attention-anchor term: every text token EXCEPT the target's.
 
-    Ported from the pre-core LTX loop (master, attention-anchor regularizer). The
+    Key positions for the attention-anchor regularizer. The
     cross-attention key axis is the text encoder's padded sequence (LTX: 256), right-padded,
     so the real prompt tokens occupy ``[0, n_text_tokens)`` in tokenizer order -- the same
     indexing ``target_words_indices`` use. ``"prompt"`` = real tokens only; ``"all"`` = every
@@ -1454,7 +1449,7 @@ def run_steering_optimization(
                         # Breaking skips the autograd.grad below, so the just-built forward
                         # graph (a FULL transformer grad-forward, ~49 GB on CogVideoX) would
                         # stay alive through these locals into the next step's forwards —
-                        # enough to OOM a 94 GB H100. pred_term is the sneaky one: computed
+                        # enough to OOM a 94 GB card. pred_term is the sneaky one: computed
                         # unconditionally ("always logged") and its grad_fn chains through
                         # pred into the ENTIRE graph. Drop every reference so it frees now.
                         loss = bce_loss = captures = pred = None
@@ -1477,7 +1472,7 @@ def run_steering_optimization(
                                 # Release the un-backwarded forward graph before breaking, exactly
                                 # as the A&E and correlation early-exits do — on CogVideoX this
                                 # graph is ~49 GB and would otherwise stay alive into the next
-                                # step's forwards and OOM a 94 GB H100. (WAN's graph is small, so
+                                # step's forwards and OOM a 94 GB card. (WAN's graph is small, so
                                 # this break historically "worked" there without the release.)
                                 loss = bce_loss = captures = pred = None
                                 pred_term = _x0_drift = anchor_term = kl_term = mag_term = entropy_term = None
@@ -1513,7 +1508,7 @@ def run_steering_optimization(
                         # latent frames of its own class. The absent half never touches a
                         # requested frame and the present half never touches a forbidden one,
                         # so the two can no longer cancel on shared latent elements — the
-                        # failure mode behind the equalized fixed point (DEBUG.md §2, §6).
+                        # failure mode behind the equalized fixed point.
                         # Unmasked, the two grads would sum to exactly the frame_reduce=
                         # "balanced" gradient, so this is a change of *routing*, not of loss.
                         with torch.enable_grad():
@@ -1542,8 +1537,7 @@ def run_steering_optimization(
                             and hasattr(steering_model, "per_object_bce")):
                         # O(1)-in-K: aggregate per-object grads at the attention captures, one
                         # transformer backward to x_t. Fits a memory-bound GPU (see helper).
-                        # Ported from the wan-mutual-batchgrad branch; the helper folds in this
-                        # branch's grad_balance/unitnorm when that aggregation rule is selected.
+                        # The helper folds in grad_balance/unitnorm when that aggregation rule is selected.
                         with torch.enable_grad():
                             # Regularizer gradient FIRST (retain_graph=True): the capture-space
                             # backward frees the graph, and the trust region must still apply
@@ -1593,8 +1587,8 @@ def run_steering_optimization(
                             # Free the graph on the LAST backward (unless the reg branch below
                             # still needs it): retain_graph=True on every call keeps the
                             # checkpointed capture-softmax recomputes alive into the next
-                            # iteration's forward — +~12 GB, OOMs the 94 GB H100 on CogVideoX
-                            # (from feat+cogvideox-backend). retain_graph does not change values.
+                            # iteration's forward — +~12 GB, OOMs a 94 GB card on CogVideoX.
+                            # retain_graph does not change values.
                             _need_reg = loss is not bce_loss
                             _pg = {}
                             if _words:
@@ -1741,8 +1735,8 @@ def run_steering_optimization(
                     # direction is −Δ (the applied move is always −g), and the result is applied
                     # to the PRE-optimisation latent x0 rather than composed onto x_t.
                     # ANCHOR (v3b, FLOW_ON_TOTAL_K0). Sample the flow at the PRE-optimisation
-                    # latent x0 instead of at the post-optimisation x_t. §5.1 of the 2026-09-22
-                    # report showed the site otherwise straddles three anchor points — Δ measured
+                    # latent x0 instead of at the post-optimisation x_t. The site otherwise
+                    # straddles three anchor points — Δ measured
                     # from x0, v read at x^N, result applied at x0 — and at lr=500 x^N is the
                     # furthest off-manifold the latent ever gets, i.e. precisely where the
                     # denoiser is least trustworthy. With K0 all three collapse onto x0.
@@ -1772,7 +1766,7 @@ def run_steering_optimization(
                     # to act ONLY here), and `[]` made `_flow_iter_on()` false right where the flow
                     # is the entire point: an `aemax` rule then took its gated-OFF branch and
                     # returned the argmax gradient unchanged, i.e. `_d3 = -Δ` and `x_t = x0 + Δ` —
-                    # a bit-exact NO-OP. Every flow_on_total run before 2026-09-22 reproduced its
+                    # a bit-exact NO-OP. Earlier flow_on_total runs reproduced their
                     # own un-arbitrated optimisation and must be re-read as such.
                     _keep3, globals()["FLOW_ITERS"] = FLOW_ITERS, None
                     _obj3 = (-_delta / step_lr) if FLOW_ON_TOTAL_PER_LR else -_delta
@@ -1887,7 +1881,7 @@ def run_steering_optimization(
                 with torch.no_grad():
                     x_g = (x_g - step_lr * Jg).detach()
                 # Free the extra grad-forward graph/activations before the (heavy) denoise forwards,
-                # else the aggressive path peaks ~1.5× and OOMs a 141 GB H200.
+                # else the aggressive path peaks ~1.5× and OOMs a 141 GB card.
                 del captures_g, pred_g, _pobj_g, _pg_g, Jg
                 torch.cuda.empty_cache()
                 adapter.end_optimization()

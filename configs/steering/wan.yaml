@@ -1,7 +1,7 @@
 # AttnSteer — WAN (Wan2.1-T2V-1.3B, 21f), per-clip object induction. Paper "Ours" (main table).
-# Formal version: WAN_ours_mutualFix_rgbfixProbe (FORMAL_VERSIONS.md). Paper (rule C): det-all 0.599, det-ratio 0.893.
+# Formal version: WAN_ours_mutualFix_rgbfixProbe. Paper (rule C): det-all 0.599, det-ratio 0.893.
 # Uses the colour-corrected full-res retrained probe (train_spatial_downsample 1). Pairs with a WAN bundle.
-# GPU: full-res steered → B200 / H200 only.
+# GPU: full-res steered ~45 GB (fits a 48 GB card).
 model_type: wan
 model_extraction_overrides:
   attn_spatial_downsample: 1              # full-res probe (matches train_spatial_downsample 1)

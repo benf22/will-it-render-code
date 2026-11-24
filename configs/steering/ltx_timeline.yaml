@@ -1,8 +1,8 @@
 # AttnSteer — LTX-2, per-frame TEMPORAL control (control WHEN an object is on screen).
 # Paper "Ours" for the temporal-control table (TempoControl protocol). Formal version:
-# LTX_perframe_v3 (bce_huber_m2) — "the single arm in every paper table" (FORMAL_VERSIONS.md).
+# LTX_perframe_v3 (bce_huber_m2) — the single arm in every paper table.
 # temporal-acc 0.681 / 0.841 / 0.913 (1 / 2 / multi-object).
-# Uses a DISTINCT bundle: an adversarially-hardened PER-FRAME AttnSteer probe (not the per-clip one).
+# Uses a DISTINCT bundle: a PER-FRAME AttnSteer probe (not the per-clip one).
 # Each prompt row supplies a `timelines` column (per-object on/off schedule). GPU: as LTX per-clip (~84 GB).
 model_type: ltx
 steering:
@@ -24,7 +24,7 @@ steering:
   model:
     mode: per_frame
     nearest_probe: true
-    checkpoints_dir: /path/to/attnsteer-perframe-bundle/checkpoints        # adv-hardened per-frame probe
+    checkpoints_dir: /path/to/attnsteer-perframe-bundle/checkpoints        # per-frame probe
     extraction_config: /path/to/attnsteer-perframe-bundle/extraction_config.yaml
   objective:
     frame_reduce: bce_huber         # v3: capped mirror of log(BCE)

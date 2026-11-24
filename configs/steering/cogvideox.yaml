@@ -1,5 +1,5 @@
 # AttnSteer — CogVideoX-5B, per-clip object induction. Paper "Ours" (main table).
-# Formal version: CogVideoX_ours_mutualFix (FORMAL_VERSIONS.md). Paper (rule C): det-all 0.659, det-ratio 0.912.
+# Formal version: CogVideoX_ours_mutualFix. Paper (rule C): det-all 0.659, det-ratio 0.912.
 # Pairs with a CogVideoX bundle. Run with determinism ON (STEER_DETERMINISTIC=1). ~477 s/clip.
 model_type: cogvideox
 model_extraction_overrides:

@@ -3,7 +3,7 @@
 Measure **object presence** (and quality) in generated videos — the paper's headline metrics.
 Works on clips from **any** model, so you can evaluate your own generations, not just ours.
 
-**Standalone (N2):** imports only `common` and `backends`.
+**Standalone:** imports only `common` and `backends`.
 
 ## Entry point
 
@@ -19,7 +19,7 @@ python -m will_it_render.evaluation.run --labels labels.csv                     
 Prints **det-all** / **det-ratio** / clip-level detection rate, plus a per-k breakdown.
 
 ```bash
-# (C) reproduce the paper's §1 table from the shipped annotated clips (no GPU, no model)
+# (C) reproduce the paper's main object-presence table from the shipped annotated clips (no GPU, no model)
 python -m will_it_render.evaluation.paper_table    # det-all / det-ratio per backbone × method
 ```
 

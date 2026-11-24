@@ -42,8 +42,7 @@ from will_it_render.inference.steering_model import build_steering_model
 
 def run_video_edit_steering(steering: dict, backend, model_extraction_cfg: dict, raw_cfg: dict,
                             model_cfg: dict, model_cfg_path: Path, output_dir: Path,
-                            device: int, logger: logging.Logger, prompts_csv: str | None = None,
-                            wandb_run=None) -> dict:
+                            device: int, logger: logging.Logger, prompts_csv: str | None = None) -> dict:
     """Run video-edit (SDEdit-style) steering for every row into ``output_dir``.
 
     Mirrors ``steering.steer.run_steering`` (same steering-model construction,
@@ -167,13 +166,6 @@ def run_video_edit_steering(steering: dict, backend, model_extraction_cfg: dict,
         (out_dir / "source_anchor_trace.json").write_text(json.dumps(source_trace, indent=2))
         print(f"[video-edit-steering] saved → {out_dir}")
         prompt_dirs.append(out_dir)
-
-        if wandb_run is not None and metrics_log:
-            last = metrics_log[-1]
-            wandb_run.log({
-                f"prompt_{row['prompt_idx']}/final_prob":
-                    last.get("prob_after", last.get("prob")),
-            })
 
         torch.cuda.empty_cache()
 

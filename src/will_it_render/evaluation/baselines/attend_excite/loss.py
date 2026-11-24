@@ -91,7 +91,7 @@ class AttendExciteSteeringModel(SteeringModel):
     Hooks **all** transformer blocks (``capture_blocks = None``): LTX-2 is a DiT whose
     every block attends at the same ``13×16×16`` grid, so there is no resolution
     hierarchy to select from and "all layers at the chosen resolution" reads as all 48.
-    Same backprop footprint as our conv_k48 steering → B200/H200/H100-NVL/RTX6000-Blackwell.
+    Same backprop footprint as our conv_k48 steering.
     """
 
     def __init__(
@@ -124,7 +124,7 @@ class AttendExciteSteeringModel(SteeringModel):
         self.agg_kwargs = agg_kwargs
         # The steering loop reads this to decide which blocks to hook. None = all of them
         # (LTX: all 48 at one resolution). On WAN the un-subset 30-block grad forward at
-        # Lq=32760 OOMs even a 180 GB B200, so the WAN config hooks a block subset (the same
+        # Lq=32760 OOMs even a 180 GB card, so the WAN config hooks a block subset (the same
         # 15 the probe uses) — A&E just means over whichever blocks are captured.
         self.capture_blocks: Optional[list[int]] = list(capture_blocks) if capture_blocks is not None else None
 

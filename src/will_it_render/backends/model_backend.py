@@ -45,7 +45,7 @@ class _PrecomputedNoiser:
         assert path.exists(), (
             f"Precomputed seed-latent file is missing for seed={seed}:\n  {path}\n"
             f"All seeds must be precomputed on the canonical GPU before extraction.\n"
-            f"Generate it (on ctxa100-01) with:\n  {gen_hint}"
+            f"Generate it (on your canonical GPU) with:\n  {gen_hint}"
         )
         # weights_only=False: our own precomputed seed-latent file (trusted); it carries
         # a torch TorchVersion tag that the PyTorch>=2.6 weights_only=True default rejects.
@@ -202,7 +202,7 @@ class ModelBackend(ABC):
         """Save generated video and audio to *path* using the backend's environment."""
 
 
-# ``build_agg_kwargs`` hoisted to ``common.agg`` (WILL_IT_RENDER_PLAN.md §10b R1) so the
+# ``build_agg_kwargs`` hoisted to ``common.agg`` so the
 # steering path can derive agg flags without importing this backend module. Re-exported
 # under both the public name and the historical private ``_build_agg_kwargs`` alias so
 # existing callers (here and in steering/) keep working.
@@ -389,8 +389,7 @@ class LTXBackend(ModelBackend):
     ) -> None:
         from will_it_render.common import paths
 
-        # Resolve the LTX-2 checkout from VP_LTX_ROOT (or engine_cfg.ltx_root). The old
-        # parents[3] directory-walk broke once this module moved under src/ (plan §10b R5).
+        # Resolve the LTX-2 checkout from VP_LTX_ROOT (or engine_cfg.ltx_root).
         _LTX_ROOT = paths.ltx_root(getattr(engine_cfg, "ltx_root", None))
         for pkg in ("ltx-core", "ltx-pipelines"):
             paths.add_to_syspath(_LTX_ROOT / "packages" / pkg / "src")
@@ -599,7 +598,7 @@ class LTXBackend(ModelBackend):
                 noiser = None
             elif not (_save_p or _load_p):
                 # Prefer the canonical, GPU-independent per-seed initial latents precomputed
-                # on ctxa100 (seed noise is GPU-architecture dependent, see seed_gpu_analysis/,
+                # on a fixed GPU (seed noise is GPU-architecture dependent,
                 # so a precomputed latent is what makes the same seed reproduce across GPUs).
                 _seed_path = self._seed_latent_path(seed, video_h, video_w)
                 if _seed_path.exists():
@@ -1332,7 +1331,7 @@ class WanBackend(ModelBackend):
         from will_it_render.common import paths
 
         # Locate the Wan2.1 checkout: an explicit engine.wan_root (configs/models/wan.yaml)
-        # wins, else VP_WAN_ROOT (plan §10b R5). `wan` is not pip-installed, so we path-inject.
+        # wins, else VP_WAN_ROOT. `wan` is not pip-installed, so we path-inject.
         _WAN_ROOT = paths.wan_root(getattr(engine_cfg, "wan_root", None))
         if not (_WAN_ROOT / "wan").is_dir():
             raise FileNotFoundError(
@@ -1364,7 +1363,7 @@ class WanBackend(ModelBackend):
         # (use_deterministic_algorithms warn_only=False): SDPA's flash backward then uses its
         # deterministic algorithm, so a steered run is bit-reproducible on the same GPU type.
         # Under warn_only the backward was atomicAdd-based and steered runs differed run-to-run
-        # even on the same GPU (2026-10-09 hash test). Measured cost of strict: +5% wall-clock,
+        # even on the same GPU (hash test). Measured cost of strict: +5% wall-clock,
         # no extra VRAM; the full WAN steer + VAE-decode path has no op without a deterministic
         # kernel. STEER_DETERMINISTIC=warn restores warn_only; =0 opts out entirely.
         import os as _os
@@ -1994,7 +1993,7 @@ class CogVideoXBackend(ModelBackend):
         # The WHOLE loop runs under no_grad. Extraction and generation are inference-only,
         # and (crucially) leaving scale_model_input / step outside no_grad let an autograd
         # graph accumulate across all 50 steps — which the VAE decode then retained, growing
-        # to fill the entire GPU (78 GB on A100, 92 GB on H100) and OOMing. Steering uses a
+        # to fill the entire GPU (tens of GB) and OOMing. Steering uses a
         # separate grad-enabled path (run_with_steering), not this method.
         with torch.no_grad():
             for step_idx, t in enumerate(tqdm(timesteps, desc=desc, unit="step")):
@@ -2027,7 +2026,7 @@ class CogVideoXBackend(ModelBackend):
                     # index — matching CogVideoXPipeline.__call__ (`num_inference_steps -
                     # t.item()`). Using step_idx collapsed guidance to ~1 for most of the loop
                     # (mean gs 1.94 vs 3.82), over-brightening output and weakening prompt
-                    # adherence (fixed 2026-10-09).
+                    # adherence.
                     gs = 1.0 + guidance_scale * (
                         (1 - math.cos(math.pi * ((n_steps - t.item()) / n_steps) ** 5.0)) / 2.0
                     )
@@ -2314,7 +2313,7 @@ class CogVideoXBackend(ModelBackend):
         # export_to_video does `(frame * 255).astype(uint8)` itself, so frames MUST be float
         # in [0,1]. Passing uint8 here multiplies 0-255 by 255 in uint8 arithmetic, which
         # wraps mod 256 (255·x ≡ 256−x) and stored every clip as its photographic NEGATIVE
-        # (found 2026-10-09; all cogx eval clips before this fix are negated).
+        # (all cogx eval clips before this fix are negated).
         vid = torch.from_numpy(video).permute(1, 2, 3, 0)  # [F, H, W, C]
         vid = ((vid.clamp(-1, 1) + 1.0) / 2.0).float().numpy()
         frames = [vid[i] for i in range(vid.shape[0])]

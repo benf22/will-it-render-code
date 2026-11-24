@@ -97,8 +97,7 @@ def load_configs(config_path: str):
     model_type: str = raw_cfg.get("model_type", "ltx")
 
     # The per-model config is the only shared config; it lives in the repo's configs/models/
-    # dir, located via common.paths.config_dir() (VP_CONFIG_DIR or an upward search — the
-    # old parent.parent walk broke once this module moved under src/, plan §10b R5).
+    # dir, located via common.paths.config_dir() (VP_CONFIG_DIR or an upward search).
     from will_it_render.common import paths
 
     model_cfg_path = paths.config_dir() / "models" / f"{model_type}.yaml"
@@ -130,7 +129,7 @@ def enable_determinism(logger: logging.Logger | None = None) -> bool:
 
     Steered generation was **not** reproducible run-to-run even on one GPU type, while
     un-steered generation is bit-exact — so the divergence entered through the backward
-    pass. Measured 2026-08-05 (2 prompts, B200, identical config/seed/latent):
+    pass. Measured (2 prompts, identical config/seed/latent):
 
         flags off ............ CLIP drift 0.19 / 0.38 vs its own re-run
         warn_only=True ....... 0.14 / 0.39   (fixes every op EXCEPT the one that mattered)
@@ -139,12 +138,11 @@ def enable_determinism(logger: logging.Logger | None = None) -> bool:
     ``warn_only=True`` isolated the single culprit: **Flash Attention backward**, which
     accumulates dQ/dK/dV with atomics. Nothing else in the steering path lacks a
     deterministic kernel, so this does not raise. Cost ≈ +24% wall-clock per clip
-    (46 s → 57 s on B200); most of that is `cudnn.benchmark=False` plus the other
+    (46 s → 57 s); most of that is `cudnn.benchmark=False` plus the other
     deterministic kernels, not the attention fix itself.
 
     Without this, a config's own re-run differs about as much as a *different prompt*
-    would — which is why small-n steering sweeps measured noise. See
-    ``experiment_reports/2026_07_15_STEER_LossAdd_latents_terms`` and the 2026-08-05 determinism probe.
+    would — which is why small-n steering sweeps measured noise (empirically).
 
     Call BEFORE the model is built. Returns True when determinism is on.
     """
@@ -210,7 +208,7 @@ def _make_attn_capture_sink(root: Path, stem: str, step: int, logger: logging.Lo
         tmp = d / f"step_{step:03d}.safetensors.tmp"
         save_file(feats, str(tmp))
         os.replace(tmp, final)  # atomic: a reader never sees a half-written file
-        pc = root / "extraction_config.yaml"  # N1
+        pc = root / "extraction_config.yaml"
         if not pc.exists():
             shape = probe_shape_from_captures(captures, **steering_model.agg_kwargs)
             h, w = shape["latent_hw"]
@@ -233,13 +231,11 @@ def _make_attn_capture_sink(root: Path, stem: str, step: int, logger: logging.Lo
 def run_steering(steering: dict, backend, model_extraction_cfg: dict, raw_cfg: dict,
                  model_cfg: dict, model_cfg_path: Path, output_dir: Path,
                  device: int, logger: logging.Logger, prompts_csv: str | None = None,
-                 wandb_run=None, extra_step_callback=None) -> dict:
+                 extra_step_callback=None) -> dict:
     """Run steered generation for every prompt into ``output_dir``.
 
     ``backend`` is prebuilt and reused — never recreated here. ``output_dir`` is
-    explicit and fully resolved (the caller owns any timestamping). ``wandb_run`` is
-    optional; when given, per-prompt metrics/media are logged to it (else no-op so the
-    plain CLI path stays logging-agnostic).
+    explicit and fully resolved (the caller owns any timestamping).
 
     Returns ``{"n_prompts": int, "prompt_dirs": list[Path]}`` so callers can aggregate.
     """
@@ -342,11 +338,11 @@ def run_steering(steering: dict, backend, model_extraction_cfg: dict, raw_cfg: d
         steering_core.STOP_WHEN_MIN_PROB = float(getattr(_agg, "gate_tau", 0.95))
         logger.info("stop_when_min_prob auto-enabled at %.2f (zero-fallback rule requires early-stop)",
                     steering_core.STOP_WHEN_MIN_PROB)
-    # Mutual-agree fold order (steering.mutual_order): "worst_first" (default since 2026-10-21) folds the
-    # least-present object first; "text" = the legacy prompt order of every earlier run (reproduce old runs).
+    # Mutual-agree fold order (steering.mutual_order): "worst_first" (default) folds the
+    # least-present object first; "text" = the legacy prompt order (reproduce old runs).
     steering_core.MUTUAL_ORDER = str(steering.get("mutual_order", "worst_first"))
-    # Mutual-agree fold (steering.mutual_fold): "anchor" (default since 2026-10-25) keeps the first object
-    # as is and adds each next one on the PATCHES where it agrees; "legacy" = every earlier run.
+    # Mutual-agree fold (steering.mutual_fold): "anchor" (default) keeps the first object
+    # as is and adds each next one on the PATCHES where it agrees; "legacy" = the earlier behaviour.
     steering_core.MUTUAL_FOLD = str(steering.get("mutual_fold", "anchor"))
     # steering.mutual_skip_steps: denoising steps where the fold is replaced by the plain mean ("-mutual" there).
     steering_core.MUTUAL_SKIP_STEPS = frozenset(int(x) for x in (steering.get("mutual_skip_steps") or []))
@@ -431,7 +427,7 @@ def run_steering(steering: dict, backend, model_extraction_cfg: dict, raw_cfg: d
         steering_core.AGGRESSIVE_FLOW = bool(steering.get("aggressive_flow"))
         logger.info("aggressive_flow: %s", steering_core.AGGRESSIVE_FLOW)
 
-    # WHERE the flow task acts (the 2026-09-20 variations). Reset on EVERY combo rather than
+    # WHERE the flow task acts. Reset on EVERY combo rather than
     # gated behind `in steering`: these are module globals, so a sweep arm that omits the key
     # would otherwise inherit the previous arm's setting and be silently mislabelled.
     _fi = steering.get("flow_iters", None)
@@ -620,13 +616,6 @@ def run_steering(steering: dict, backend, model_extraction_cfg: dict, raw_cfg: d
         (out_dir / "steering_metrics.json").write_text(json.dumps(metrics_log, indent=2))
         print(f"[steering] saved → {out_dir} (gen {gen_duration_s:.1f}s)")
         prompt_dirs.append(out_dir)
-
-        if wandb_run is not None and metrics_log:
-            last = metrics_log[-1]
-            wandb_run.log({
-                f"prompt_{row['prompt_idx']}/final_prob":
-                    last.get("prob_after", last.get("prob")),
-            })
 
         torch.cuda.empty_cache()
 

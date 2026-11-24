@@ -10,7 +10,7 @@ Subpackages:
     training    — AttnSteer architectures + trainer + AUROC/AP/F1 evaluation.
     evaluation  — det-all / det-ratio / VBench / runtime metrics + baselines.
 
-Module-independence contract (plan §10c N2): `datasets`, `training`, `inference`, and
+Module-independence contract: `datasets`, `training`, `inference`, and
 `evaluation` are standalone — each imports only `common` and `backends`, never a sibling.
 """
 

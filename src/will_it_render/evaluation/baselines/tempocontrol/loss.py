@@ -70,7 +70,7 @@ class TempoControlSteeringModel(SteeringModel):
 
     Hooks **all** transformer blocks (``capture_blocks = None``) because the method
     averages cross-attention across every layer — the same memory profile as our 48-layer
-    conv_k steering, so dense prompts need a B200/H200.
+    conv_k steering, so dense prompts need a large-memory card.
     """
 
     def __init__(

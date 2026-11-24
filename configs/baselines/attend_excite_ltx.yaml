@@ -1,6 +1,5 @@
 # Baseline: Attend-and-Excite (Chefer et al. 2023) on LTX-2, per-clip induction.
-# Paper main-table A&E column (LTX). Parameter-free (no AttnSteer probe). lr 20 = their scale_factor
-# (confirmed from the 2026-10-30 seed-matched "night ae" run the 4-method report consumed).
+# Paper main-table A&E column (LTX). Parameter-free (no AttnSteer probe). lr 20 = their scale_factor.
 model_type: ltx
 steering:
   seed: 42

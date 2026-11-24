@@ -1,6 +1,6 @@
 """``wir-run`` — one prompt + one AttnSteer bundle → a steered video.
 
-The headline entry point. It is NOT a zero-config one-liner (plan §10b R2): steering needs a
+The headline entry point. It is NOT a zero-config one-liner: steering needs a
 trained AttnSteer, the extraction geometry it was trained on, and a matched seed latent. Those
 ship together as a **bundle**:
 

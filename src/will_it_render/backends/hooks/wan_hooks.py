@@ -126,7 +126,7 @@ def install_block_grad_checkpointing(model) -> callable:
 
     Steering's ``grad_forward`` runs the full 30-block WAN forward with grad; retaining every
     block's self-attention and FFN activations at Lq=32760 is ~177 GB — the edge of a 180 GB
-    B200, which the Attend-and-Excite baseline tips over. Wrapping ``self_attn`` and ``ffn``
+    card, which the Attend-and-Excite baseline tips over. Wrapping ``self_attn`` and ``ffn``
     (the ``gelu`` is the largest activation) in :func:`torch.utils.checkpoint.checkpoint`
     frees those activations after the forward and recomputes them during backward, ~halving
     peak VRAM for ~+30 % wall-clock.

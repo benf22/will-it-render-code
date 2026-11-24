@@ -132,7 +132,7 @@ class _CogVideoXCaptureProcessor:
             # [B,H,Lq,Lk] (≈380 MB bf16 × 21 hooked blocks ≈ 8 GB) is NOT retained for
             # backward — it is recomputed from q_v/k_t (already resident as slices of the
             # block's SDPA query/key), leaving only the small pooled map on-GPU. This is
-            # what lets the 94 GB H100 fit (post-steer_pool peak was ~99 GB). Numerically
+            # what lets a 94 GB card fit (post-steer_pool peak was ~99 GB). Numerically
             # identical (no dropout). Extraction (detach=True, no grad) runs it directly.
             if not ctx.detach and torch.is_grad_enabled():
                 import torch.utils.checkpoint as _cp

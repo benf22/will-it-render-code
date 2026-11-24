@@ -3,7 +3,7 @@
 Builds the training/eval data: validate prompts, extract per-step cross-attention features, and
 label the generated clips with object detectors.
 
-**Standalone (N2):** imports only `common` and `backends`.
+**Standalone:** imports only `common` and `backends`.
 
 ## Files
 

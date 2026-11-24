@@ -3,7 +3,7 @@
 
 Mirrors ``data_extraction/gen_seed_latents.py`` (the LTX version): PyTorch's CUDA RNG
 maps ``(seed, shape)`` to noise in a GPU-architecture-dependent way, so the *same seed*
-yields a *different* initial latent — and video — on an A100 vs H100 vs B200. We sample
+yields a *different* initial latent — and video — across different GPU generations. We sample
 the initial latent ONCE on a canonical GPU and store it; ``WanBackend._prepare`` then
 LOADS it instead of sampling, so every GPU denoises from the identical latent.
 
@@ -17,7 +17,7 @@ Output (one file per seed), matching ``WanBackend._seed_latent_path``::
     <out_root>/wan-<task>/<H>x<W>x<F>_<fps>fps/seed_<NNNNN>__<gpu_tag>.pt
       { "video_noise": float32 CPU tensor [z_dim, F', H/8, W/8], "seed": int, "meta": {...} }
 
-Usage (on ctxh100-01 for the h100 tag):
+Usage (on your canonical GPU; --gpu-tag names the resulting file):
     cd <repo> && source <your-wan-venv>/bin/activate   # set VP_WAN_ROOT
     CUDA_VISIBLE_DEVICES=<gpu> python -m data_extraction.gen_seed_latents_wan \
         --seeds 42,111,123,456,469,696,35426,873641 --gpu-tag h100 \

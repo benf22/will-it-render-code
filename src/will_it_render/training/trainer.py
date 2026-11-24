@@ -3,13 +3,12 @@
 # Run with Hydra — supports dot-notation CLI overrides for any key in configs/probing.yaml:
 #
 #   python -m training.trainer                                      # use default config
-#   python -m training.trainer training.wandb_notes="my note"       # add a W&B run note
 #   python -m training.trainer training.lr=5e-4 training.num_epochs=100
 #   python -m training.trainer --config-name my_experiment          # alternate yaml in configs/
 #
-# Single-node training. (The research monorepo's multi-GPU filesystem-queue runner is
+# Single-node training. (The multi-GPU filesystem-queue runner is
 #
-#   out of scope for this public repo — see plan §3.)
+#   out of scope for this public repo.)
 #
 #
 # Each worker claims independent (step, block) tasks from the queue — no DDP needed.
@@ -40,28 +39,14 @@ try:
     import hydra  # only needed by the training CLI (main); the steering path imports
 except ModuleNotFoundError:  # build_attnsteer without it (e.g. the WAN gen venv has no hydra).
     hydra = None
-try:
-    import wandb  # same story: only the training CLI logs to W&B; the WAN gen venv has no wandb
-except ModuleNotFoundError:
-    wandb = None
 from datetime import datetime
 from omegaconf import DictConfig, OmegaConf
 
-from will_it_render.training.adversarial import (
-    STAT_NAMES,
-    AdvConfig,
-    AttentionPGD,
-    evaluate_adversarial,
-    save_adv_examples,
-)
 from will_it_render.training.augment import head_shuffle_supported, parse_clip_percentiles, shuffle_heads
 from will_it_render.training.evaluation import (
     evaluate_class,
     evaluate_perframe,
     evaluate_probe,
-    plot_adv_curves,
-    plot_adv_diagnostics,
-    plot_adv_examples,
     plot_epoch_summary,
     plot_fp_fn,
     plot_per_layer_f1_summary,
@@ -75,7 +60,7 @@ from will_it_render.training.feature_dataset import BalancedBatchSampler, ProbeD
 
 # ``build_attnsteer`` and the probe-architecture classes it instantiates moved to
 # ``common.probe_factory`` so the steering path can build a probe without importing this
-# module's full training stack (WILL_IT_RENDER_PLAN.md §10b R1). Re-exported here for
+# module's full training stack. Re-exported here for
 # backwards compatibility — ``from training.trainer import build_attnsteer`` keeps working.
 from will_it_render.common.attnsteer_factory import build_attnsteer  # noqa: E402,F401
 from will_it_render.common.extraction_config import find_extraction_config
@@ -194,19 +179,6 @@ def step_output_dir(run_dir: Path, step: int, block: Optional[int]) -> Path:
     return d / f"block_{block:02d}" if block is not None else d
 
 
-def _bernoulli_kl(logit_p: torch.Tensor, logit_q: torch.Tensor) -> torch.Tensor:
-    """Mean KL( Bernoulli(sigmoid(logit_p)) ‖ Bernoulli(sigmoid(logit_q)) ).
-
-    The TRADES consistency term for a binary head: it asks the adversarial reading to match
-    the clean one, rather than asking it to be independently correct. Written with logsigmoid
-    so it stays finite at saturated logits.
-    """
-    log_p1, log_p0 = F.logsigmoid(logit_p), F.logsigmoid(-logit_p)
-    log_q1, log_q0 = F.logsigmoid(logit_q), F.logsigmoid(-logit_q)
-    p1, p0 = log_p1.exp(), log_p0.exp()
-    return (p1 * (log_p1 - log_q1) + p0 * (log_p0 - log_q0)).mean()
-
-
 def build_training_kwargs(t) -> dict:
     """Build the train_one_step kwargs dict from a training config section.
 
@@ -214,7 +186,7 @@ def build_training_kwargs(t) -> dict:
     hydra entry point (main).
     """
     return dict(
-        # config key is `model_arch` (N1); `probe_model` accepted as a legacy alias. The
+        # config key is `model_arch`; `probe_model` accepted as a legacy alias. The
         # internal kwarg + checkpoint field stay `probe_model` (mirrors the state-dict key).
         probe_model=str(t.get("model_arch", t.get("probe_model", "conv"))),
         avg_channels=t.get("avg_channels", "none"),  # none|all|layers (or legacy bool); _parse_avg_mode normalizes
@@ -285,11 +257,6 @@ def build_training_kwargs(t) -> dict:
         head_shuffle=str(t.get("head_shuffle", "none")),
         resnet_step_cond=bool(t.get("resnet_step_cond", False)),
         resnet_step_embed_dim=int(t.get("resnet_step_embed_dim", 64)),
-        multitask_aesthetic=bool(t.get("multitask_aesthetic", False)),
-        aesthetic_csv=(str(t.get("aesthetic_csv")) if t.get("aesthetic_csv") is not None else None),
-        aesthetic_col=str(t.get("aesthetic_col", "score_aesthetic_quality")),
-        aesthetic_loss_weight=float(t.get("aesthetic_loss_weight", 0.5)),
-        aesthetic_loss=str(t.get("aesthetic_loss", "bce_soft")),
         perframe_presence_head=bool(t.get("perframe_presence_head", False)),
         perframe_csv=(str(t.get("perframe_csv")) if t.get("perframe_csv") is not None else None),
         perframe_col=str(t.get("perframe_col", "frames_final")),
@@ -328,10 +295,7 @@ def build_training_kwargs(t) -> dict:
         balanced_batches=bool(t.get("balanced_batches", False)),
         loss_balance=str(t.get("loss_balance", "none")),
         loss_balance_beta=float(t.get("loss_balance_beta", 1.0)),
-        # Adversarial (PGD-on-attention-maps) training; a plain dict so queue tasks
-        # round-trip through run_config.json unchanged.
-        adv=AdvConfig.from_training_cfg(t).to_dict(),
-        source_tag=str(t.get("source_tag", "2026_06_22_dense_balanced")),
+        source_tag=str(t.get("source_tag", "dense_balanced")),
     )
 
 
@@ -465,15 +429,6 @@ def write_task_result(
                       "n_classes", "n_eval"):
                 if k in ch:
                     row[k] = float(ch[k])
-        # Robustness under the training-time threat model (adversarial runs only), so
-        # training_results.csv carries the headline "is it still exploitable" numbers.
-        for key, prefix in (("robust", ""), ("robust_train", "train_")):
-            rb = metrics.get(key)
-            if rb:
-                for k in ("adv_auroc", "adv_balanced_accuracy", "adv_average_precision",
-                          "flip_rate", "neg_spike_rate", "mean_score_shift"):
-                    if k in rb:
-                        row[f"{prefix}{k}"] = float(rb[k])
         if block is not None:
             row["block"] = block
     payload = {
@@ -482,8 +437,6 @@ def write_task_result(
         "status": status,
         "row": row,
         "epoch_losses": [[int(e), float(tr), float(vl)] for e, tr, vl in metrics.get("epoch_losses", [])],
-        "aux_epoch_losses": [[int(e), float(ta), float(va)]
-                             for e, ta, va in metrics.get("aux_epoch_losses", [])],
         "frame_epoch_losses": [[int(e), float(tf), float(vf)]
                                for e, tf, vf in metrics.get("frame_epoch_losses", [])],
         "class_epoch_losses": [[int(e), float(tc), float(vc)]
@@ -496,8 +449,6 @@ def write_task_result(
         "perframe": metrics.get("perframe"),
         "perframe_init": metrics.get("perframe_init"),
         "classhead": metrics.get("classhead"),
-        "robust": metrics.get("robust"),
-        "robust_train": metrics.get("robust_train"),
         "best_epoch": metrics.get("best_epoch"),
         "best_val_loss": metrics.get("best_val_loss"),
         "monitor_metric": metrics.get("monitor_metric"),
@@ -513,7 +464,7 @@ def write_task_result(
     os.rename(tmp, out)
 
 
-def aggregate_run(run_dir: str | Path, wandb_run=None, metric: str = "auroc") -> pd.DataFrame:
+def aggregate_run(run_dir: str | Path, metric: str = "auroc") -> pd.DataFrame:
     """Rebuild run-level summaries from per-task results.json files on disk.
 
     Fully disk-driven and idempotent: writes training_results.csv and summary
@@ -537,18 +488,6 @@ def aggregate_run(run_dir: str | Path, wandb_run=None, metric: str = "auroc") ->
     if n_skipped:
         print(f"[aggregate] {n_skipped} task(s) had status=skipped (one-class train set or empty val)")
 
-    # Merge per-task prediction CSVs (written unchanged by train_one_step).
-    all_predictions: list[pd.DataFrame] = []
-    for t in tasks:
-        step, block = t["step"], t["block"]
-        preds_path = step_output_dir(run_dir, step, block) / f"predictions_{run_label_for(step, block)}.csv"
-        if preds_path.exists():
-            preds = pd.read_csv(preds_path)
-            preds.insert(0, "denoising_step", step)
-            if per_layer:
-                preds.insert(1, "block_index", block)
-            all_predictions.append(preds)
-
     if per_layer:
         # Per-step loss-by-block plots from the persisted epoch losses.
         steps = sorted({t["step"] for t in tasks})
@@ -560,23 +499,14 @@ def aggregate_run(run_dir: str | Path, wandb_run=None, metric: str = "auroc") ->
             if blocks_for_step:
                 loss_plot = run_dir / f"step_{step:03d}" / f"loss_by_block_step_{step:03d}.png"
                 plot_per_layer_loss_by_step(step, blocks_for_step, loss_plot)
-                if loss_plot.exists() and wandb_run is not None:
-                    wandb_run.log({f"step_{step:03d}/loss_by_block": wandb.Image(str(loss_plot))})
 
     # Single summary authority: best-epoch table, prompt-length-segmented table, and
     # the two-subplot training_summary.png — all derived from the per-epoch dumps.
-    results_df = write_run_summary(run_dir, metric=metric, wandb_run=wandb_run)
+    results_df = write_run_summary(run_dir, metric=metric)
 
-    end_log: dict = {}
-    if all_predictions and wandb_run is not None:
-        end_log["predictions"] = wandb.Table(dataframe=pd.concat(all_predictions, ignore_index=True))
     if per_layer and not results_df.empty and {"step", "block", "f1"}.issubset(results_df.columns):
         f1_plot = run_dir / "per_layer_f1_summary.png"
         plot_per_layer_f1_summary(results_df, f1_plot)
-        if f1_plot.exists() and wandb_run is not None:
-            end_log["per_layer_f1_summary"] = wandb.Image(str(f1_plot))
-    if wandb_run is not None and end_log:
-        wandb_run.log(end_log)
     print(f"[aggregate] {len(results_df)} task results → {run_dir / 'training_results.csv'}")
     return results_df
 
@@ -645,11 +575,6 @@ def train_one_step(
     head_shuffle: str = "none",
     resnet_step_cond: bool = False,
     resnet_step_embed_dim: int = 64,
-    multitask_aesthetic: bool = False,
-    aesthetic_csv: Optional[str] = None,
-    aesthetic_col: str = "score_aesthetic_quality",
-    aesthetic_loss_weight: float = 0.5,
-    aesthetic_loss: str = "bce_soft",
     perframe_presence_head: bool = False,
     perframe_csv: Optional[str] = None,
     perframe_col: str = "frames_final",
@@ -686,9 +611,7 @@ def train_one_step(
     balanced_batches: bool = False,
     loss_balance: str = "none",
     loss_balance_beta: float = 1.0,
-    adv: Optional[dict | AdvConfig] = None,
-    source_tag: str = "2026_06_22_dense_balanced",
-    wandb_run=None,
+    source_tag: str = "dense_balanced",
     block_index: Optional[int] = None,
     train_root_override: Optional[str | Path] = None,
     val_root_override: Optional[str | Path] = None,
@@ -759,23 +682,11 @@ def train_one_step(
                 "it consumes the un-reduced stacked blocks."
             )
         effective_avg_mode = "stack"
-    # Multi-task aesthetic head: a second regression head predicting the clip's aesthetic
-    # score alongside the class logit. Implemented for the ResNet probe (the conv_k champion);
-    # the target is joined from aesthetic_csv into a 2nd label column by ProbeDataset.
-    if multitask_aesthetic:
-        if probe_model != "resnet":
-            raise ValueError(
-                f"multitask_aesthetic requires probe_model='resnet' (got {probe_model!r})."
-            )
-        if not aesthetic_csv:
-            raise ValueError("multitask_aesthetic=True requires aesthetic_csv (per-video score CSV).")
-        if aesthetic_loss not in ("bce_soft", "mse"):
-            raise ValueError(f"aesthetic_loss must be 'bce_soft' or 'mse' (got {aesthetic_loss!r}).")
     # Per-frame presence head: predicts, for each of the T latent frames, whether the target
     # object is visible in that frame — alongside (not replacing) the clip logit. The targets
     # come from the object labeler's `frames_final` bit-strings, binned onto the latent frames
     # by ProbeDataset into T extra label columns. Implemented for the ResNet probe (the conv_k
-    # champion), like the multi-task aesthetic head; the two flags are independent.
+    # probe).
     if perframe_presence_head:
         if probe_model != "resnet":
             raise ValueError(
@@ -820,14 +731,6 @@ def train_one_step(
         raise ValueError(
             "class_freeze_backbone / class_init_ckpt_dir are only meaningful with class_head=True."
         )
-    # Adversarial (PGD-on-the-attention-maps) training — see training/adversarial.py.
-    adv_cfg = AdvConfig.coerce(adv)
-    adv_cfg.validate()
-    if adv_cfg.enabled and adv_cfg.objective == "perframe_min" and not perframe_presence_head:
-        raise ValueError(
-            "adv_objective='perframe_min' requires perframe_presence_head=True (there are no "
-            "per-frame logits to attack otherwise); use adv_objective='clip'."
-        )
     # layer_subset trains on only a subset of the stored transformer blocks (by ORIGINAL
     # index). It slices the layer axis, so it only makes sense for the stacked/mean layer
     # paths — guard against combining it with a single-block slice.
@@ -871,9 +774,6 @@ def train_one_step(
     if clip_band is not None:
         ds_kwargs["clip_percentiles"] = clip_band
         ds_kwargs["clip_device"] = device if device.type == "cuda" else None
-    if multitask_aesthetic:
-        ds_kwargs["aux_csv"] = aesthetic_csv
-        ds_kwargs["aux_col"] = aesthetic_col
     if perframe_presence_head:
         ds_kwargs["perframe_csv"] = perframe_csv
         ds_kwargs["perframe_col"] = perframe_col
@@ -898,7 +798,7 @@ def train_one_step(
     # re-copies them every epoch (slow). Instead keep TRAIN in PINNED host RAM and feed it via
     # GpuBatchStreamer, which caches as many rows as fit GPU-resident (no per-epoch copy) and
     # streams only the overflow. VAL is small → GPU-resident directly.
-    #   gpu_resident_fp16        → streamer in fp16 (compact; caches ~all of a B200) [production]
+    #   gpu_resident_fp16        → streamer in fp16 (compact; caches ~all of a large card) [production]
     #   gpu_resident_stream_fp32 → streamer in fp32 (exact; caches less, streams more) [fp32 ref]
     use_streamer = gpu_resident_fp16 or gpu_resident_stream_fp32
     streamer_half = gpu_resident_fp16
@@ -1059,7 +959,7 @@ def train_one_step(
         # Train streamer first, val streamer after. Default (stream_resident_gb unset) is
         # ADAPTIVE to the GPU: the train cache takes free VRAM minus stream_reserve_gb (batch +
         # activations headroom) minus the val set's size, so val fits resident behind it on
-        # any card (B200 caches more train rows, H200 fewer). Explicit stream_resident_gb still
+        # any card (more VRAM caches more train rows). Explicit stream_resident_gb still
         # pins the train cache (historical configs). Only the streamed fraction (speed)
         # depends on this, never the values.
         val_bytes = val_ds._data.numel() * val_ds._data.element_size()
@@ -1105,7 +1005,6 @@ def train_one_step(
         resnet_layer_agg_init_random=resnet_layer_agg_init_random,
         resnet_step_cond=resnet_step_cond,
         resnet_step_embed_dim=resnet_step_embed_dim,
-        resnet_multitask=multitask_aesthetic,
         resnet_perframe=perframe_presence_head,
         resnet_perframe_head=perframe_head,
         resnet_perframe_tap=perframe_tap,
@@ -1131,15 +1030,15 @@ def train_one_step(
 
     # Per-frame warm start: reuse a trained clip-level probe's weights for this same step.
     # With perframe_head="shared" the state dict is identical to the clip-only probe's, so a
-    # champion checkpoint loads exactly; "separate" adds conv_out_frame, which is seeded from
+    # deployed-probe checkpoint loads exactly; "separate" adds conv_out_frame, which is seeded from
     # conv_out at construction and therefore left untouched by the (non-strict) load.
-    # Warm start (shared by the per-frame head-only fine-tune and the adversarial fine-tune:
-    # both take an already-trained probe for this same step and keep training it).
+    # Warm start (used by the per-frame and class head-only fine-tunes: both take an
+    # already-trained probe for this same step and keep training it).
     frozen_modules: list[nn.Module] = []
-    init_ckpt_dir = perframe_init_ckpt_dir or class_init_ckpt_dir or adv_cfg.init_ckpt_dir
+    init_ckpt_dir = perframe_init_ckpt_dir or class_init_ckpt_dir
     if init_ckpt_dir:
         init_key = ("perframe_init_ckpt_dir" if perframe_init_ckpt_dir else
-                    "class_init_ckpt_dir" if class_init_ckpt_dir else "adv_init_ckpt_dir")
+                    "class_init_ckpt_dir")
         init_path = Path(init_ckpt_dir) / run_label / f"probe_{run_label}.pt"
         if not init_path.exists():
             raise FileNotFoundError(
@@ -1219,20 +1118,6 @@ def train_one_step(
         print(f"[train] frozen backbone (class head only, arch={class_head_arch}): "
               f"{n_train_p}/{n_all_p} trainable params")
 
-    # Adversarial training: a PGD attack on the input attention maps, run per batch to
-    # simulate the inference-time steering optimizer's search for score-spiking maps.
-    attack: Optional[AttentionPGD] = None
-    if adv_cfg.enabled:
-        attack = AttentionPGD(adv_cfg, feat_shape=(probe_n_blocks_heads, *latent_thw),
-                              n_blocks=probe_n_blocks)
-        print(f"  [{run_label}] {adv_cfg.summary()}")
-    if adv_cfg.objective == "perframe_min":
-        def adv_forward(m, z):
-            return m(z, return_frames=True)
-    else:
-        def adv_forward(m, z):
-            return m(z)
-
     trainable = [p for p in model.parameters() if p.requires_grad]
     optimizer = AdamW(trainable, lr=lr, weight_decay=weight_decay)
     # LR schedule (stepped once per epoch). "cosine" anneals once over the whole run;
@@ -1262,23 +1147,17 @@ def train_one_step(
     if weighted:
         print(f"  [{run_label}] using source/class weighted loss (pos_weight disabled)")
     val_criterion = nn.BCEWithLogitsLoss()
-    # Aux (aesthetic) head loss. The target is the continuous score in [0,1]:
-    #   bce_soft → BCEWithLogits with the score as a soft target (prediction = sigmoid(logit),
-    #              bounded to [0,1]; reuses the class head's loss family — the default).
-    #   mse      → MSE on sigmoid(logit) vs the score.
-    # reduction="none" so NaN aux targets (clips absent from aesthetic_csv) are masked per-sample.
-    aux_criterion = nn.BCEWithLogitsLoss(reduction="none") if aesthetic_loss == "bce_soft" else None
     # Per-frame presence loss. reduction="none" so undecided frames (all-'u' bins) and rows
     # absent from the per-frame CSVs — both NaN — are masked out per (sample, frame) cell.
     frame_criterion = nn.BCEWithLogitsLoss(reduction="none")
-    # Column offset of the first per-frame target: 0=class, 1=aesthetic aux (multitask only),
-    # then the T per-frame columns. Mirrors ProbeDataset.perframe_offset.
-    pf_off = 1 + int(multitask_aesthetic)
+    # Column offset of the first per-frame target: 0=class, then the T per-frame columns.
+    # Mirrors ProbeDataset.perframe_offset.
+    pf_off = 1
     pf_T = latent_thw[0]
     # Column index of the class-identity target (the last packed label column): after the
-    # class-presence label, the aesthetic aux, and the T per-frame columns. Mirrors
-    # ProbeDataset.class_offset. Cross-entropy over the class logits; targets of -1 (object_name
-    # absent from the train-built vocab) are masked out.
+    # class-presence label and the T per-frame columns. Mirrors ProbeDataset.class_offset.
+    # Cross-entropy over the class logits; targets of -1 (object_name absent from the
+    # train-built vocab) are masked out.
     class_off = pf_off + (pf_T if perframe_presence_head else 0)
     # Per-class CE weights for the class head (imbalanced 156-way target). Computed once from the
     # TRAIN split's class counts and normalized to mean 1 (so the loss scale is comparable to the
@@ -1312,29 +1191,27 @@ def train_one_step(
               f"(weights: min={w.min():.3f} max={w.max():.3f})")
 
     def compute_task_loss(feats, labels, wts):
-        """Forward + task loss for one batch of features (clean OR adversarial).
+        """Forward + task loss for one batch of features.
 
-        Factored out of the epoch loop so the adversarial batch is scored by exactly the
-        same objective as the clean one. Returns ``(loss, aux_value, frame_value)``; the
-        two component values are plain floats for the per-epoch component curves.
+        Factored out of the epoch loop. Returns a tuple whose component values
+        (``frame_value`` / ``clip_bce_value`` / ``class_value``) are plain floats for the
+        per-epoch component curves.
         """
         clabels = labels[:, :1]
         if lipschitz_weight:
             feats.requires_grad_(True)   # input-gradient penalty needs grad w.r.t. the input maps
         # Single forward requesting whichever extra heads are active; the returns come back in a
-        # fixed order (logit, [aux], [frame_logits], [class_logits]) so this unpack stays valid
+        # fixed order (logit, [frame_logits], [class_logits]) so this unpack stays valid
         # for any combination of heads.
-        want_aux, want_frames, want_class = multitask_aesthetic, perframe_presence_head, class_head
-        # The extra-head kwargs only exist on ResNetProbe; other probes take model(feats). All
-        # three heads are resnet-guarded, so pass the kwargs only when one is actually requested.
-        outs = (model(feats, return_aux=want_aux, return_frames=want_frames, return_class=want_class)
-                if (want_aux or want_frames or want_class) else model(feats))
-        aux_pred = frame_logits = class_logits = None
+        want_frames, want_class = perframe_presence_head, class_head
+        # The extra-head kwargs only exist on ResNetProbe; other probes take model(feats). Both
+        # heads are resnet-guarded, so pass the kwargs only when one is actually requested.
+        outs = (model(feats, return_frames=want_frames, return_class=want_class)
+                if (want_frames or want_class) else model(feats))
+        frame_logits = class_logits = None
         if isinstance(outs, tuple):
             rest = list(outs)
             logits = rest.pop(0)
-            if want_aux:
-                aux_pred = rest.pop(0)
             if want_frames:
                 frame_logits = rest.pop(0)
             if want_class:
@@ -1379,27 +1256,12 @@ def train_one_step(
             # harder for the steering optimizer to walk off-manifold.
             g = torch.autograd.grad(logits.sum(), feats, create_graph=True, retain_graph=True)[0]
             loss = loss + lipschitz_weight * g.flatten(1).pow(2).sum(1).mean()
-        aux_value = 0.0
         frame_value = 0.0
-        # Aux (aesthetic) regression head: masked over NaN targets (clips absent from
-        # aesthetic_csv), weighted by aesthetic_loss_weight, added to the class loss.
-        if multitask_aesthetic:
-            aux_tgt = labels[:, 1:2]
-            aux_mask = ~torch.isnan(aux_tgt)
-            if aux_mask.any():
-                safe_tgt = torch.nan_to_num(aux_tgt, nan=0.0)
-                if aux_criterion is not None:            # bce_soft
-                    per = aux_criterion(aux_pred, safe_tgt)
-                else:                                    # mse on sigmoid(logit)
-                    per = (torch.sigmoid(aux_pred) - safe_tgt) ** 2
-                aux_loss = (per * aux_mask).sum() / aux_mask.sum()
-                loss = loss + aesthetic_loss_weight * aux_loss
-                aux_value = aux_loss.item()              # unweighted aesthetic component
         # Per-frame presence head: masked BCE over the [B, T] block of label columns.
         # Undecided frames and unjoined rows are NaN and drop out of both numerator and
         # denominator. perframe_class_loss_weight scales the clip term (0 = pure per-frame).
         if perframe_presence_head:
-            class_term = loss  # per-clip head objective (clip BCE, + aux if multitask)
+            class_term = loss  # per-clip head objective (clip BCE)
             ftgt = labels[:, pf_off:pf_off + pf_T]
             fmask = ~torch.isnan(ftgt)
             frame_term = None
@@ -1432,42 +1294,25 @@ def train_one_step(
                 class_loss = F.cross_entropy(class_logits[cmask], ctgt[cmask], weight=class_weight)
                 loss = loss + class_loss_weight * class_loss
                 class_value = class_loss.item()
-        return (loss, aux_value, frame_value, clip_bce_value, logits, frame_logits,
+        return (loss, frame_value, clip_bce_value, logits, frame_logits,
                 class_value, class_logits)
 
     epoch_losses: list[tuple[int, float, float]] = []
     train_epoch_metrics: list[tuple[int, float, float, float]] = []
     val_epoch_metrics: list[tuple[int, float, float, float]] = []
 
-    if wandb_run is not None:
-        wandb_run.define_metric(f"{run_label}/epoch")
-        wandb_run.define_metric(f"{run_label}/*", step_metric=f"{run_label}/epoch")
-
     # Best-epoch tracking. Select the epoch that optimizes `best_metric`; keep a
     # CPU snapshot of its weights so the saved checkpoint + reported results
     # reflect that epoch rather than the (often overfit) final one.
-    # val_adv_loss / val_combined select on ROBUSTNESS, not just clean skill. The 2026-08-13
-    # run showed why that matters: clean val_loss bottoms out before adversarial training has
-    # done its work, so selecting on it saves near-un-hardened weights (step_010: adv AUROC
-    # 0.010 at the saved epoch vs 0.709 at the last). val_combined is the mean of the clean and
-    # adversarial class BCE — the quantity to minimise when the goal is BOTH losses low.
-    # val_frame_* select on the PER-FRAME head — the readout the steering objective
-    # uses. Selecting on the clip head (val_combined) is what produced the
-    # 2026-08-13 mis-ranking: clip adv AUROC 0.998 with min-frame at 0.000.
-    ADV_METRICS = ("val_adv_loss", "val_combined", "val_frame_combined",
-                   "val_frame_adv_auroc")
     CLASS_METRICS = ("val_class_loss", "val_class_acc")
-    if best_metric not in ("val_loss", "val_auroc", "val_f1", *ADV_METRICS, *CLASS_METRICS):
+    if best_metric not in ("val_loss", "val_auroc", "val_f1", *CLASS_METRICS):
         raise ValueError(f"Invalid best_metric {best_metric!r}; choose val_loss | val_auroc | "
-                         f"val_f1 | val_adv_loss | val_combined | val_class_loss | val_class_acc")
+                         f"val_f1 | val_class_loss | val_class_acc")
     if best_metric.startswith("val_frame") and not perframe_presence_head:
         raise ValueError(f"best_metric={best_metric!r} requires perframe_presence_head=true.")
     if best_metric in CLASS_METRICS and not class_head:
         raise ValueError(f"best_metric={best_metric!r} requires class_head=true.")
-    if best_metric in ADV_METRICS and not (adv_cfg.enabled and adv_cfg.eval_robust):
-        raise ValueError(f"best_metric={best_metric!r} requires adv_training=true and "
-                         f"adv_eval_robust=true (it is read from the robust val pass).")
-    higher_better = best_metric in ("val_auroc", "val_f1", "val_frame_adv_auroc", "val_class_acc")
+    higher_better = best_metric in ("val_auroc", "val_f1", "val_class_acc")
     best_value = float("-inf") if higher_better else float("inf")
     best_epoch = 0
     best_state: Optional[dict] = None
@@ -1478,10 +1323,8 @@ def train_one_step(
     early_stopped = False
     epochs_trained = 0
 
-    # Per-component loss curves (multitask only): (epoch, train_aux, val_aux), unweighted, so the
-    # report can split total into class vs aesthetic. val_loss/epoch_val_loss stay class-only.
-    aux_epoch_losses: list[tuple[int, float, float]] = []
-    # Same idea for the per-frame head: (epoch, train_frame, val_frame), unweighted.
+    # Per-component loss curves for the per-frame head: (epoch, train_frame, val_frame),
+    # unweighted.
     frame_epoch_losses: list[tuple[int, float, float]] = []
     # Class-identity head: (epoch, train_class_ce, val_class_ce), unweighted.
     class_epoch_losses: list[tuple[int, float, float]] = []
@@ -1496,39 +1339,10 @@ def train_one_step(
     combined_epoch_losses: list[tuple[int, float, float]] = []
     last_perframe_eval: Optional[dict] = None
     perframe_init_eval: Optional[dict] = None
-    # Adversarial bookkeeping, all flushed to CSV as it accumulates (see the eval block).
-    adv_train_rows: list[dict] = []
-    adv_eval_rows: list[dict] = []
-    adv_traces: list[tuple[int, list]] = []
-    # Robustness is measured on BOTH splits: the attack is only ever *trained* against the
-    # train set, so the train→val robust gap says whether robustness generalized or was
-    # memorized on the training maps. The train pass is capped (adv_eval_train_max) because
-    # attacking ~18k examples every eval epoch would cost more than the training itself.
-    adv_train_max_batches = (
-        max(1, -(-adv_cfg.eval_train_max // batch_size)) if adv_cfg.eval_train_max else None
-    )
-    adv_splits: list[tuple[str, object, object, Optional[int]]] = []
-    if attack is not None and adv_cfg.eval_robust:
-        if adv_cfg.eval_train:
-            adv_splits.append(("train", train_eval_loader, train_ds, adv_train_max_batches))
-        adv_splits.append(("val", val_loader, val_ds, None))
-
-    def run_robust(epoch_label: int, **kw) -> dict[str, dict]:
-        """Attack every configured split; return {split: metrics}. Bulky payloads stay out
-        of the returned scalars — the caller persists them."""
-        out: dict[str, dict] = {}
-        for split, loader, ds, max_b in adv_splits:
-            out[split] = evaluate_adversarial(
-                model, loader, device, attack, forward=adv_forward, dataset=ds,
-                max_batches=max_b,
-                perframe=((pf_off, pf_T) if perframe_presence_head else None),
-                **(kw if split == "val" else {}),
-            )
-        return out
     if perframe_presence_head:
         # Per-frame readout BEFORE any optimizer step. Warm-started from a clip-level probe
         # this is the zero-training reference: because the clip head is linear over a mean,
-        # the champion checkpoint ALREADY defines per-frame logits, and this measures how much
+        # the deployed-probe checkpoint ALREADY defines per-frame logits, and this measures how much
         # per-frame presence its representation carries for free. Training is then judged
         # against this row, not just against chance.
         perframe_init_eval = evaluate_perframe(model, val_loader, device, pf_T, pf_off)
@@ -1545,18 +1359,11 @@ def train_one_step(
             m.eval()  # frozen backbone → no dropout/DropBlock noise in the fixed features
         train_loss = 0.0        # COMBINED (per-clip + per-frame, as weighted below)
         train_clip_loss = 0.0   # per-clip BCE component only (unweighted)
-        train_aux_loss = 0.0
         train_frame_loss = 0.0
         train_class_loss = 0.0  # class-identity CE component (unweighted)
         train_class_correct = 0
         train_class_total = 0
-        train_clean_loss = 0.0
-        train_adv_loss = 0.0
         n_train = 0
-        n_adv = 0
-        # Clean-only warmup: attacking a randomly-initialised probe just chases noise, so
-        # the attack switches on once the clean objective has shaped a boundary to attack.
-        use_adv = attack is not None and epoch >= adv_cfg.warmup_epochs
         for batch in train_loader:
             # weighted path yields (feats, labels, weights); default yields (feats, labels)
             if weighted:
@@ -1576,12 +1383,11 @@ def train_one_step(
                 feats = shuffle_heads(feats, probe_n_blocks, n_heads, head_shuffle)
             bsz = labels.shape[0]
             optimizer.zero_grad()
-            # Column 0 is the class label; extra columns (multitask) are aux targets.
+            # Column 0 is the class label; the rest (per-frame / class) are extra targets.
             # compute_task_loss owns the forward + perframe_loss_mode selection; it returns the
-            # raw per-clip BCE (clip_bce_value) so all three components stay logged in every mode.
-            loss, aux_value, frame_value, clip_bce_value, clean_logits, clean_frames, class_value, clean_class = compute_task_loss(
+            # raw per-clip BCE (clip_bce_value) so all components stay logged in every mode.
+            loss, frame_value, clip_bce_value, clean_logits, clean_frames, class_value, clean_class = compute_task_loss(
                 feats, labels, wts if weighted else None)
-            train_aux_loss += aux_value * bsz
             train_frame_loss += frame_value * bsz
             train_class_loss += class_value * bsz
             if class_head and clean_class is not None:
@@ -1590,81 +1396,25 @@ def train_one_step(
                     train_class_correct += int((clean_class[cm].detach().argmax(1) == ct[cm]).sum())
                     train_class_total += int(cm.sum())
             train_clip_loss += clip_bce_value * bsz   # per-clip BCE component (always logged)
-            train_clean_loss += loss.item() * bsz   # pre-interpolation, for the clean/adv gap
             # Aggregator-targeted regularization (L1 sparsity / attn entropy) on the layer combine;
-            # no-op for non-resnet probes or when both coefficients are 0. Read here, off the
-            # CLEAN forward's cached weights, before any adversarial forward overwrites them.
+            # no-op for non-resnet probes or when both coefficients are 0.
             reg_term = None
             if resnet_layer_agg_l1 or resnet_layer_agg_entropy:
                 reg = getattr(model, "layer_agg_reg", None)
                 if reg is not None:
                     reg_term = reg(resnet_layer_agg_l1, resnet_layer_agg_entropy)
-            # SPLIT BACKWARD. Summing the clean and adversarial losses and backward-ing once
-            # keeps the CLEAN graph alive through the whole PGD inner loop — and that loop
-            # already holds several full-batch fp32 copies of the input (2.6 GB each at batch
-            # 128 × 1536 × 13 × 16 × 16). Backward-ing each term as soon as it is produced is
-            # mathematically identical, since gradients accumulate into .grad and
-            #   d/dθ[(1-α)·L_clean + α·L_adv] = (1-α)·dL_clean + α·dL_adv,
-            # but it roughly halves peak VRAM. The aggregator regularizer rides with the
-            # clean term so its cached forward weights are still inside that graph.
-            # Snapshot the clean logits before backward frees the graph — alp/trades need them
-            # as a detached reference for the consistency term.
-            # Reference for the alp/trades consistency term. It MUST be the readout the
-            # attack targets: with adv_objective=perframe_min the attack moves
-            # min_t frame_logit, so pairing on the clip logit (the original behaviour, kept
-            # as adv_pair_on='clip') hardens a head the attack never aims at — measured as
-            # clip adv AUROC 0.998 while min-frame adv AUROC stayed 0.000.
-            pair_on_frames = (adv_cfg.pair_on == "frame") and (clean_frames is not None)
-            clean_ref = ((clean_frames if pair_on_frames else clean_logits).detach()
-                         if use_adv else None)
-            clean_w = (1.0 - adv_cfg.alpha) if (use_adv and adv_cfg.loss != "trades") else 1.0
-            clean_term = clean_w * loss
             if reg_term is not None:
-                clean_term = clean_term + reg_term
-            clean_term.backward()
-            total_value = clean_term.item()
-            del clean_term, loss, reg_term, clean_logits, clean_frames
-            # Adversarial batch: PGD-perturbed attention maps for the same labels, scored by
-            # the same objective. The attack runs with frozen params and takes gradients
-            # w.r.t. the input only, so it never touches the p.grad accumulated above.
-            if use_adv:
-                sel = attack.select(labels[:, :1])
-                n_sel = int(sel.sum().item())
-                if n_sel:
-                    feats_adv = attack.perturb(model, feats[sel], labels[sel, :1],
-                                               forward=adv_forward)
-                    adv_loss, _, _, _, adv_logits, adv_frames, _, _ = compute_task_loss(
-                        feats_adv, labels[sel], wts[sel] if weighted else None)
-                    cur = adv_frames if pair_on_frames else adv_logits
-                    # How the adversarial term enters the objective:
-                    #   bce    — Madry: plain task loss on the perturbed maps.
-                    #   alp    — adversarial logit pairing: adds λ·(logit_clean − logit_adv)²,
-                    #            tying the two readings together instead of only pushing each
-                    #            toward its label. Aimed at the clean/robust trade-off.
-                    #   trades — the adversarial BCE is REPLACED by β·KL(p_adv ‖ p_clean), so the
-                    #            clean term keeps full weight and the attack only has to be made
-                    #            consistent with it, not separately correct.
-                    ref = clean_ref[sel]
-                    if adv_cfg.loss == "trades":
-                        adv_term = adv_cfg.trades_beta * _bernoulli_kl(cur, ref)
-                    else:
-                        adv_term = adv_cfg.alpha * adv_loss
-                        if adv_cfg.loss == "alp":
-                            adv_term = adv_term + adv_cfg.trades_beta * (
-                                (cur - ref) ** 2).mean()
-                    adv_term.backward()
-                    train_adv_loss += adv_loss.item() * n_sel
-                    total_value += adv_term.item()
-                    n_adv += n_sel
-                    del feats_adv, adv_loss, adv_term
+                loss = loss + reg_term
+            loss.backward()
+            total_value = loss.item()
+            del loss, reg_term, clean_logits, clean_frames
             optimizer.step()
-            train_loss += total_value * bsz   # clean (+ adversarial) total actually optimised
+            train_loss += total_value * bsz
             n_train += bsz
         scheduler.step()
 
         model.eval()
         val_loss = 0.0
-        val_aux_loss = 0.0
         val_frame_loss = 0.0
         val_class_loss = 0.0
         val_class_correct = 0
@@ -1679,17 +1429,13 @@ def train_one_step(
                 # val_loss tracks the primary (class-presence) task only, so model selection /
                 # best_metric stay comparable to single-task runs. Same fixed-order unpack as
                 # compute_task_loss.
-                want_aux, want_frames, want_class = (
-                    multitask_aesthetic, perframe_presence_head, class_head)
-                vouts = (model(feats, return_aux=want_aux, return_frames=want_frames,
-                               return_class=want_class)
-                         if (want_aux or want_frames or want_class) else model(feats))
-                vaux = vframe = vclass = None
+                want_frames, want_class = (perframe_presence_head, class_head)
+                vouts = (model(feats, return_frames=want_frames, return_class=want_class)
+                         if (want_frames or want_class) else model(feats))
+                vframe = vclass = None
                 if isinstance(vouts, tuple):
                     vrest = list(vouts)
                     vlogit = vrest.pop(0)
-                    if want_aux:
-                        vaux = vrest.pop(0)
                     if want_frames:
                         vframe = vrest.pop(0)
                     if want_class:
@@ -1697,13 +1443,6 @@ def train_one_step(
                 else:
                     vlogit = vouts
                 val_loss += val_criterion(vlogit, labels[:, :1]).item() * bsz
-                if multitask_aesthetic:
-                    vtgt = labels[:, 1:2]; vmask = ~torch.isnan(vtgt)
-                    if vmask.any():
-                        vsafe = torch.nan_to_num(vtgt, nan=0.0)
-                        vper = (aux_criterion(vaux, vsafe) if aux_criterion is not None
-                                else (torch.sigmoid(vaux) - vsafe) ** 2)
-                        val_aux_loss += ((vper * vmask).sum() / vmask.sum()).item() * bsz
                 if perframe_presence_head:
                     vftgt = labels[:, pf_off:pf_off + pf_T]
                     vfmask = ~torch.isnan(vftgt)
@@ -1735,10 +1474,6 @@ def train_one_step(
         epoch_train_class_acc = train_class_correct / train_class_total if train_class_total else float("nan")
         if class_head:
             class_epoch_losses.append((epoch + 1, epoch_train_class_ce, epoch_class_loss))
-        if multitask_aesthetic:
-            aux_epoch_losses.append((epoch + 1,
-                                     train_aux_loss / n_train if n_train > 0 else float("nan"),
-                                     val_aux_loss / n_val if n_val > 0 else float("nan")))
         if perframe_presence_head:
             epoch_frame_train = train_frame_loss / n_train if n_train > 0 else float("nan")
             epoch_frame_val = val_frame_loss / n_val if n_val > 0 else float("nan")
@@ -1757,21 +1492,7 @@ def train_one_step(
             lr=f"{current_lr:.2e}",
         )
 
-        wandb_log = {
-            f"{run_label}/train_loss": epoch_train_loss,
-            f"{run_label}/val_loss": epoch_val_loss,
-            f"{run_label}/lr": current_lr,
-            f"{run_label}/epoch": epoch + 1,
-            "denoising_step": step,
-        }
-        if per_layer:
-            wandb_log["block_index"] = block_index
         if class_head:
-            wandb_log[f"{run_label}/train_class_loss"] = epoch_train_class_ce
-            wandb_log[f"{run_label}/val_class_loss"] = epoch_class_loss
-            wandb_log[f"{run_label}/val_class_acc"] = epoch_class_acc
-            wandb_log[f"{run_label}/val_class_top5"] = epoch_class_top5
-            wandb_log[f"{run_label}/train_class_acc"] = epoch_train_class_acc
             # Flush the class curve to disk EVERY epoch (live monitoring; no wait for results.json).
             class_epoch_rows.append({
                 "epoch": epoch + 1,
@@ -1784,24 +1505,6 @@ def train_one_step(
             })
             pd.DataFrame(class_epoch_rows).to_csv(
                 str(output_dir / f"class_metrics_{run_label}.csv"), index=False)
-        if attack is not None and n_train > 0:
-            # One row per epoch, flushed to disk every epoch so a killed run keeps its
-            # history: the clean/adversarial loss gap is the primary convergence signal.
-            adv_train_rows.append({
-                "epoch": epoch + 1,
-                "train_clean_loss": train_clean_loss / n_train,
-                "train_adv_loss": (train_adv_loss / n_adv) if n_adv else float("nan"),
-                "train_total_loss": epoch_train_loss,
-                "val_clean_loss": epoch_val_loss,
-                "frac_attacked": n_adv / n_train,
-                "attack_active": bool(use_adv),
-            })
-            pd.DataFrame(adv_train_rows).to_csv(
-                str(output_dir / f"adv_train_{run_label}.csv"), index=False)
-            wandb_log[f"{run_label}/train_clean_loss"] = train_clean_loss / n_train
-            if n_adv:
-                wandb_log[f"{run_label}/train_adv_loss"] = train_adv_loss / n_adv
-                wandb_log[f"{run_label}/adv_frac_attacked"] = n_adv / n_train
 
         if epoch == 0 or (epoch + 1) % eval_every_n_epochs == 0:
             train_mid = evaluate_probe(model, train_eval_loader, device, step)
@@ -1816,21 +1519,6 @@ def train_one_step(
             )
             train_epoch_metrics.append((epoch + 1, float(train_best["precision"]), float(train_best["recall"]), float(train_best["f1"])))
             val_epoch_metrics.append((epoch + 1, float(val_best["precision"]), float(val_best["recall"]), float(val_best["f1"])))
-            wandb_log.update({
-                f"{run_label}/train_precision": float(train_best["precision"]),
-                f"{run_label}/train_recall": float(train_best["recall"]),
-                f"{run_label}/train_f1": float(train_best["f1"]),
-                f"{run_label}/train_auroc": float(train_mid["auroc"]),
-                f"{run_label}/val_precision": float(val_best["precision"]),
-                f"{run_label}/val_recall": float(val_best["recall"]),
-                f"{run_label}/val_f1": float(val_best["f1"]),
-                f"{run_label}/val_balanced_accuracy": float(val_best["balanced_accuracy"]),
-                f"{run_label}/val_auroc": float(val_mid["auroc"]),
-                f"{run_label}/val_average_precision": float(val_mid["average_precision"]),
-                f"{run_label}/val_baseline_f1": float(val_mid["baseline_f1"]),
-                f"{run_label}/pos_base_rate": float(val_mid["pos_base_rate"]),
-                f"{run_label}/best_threshold": float(val_best["threshold"]),
-            })
             if perframe_presence_head:
                 pf_eval = evaluate_perframe(model, val_loader, device, pf_T, pf_off)
                 pf_eval["per_frame"].to_csv(
@@ -1838,49 +1526,12 @@ def train_one_step(
                     index=False,
                 )
                 last_perframe_eval = pf_eval
-                wandb_log.update({
-                    f"{run_label}/val_frame_auroc": float(pf_eval["frame_auroc"]),
-                    f"{run_label}/val_frame_average_precision": float(pf_eval["frame_average_precision"]),
-                    f"{run_label}/val_frame_balanced_accuracy": float(pf_eval["frame_balanced_accuracy"]),
-                    f"{run_label}/val_allframes_auroc": float(pf_eval.get("allframes_auroc", float("nan"))),
-                    f"{run_label}/val_anyframe_auroc": float(pf_eval.get("anyframe_auroc", float("nan"))),
-                })
             if class_head:
                 # Per-class breakdown (support + top-1) at this eval epoch, plus macro/top-1/top-5.
                 ce_eval = evaluate_class(model, val_loader, device, class_off,
                                          len(class_vocab), class_vocab=class_vocab)
                 ce_eval["per_class"].to_csv(
                     str(output_dir / f"class_eval_{run_label}_epoch_{epoch + 1:03d}.csv"), index=False)
-                wandb_log.update({
-                    f"{run_label}/val_class_macro_acc": float(ce_eval["class_macro_acc"]),
-                    f"{run_label}/val_class_top1_eval": float(ce_eval["class_top1_acc"]),
-                    f"{run_label}/val_class_top5_eval": float(ce_eval["class_top5_acc"]),
-                })
-            if attack is not None and adv_cfg.eval_robust:
-                # How exploitable is the probe right now? adv_auroc under the same threat
-                # model, plus the flip / negative-spike rates that mirror the inference
-                # failure (score spikes with no object). Everything is written to disk each
-                # eval epoch: the scalar row, the per-example clean/adv scores + map stats,
-                # and the PGD trace — so the post-hoc plots never need a re-run.
-                rb_by_split = run_robust(epoch + 1)
-                for split, rb in rb_by_split.items():
-                    rb_scalars = {k: v for k, v in rb.items()
-                                  if k not in ("per_example", "trace", "examples")}
-                    adv_eval_rows.append({"epoch": epoch + 1, "split": split, **rb_scalars})
-                    wandb_log.update({f"{run_label}/robust_{split}_{k}": float(v)
-                                      for k, v in rb_scalars.items()})
-                pd.DataFrame(adv_eval_rows).to_csv(
-                    str(output_dir / f"adv_metrics_{run_label}.csv"), index=False)
-                rb_val = rb_by_split.get("val", {})
-                if "per_example" in rb_val:
-                    rb_val["per_example"].to_csv(
-                        str(output_dir / f"adv_preds_{run_label}_epoch_{epoch + 1:03d}.csv"),
-                        index=False)
-                if rb_val.get("trace"):
-                    adv_traces.append((epoch + 1, rb_val["trace"]))
-                    pd.DataFrame([{"epoch": e, "pgd_iter": i, "p_flipped": p}
-                                  for e, tr in adv_traces for i, p in enumerate(tr)]).to_csv(
-                        str(output_dir / f"adv_pgd_trace_{run_label}.csv"), index=False)
 
         if epoch == 0 or (epoch + 1) % plot_every_n_epochs == 0:
             train_plot = evaluate_probe(model, train_eval_loader, device, step)
@@ -1895,11 +1546,6 @@ def train_one_step(
                 threshold=float(val_plot_best["threshold"]),
                 output_path=fp_fn_path,
             )
-            if wandb_run is not None:
-                plot_log = {f"{run_label}/epoch": epoch + 1}
-                if fp_fn_path.exists():
-                    plot_log[f"{run_label}/fp_fn_plot"] = wandb.Image(str(fp_fn_path))
-                wandb_run.log(plot_log)
 
         # --- best-epoch selection + early stopping ---
         epochs_trained = epoch + 1
@@ -1909,28 +1555,6 @@ def train_one_step(
             monitor_value = epoch_class_loss
         elif best_metric == "val_class_acc":
             monitor_value = epoch_class_acc
-        elif best_metric in ADV_METRICS:
-            # Attack the val split EVERY epoch so selection has per-epoch granularity (the
-            # reporting pass only runs on eval epochs). adv_eval_val_max caps it, since this
-            # costs (1 + adv_pgd_steps) forwards over whatever it covers.
-            sel_max = (max(1, -(-adv_cfg.eval_val_max // batch_size))
-                       if adv_cfg.eval_val_max else None)
-            rb_sel = evaluate_adversarial(
-                model, val_loader, device, attack, forward=adv_forward, max_batches=sel_max,
-                perframe=((pf_off, pf_T) if perframe_presence_head else None))
-            if not rb_sel:
-                monitor_value = float("nan")
-            elif best_metric == "val_adv_loss":
-                monitor_value = float(rb_sel["adv_bce"])
-            elif best_metric == "val_frame_combined":
-                monitor_value = 0.5 * (float(rb_sel["frame_clean_bce"])
-                                       + float(rb_sel["frame_adv_bce"]))
-            elif best_metric == "val_frame_adv_auroc":
-                monitor_value = float(rb_sel["frame_adv_auroc"])
-            else:  # val_combined — both losses low is the actual objective
-                monitor_value = 0.5 * (float(rb_sel["clean_bce"]) + float(rb_sel["adv_bce"]))
-            wandb_log[f"{run_label}/sel_clean_bce"] = float(rb_sel.get("clean_bce", float("nan")))
-            wandb_log[f"{run_label}/sel_adv_bce"] = float(rb_sel.get("adv_bce", float("nan")))
         else:
             if val_eval is None:  # not an eval epoch — run a val pass just for monitoring
                 val_eval = evaluate_probe(model, val_loader, device, step)
@@ -1953,11 +1577,6 @@ def train_one_step(
             epochs_since_improve = 0
         elif not is_nan:
             epochs_since_improve += 1
-        wandb_log[f"{run_label}/{best_metric}_monitor"] = monitor_value
-        wandb_log[f"{run_label}/{best_metric}_best"] = best_value
-
-        if wandb_run is not None:
-            wandb_run.log(wandb_log)
 
         if early_stop_patience > 0 and epochs_since_improve >= early_stop_patience:
             early_stopped = True
@@ -2011,8 +1630,6 @@ def train_one_step(
         "layer_subset": layer_subset,
         "resnet_step_cond": resnet_step_cond,
         "resnet_step_embed_dim": resnet_step_embed_dim,
-        "resnet_multitask": multitask_aesthetic,
-        "aesthetic_col": aesthetic_col if multitask_aesthetic else None,
         "resnet_perframe": perframe_presence_head,
         "resnet_perframe_head": perframe_head,
         "resnet_perframe_tap": perframe_tap,
@@ -2038,8 +1655,6 @@ def train_one_step(
         "transformer_pool": transformer_pool,
         "transformer_timestep_mode": transformer_timestep_mode,
         "transformer_num_timesteps": transformer_num_timesteps,
-        "adv_training": adv_cfg.enabled,
-        "adv": adv_cfg.to_dict() if adv_cfg.enabled else None,
         "best_metric": best_metric,
         "best_epoch": best_epoch,
         "best_value": best_value,
@@ -2063,7 +1678,6 @@ def train_one_step(
     train_final = evaluate_probe(model, train_eval_loader, device, step)
     metrics = evaluate_probe(model, val_loader, device, step, dataset=val_ds)
     metrics["epoch_losses"] = epoch_losses
-    metrics["aux_epoch_losses"] = aux_epoch_losses
     metrics["frame_epoch_losses"] = frame_epoch_losses
     metrics["class_epoch_losses"] = class_epoch_losses
     metrics["clip_epoch_losses"] = clip_epoch_losses
@@ -2109,50 +1723,6 @@ def train_one_step(
         print(f"  → all-frames (min_t) AUROC={pf_final.get('allframes_auroc', float('nan')):.3f} "
               f"[pos={pf_final.get('allframes_pos_base_rate', float('nan')):.0%}]  |  "
               f"any-frame (max_t) AUROC={pf_final.get('anyframe_auroc', float('nan')):.3f}")
-    if attack is not None and adv_cfg.eval_robust:
-        # Robustness of the SAVED (best-epoch) weights, under the same threat model it was
-        # trained against. adv_auroc is the headline; flip_rate / neg_spike_rate say how
-        # often a small legal attention edit still buys a wrong answer. This pass also
-        # keeps the adversarial MAPS themselves for the saved examples file.
-        final_by_split = run_robust(
-            best_epoch,
-            n_examples_kept=adv_cfg.save_examples,
-            save_maps=adv_cfg.save_maps,
-            example_seed=adv_cfg.example_seed,
-        )
-        rb_final = final_by_split.get("val", {})
-        for split, rb in final_by_split.items():
-            scalars = {k: v for k, v in rb.items()
-                       if k not in ("per_example", "trace", "examples")}
-            metrics["robust" if split == "val" else f"robust_{split}"] = scalars
-            if "per_example" in rb:
-                suffix = "" if split == "val" else f"_{split}"
-                rb["per_example"].to_csv(
-                    str(output_dir / f"adv_preds{suffix}_{run_label}.csv"), index=False)
-            if split != "val" and scalars:
-                print(f"  → robust[{split}]  AUROC={scalars['adv_auroc']:.3f} "
-                      f"(clean {scalars['clean_auroc']:.3f})  "
-                      f"flip={scalars['flip_rate']:.1%}  "
-                      f"neg-spike={scalars['neg_spike_rate']:.1%}  [n={scalars['n_examples']}]")
-        if rb_final:
-            per_ex = rb_final["per_example"]
-            adv_eval_df = pd.DataFrame(adv_eval_rows)
-            plot_adv_curves(pd.DataFrame(adv_train_rows), adv_eval_df, per_ex, adv_traces,
-                            step, output_dir / f"adv_curves_{run_label}.png")
-            plot_adv_diagnostics(per_ex, adv_eval_df, step,
-                                 output_dir / f"adv_diagnostics_{run_label}.png",
-                                 stat_names=STAT_NAMES)
-            if "examples" in rb_final:
-                save_adv_examples(output_dir / f"adv_examples_{run_label}.pt",
-                                  rb_final["examples"], adv_cfg, step, best_epoch)
-                plot_adv_examples(rb_final["examples"], step,
-                                  output_dir / f"adv_examples_{run_label}.png")
-            print(f"  → robust[val]  AUROC={rb_final['adv_auroc']:.3f} (clean {rb_final['clean_auroc']:.3f})  "
-                  f"BalAcc={rb_final['adv_balanced_accuracy']:.3f}  "
-                  f"flip={rb_final['flip_rate']:.1%}  neg-spike={rb_final['neg_spike_rate']:.1%}  "
-                  f"|Δscore|={rb_final['mean_score_shift']:.3f}")
-            print(f"  → adv-vs-real drift (KS): " + "  ".join(
-                f"{k}={rb_final[f'ks_{k}']:.3f}" for k in STAT_NAMES))
     metrics["best_epoch"] = best_epoch
     metrics["best_val_loss"] = best_val_loss
     metrics["monitor_metric"] = best_metric
@@ -2180,28 +1750,6 @@ def train_one_step(
     if "predictions" in metrics:
         metrics["predictions"].to_csv(str(output_dir / f"predictions_{run_label}.csv"), index=False)
 
-    if wandb_run is not None:
-        log = {f"{run_label}/val_{k}": float(best[k]) for k in ("precision", "recall", "f1", "balanced_accuracy")}
-        log[f"{run_label}/best_threshold"] = float(best["threshold"])
-        log[f"{run_label}/val_auroc"] = float(metrics["auroc"])
-        log[f"{run_label}/val_average_precision"] = float(metrics["average_precision"])
-        log[f"{run_label}/val_baseline_f1"] = float(metrics["baseline_f1"])
-        log[f"{run_label}/pos_base_rate"] = float(metrics["pos_base_rate"])
-        log["denoising_step"] = step
-        if per_layer:
-            log["block_index"] = block_index
-        for path_key, path_val in [
-            ("fp_fn_plot", output_dir / f"fp_fn_{run_label}.png"),
-            ("epoch_summary", output_dir / f"epoch_summary_{run_label}.png"),
-            ("pr_curves", output_dir / f"pr_curves_{run_label}.png"),
-            ("adv_curves", output_dir / f"adv_curves_{run_label}.png"),
-            ("adv_diagnostics", output_dir / f"adv_diagnostics_{run_label}.png"),
-            ("adv_examples", output_dir / f"adv_examples_{run_label}.png"),
-        ]:
-            if path_val.exists():
-                log[f"{run_label}/{path_key}"] = wandb.Image(str(path_val))
-        wandb_run.log(log)
-
     if return_datasets:
         # Hand the preloaded datasets back so a load-once/train-many driver can pass them
         # to the next config via preloaded_datasets=. Not serialized by write_task_result.
@@ -2214,10 +1762,6 @@ def train_all_steps(
     val_labels_csv: str | Path,
     output_dir: str | Path,
     device: Optional[torch.device] = None,
-    wandb_project: str = "will-it-render",
-    wandb_name: Optional[str] = None,
-    wandb_notes: Optional[str] = None,
-    disable_wandb: bool = False,
     cfg_yaml: Optional[str] = None,
     extra_cfg_paths: Optional[list[Path]] = None,
     steps_to_run: Optional[list[int]] = None,
@@ -2234,18 +1778,6 @@ def train_all_steps(
     """
     if device is None:
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-    run = wandb.init(
-        project=wandb_project,
-        name=wandb_name,
-        notes=wandb_notes,
-        config={
-            "train_labels_csv": str(train_labels_csv),
-            "val_labels_csv": str(val_labels_csv),
-            "output_dir": str(output_dir),
-            **{k: v for k, v in kwargs.items()},
-        },
-    ) if not disable_wandb else None
 
     run_dir = Path(output_dir) / datetime.now().strftime("%Y%m%d_%H%M%S")
     run_dir.mkdir(parents=True, exist_ok=True)
@@ -2278,7 +1810,6 @@ def train_all_steps(
             val_labels_csv=val_labels_csv,
             output_dir=step_dir,
             device=device,
-            wandb_run=run,
             block_index=block_idx,
             train_root_override=train_root_override,
             val_root_override=val_root_override,
@@ -2286,9 +1817,7 @@ def train_all_steps(
         )
         write_task_result(step_dir, step, block_idx, metrics)
 
-    aggregate_run(run_dir, wandb_run=run, metric=select_metric_for(kwargs.get("best_metric")))
-    if run is not None:
-        run.finish()
+    aggregate_run(run_dir, metric=select_metric_for(kwargs.get("best_metric")))
     print(f"Done. Results saved to {run_dir}")
 
 
@@ -2320,10 +1849,6 @@ def main(cfg: DictConfig) -> None:
         val_labels_csv=val_csv,
         output_dir=output_dir,
         steps_to_run=steps_to_run,
-        wandb_project=t.get("wandb_project", "will-it-render"),
-        wandb_name=t.get("wandb_name", None),
-        wandb_notes=t.get("wandb_notes", None),
-        disable_wandb=bool(t.get("disable_wandb", False)),
         cfg_yaml=OmegaConf.to_yaml(cfg),
         extra_cfg_paths=extra_cfg_paths,
         per_layer=per_layer,

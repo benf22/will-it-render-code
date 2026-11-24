@@ -79,7 +79,7 @@ class WanSteeringAdapter(SteeringBackendAdapter):
         for p in self.model.parameters():
             p.requires_grad_(False)
         # Gradient-checkpoint self_attn + ffn so the full 30-block grad forward at Lq=32760
-        # fits (~177 GB un-checkpointed OOMs even a 180 GB B200). No-op under the no_grad CFG
+        # fits (~177 GB un-checkpointed OOMs even a 180 GB card). No-op under the no_grad CFG
         # denoise; cross_attn (the capture) stays resident. See install_block_grad_checkpointing.
         self._restore_ckpt = install_block_grad_checkpointing(self.model)
         self._cm = WanCrossAttnProbeContext(

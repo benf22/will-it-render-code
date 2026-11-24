@@ -194,7 +194,7 @@ class LTXSteeringAdapter(SteeringBackendAdapter):
     def shadow_reference(self, step_idx: int, capture: bool) -> Optional[list]:
         """Advance a never-steered shadow trajectory one step (``attn_anchor_ref="unsteered"``).
 
-        Ported from the pre-core LTX loop (master's attention-anchor regularizer). The shadow
+        Implements the attention-anchor regularizer's reference trajectory. The shadow
         starts from the same initial latent and is denoised through the SAME CFG denoiser in
         eval() under no_grad, so it walks the un-steered trajectory. When ``capture`` is set
         (a steered step) it returns that forward's cond-pass captures: the reference attention

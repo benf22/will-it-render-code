@@ -5,11 +5,11 @@ Why this exists
 ---------------
 PyTorch's CUDA RNG (Philox) maps ``(seed, shape, dtype)`` to tensor positions in
 a way that depends on the GPU architecture's SM layout, so the *same seed* yields
-*different* initial noise — and therefore a different video — on an A100 vs an
-H100 vs a B200 (see ``seed_gpu_analysis/``: mean cosine ≈ 0.553 across archs).
+*different* initial noise — and therefore a different video — across different GPU
+generations (mean cosine ≈ 0.553 across archs, empirically).
 
 To make seeds canonical and GPU-independent we sample the initial latent ONCE, on
-a fixed canonical GPU (ctxa100-01), and store it. The extraction/generation/
+a fixed canonical GPU, and store it. The extraction/generation/
 steering pipeline then *loads* these latents instead of sampling
 (``data_extraction.model_backend.LTXBackend._build_pipeline_inputs`` →
 ``_PrecomputedNoiser``), so every GPU starts denoising from the identical latent.
@@ -40,8 +40,8 @@ Output (one file per seed)
 plus an ``index.json`` in the same directory recording the seeds present and the
 generation provenance (gpu, host, torch/cuda versions, shapes).
 
-Usage (on ctxa100-01)
----------------------
+Usage (on your canonical GPU)
+-----------------------------
     cd <repo> && source <your-venv>/bin/activate   # set VP_LTX_ROOT/VP_WAN_ROOT/VP_COGX_ROOT
     CUDA_VISIBLE_DEVICES=<free_gpu> python -m data_extraction.gen_seed_latents \
         --seeds 42,101,202,303,404,505,131,242,353,464,575 --gpu-tag ctxa100

@@ -132,9 +132,9 @@ class CogVideoXSteeringAdapter(SteeringBackendAdapter):
         # Release the last grad_forward's capture buffer. After an early-exit break
         # (A&E stop_iteration / es_threshold) no backward consumed the graph, so these
         # checkpoint outputs (live grad_fn) would otherwise keep the FULL un-backwarded
-        # forward graph (~49 GB measured 2026-10-08) alive through the solver advance
+        # forward graph (~49 GB) alive through the solver advance
         # into the next steered step — the difference between fitting and OOMing a
-        # 94 GB H100. After a normal backward this only frees ~2 GB of output tensors.
+        # 94 GB card. After a normal backward this only frees ~2 GB of output tensors.
         if self.probe_ctx is not None:
             self.probe_ctx.captures = []
 
@@ -155,7 +155,7 @@ class CogVideoXSteeringAdapter(SteeringBackendAdapter):
         if self.use_dynamic_cfg:
             # Schedule on the TIMESTEP VALUE (999→0), not the loop index — matches
             # CogVideoXPipeline (`num_inference_steps - t.item()`). step_idx collapsed
-            # guidance to ~1 for most of the loop; see model_backend._sample (fixed 2026-10-09).
+            # guidance to ~1 for most of the loop; see model_backend._sample.
             t_val = float(self.timesteps[step_idx])
             return 1.0 + self.guidance_scale * (
                 (1 - math.cos(math.pi * ((n - t_val) / n) ** 5.0)) / 2.0

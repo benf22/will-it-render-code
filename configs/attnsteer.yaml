@@ -8,10 +8,6 @@ extraction:
   # Storage dtype for saved feature safetensors (float16 halves disk, no training impact).
   feature_dtype: float16   # float32 | float16 | bfloat16
 
-labeling:
-  device: cpu
-  audioset_csv: null   # null = auto-detect panns_inference / LanguageBind fallback
-
 training:
   # Data — point these at your own labels CSVs / output dir.
   train_csv: /path/to/train.csv
@@ -88,13 +84,6 @@ training:
   resnet_step_cond: false
   resnet_step_embed_dim: 64
 
-  # Multi-task aesthetic head (resnet only) — predicts the clip aesthetic score alongside the class logit.
-  multitask_aesthetic: false
-  aesthetic_csv: /path/to/aesthetic.csv
-  aesthetic_col: score_aesthetic_quality
-  aesthetic_loss_weight: 0.5
-  aesthetic_loss: bce_soft         # bce_soft | mse
-
   # Per-frame presence head (resnet only) — per-latent-frame presence alongside the clip logit.
   # Targets from the object labeler's frames_final bit-strings, binned by the causal-VAE grouping.
   perframe_presence_head: false
@@ -119,42 +108,10 @@ training:
   multistep:
     steps: null
 
-  # Adversarial (PGD) training on the input attention maps (see training/README).
-  adv_training: false
-  adv_alpha: 0.5
-  adv_pgd_steps: 5
-  adv_epsilon: 0.05
-  adv_step_size: null
-  adv_norm: linf                   # linf | l2
-  adv_projection: box              # box | simplex | softmax
-  adv_axis: spatial                # spatial | frame_spatial (simplex/softmax only)
-  adv_domain_max: 1.0
-  adv_random_start: true
-  adv_on: all                      # all | pos | neg
-  adv_objective: clip              # clip | perframe_min
-  adv_eval_mode: true
-  adv_warmup_epochs: 0
-  adv_eval_robust: true
-  adv_eval_train: true
-  adv_eval_train_max: 1024
-  adv_eval_val_max: 0
-  adv_loss: bce                    # bce | alp | trades
-  adv_trades_beta: 1.0
-  adv_save_examples: 50
-  adv_save_maps: per_layer         # pooled | per_layer | full
-  adv_example_seed: 0
-  adv_init_ckpt_dir: null
-
   pos_weight: null                 # null = auto (n_neg/n_pos per step)
   balanced_batches: false
   train_root_override: null
   val_root_override: null
-
-  # W&B
-  disable_wandb: false
-  wandb_project: will-it-render
-  wandb_name: null
-  wandb_notes: null
 
   per_layer: true                  # true → one model per (step, block) instead of per step
   layer_indices: [-2]              # block indices to train when per_layer=true; null = all

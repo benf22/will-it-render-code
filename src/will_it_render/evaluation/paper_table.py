@@ -4,7 +4,7 @@ from the shipped annotated-clip labels — **no GPU, no model, no detectors**.
     python -m will_it_render.evaluation.paper_table
 
 Reads the detector-label CSVs under ``data/paper_eval/`` (one per backbone × method; see that
-directory's README) and prints the paper's §1 table. This is the "run the evaluation over the
+directory's README) and prints the paper's main object-presence table. This is the "run the evaluation over the
 annotated clips and get the paper's numbers" reproduction path.
 
 **Rule C** (the paper's tie-handling): the per-(clip, object) ``label`` is a GRiT+GDINO+OWL
@@ -28,7 +28,7 @@ import pandas as pd
 BACKBONES = [("wan", "WAN"), ("ltx", "LTX-2"), ("cogvideox", "CogVideoX")]
 METHODS = [("unsteered", "Unsteered"), ("ae", "A&E"), ("ours", "Ours")]
 
-# Paper §1 headline numbers (det-all %, det-ratio %) — used by tests and the ✓/✗ column.
+# Paper headline numbers (det-all %, det-ratio %) — used by tests and the ✓/✗ column.
 PAPER = {
     ("wan", "unsteered"): (27.1, 73.4), ("wan", "ae"): (39.2, 79.8), ("wan", "ours"): (59.9, 89.3),
     ("ltx", "unsteered"): (38.3, 78.9), ("ltx", "ae"): (37.8, 78.3), ("ltx", "ours"): (75.5, 93.9),

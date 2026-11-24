@@ -416,8 +416,6 @@ class ResNetProbe(nn.Module):
         layer_agg_init_random: bool = False,
         step_cond: bool = False,
         step_embed_dim: int = 64,
-        multitask: bool = False,
-        aux_dim: int = 1,
         perframe: bool = False,
         perframe_head: str = "shared",
         perframe_tap: str = "post_temporal",
@@ -431,13 +429,6 @@ class ResNetProbe(nn.Module):
         self.n_blocks_heads = n_blocks_heads
         self.latent_thw = latent_thw  # stored for checkpoint / repr
         self.temporal_spatial = temporal_spatial
-        # Multi-task: a second, parallel head off the same pooled backbone features. Off by
-        # default so forward(x) returns the single class logit exactly as before (every existing
-        # inference/steering caller is unchanged). When on, forward(..., return_aux=True) also
-        # returns an aux prediction [B, aux_dim] (e.g. the video's aesthetic score) — a shared
-        # trunk with two linear heads, the standard hard-parameter-sharing multi-task setup.
-        self.multitask = multitask
-        self.aux_dim = aux_dim
         # Per-latent-frame presence output. The clip head is a MEAN over (T, h, w) followed
         # by a LINEAR 1×1×1 conv, and a linear map over a mean commutes, so
         #     clip_logit == mean_t [ conv_out( mean_{h,w} feat[:, :, t] ) ]
@@ -501,14 +492,11 @@ class ResNetProbe(nn.Module):
         # Head dropout: Dropout3d on the raw input zeros whole head channels (per-layer mode,
         # where each channel is a head; in multi-block mode it drops block-head pairs).
         self.head_drop = nn.Dropout3d(head_dropout)
-        # Input mass normalization. The measured box attack is overwhelmingly *inflation*:
-        # on the 2026-08-13 run KS(clean, adversarial) was ~1.0 on total attention mass but
-        # only ~0.18 on peak. Renormalising each (channel, frame) map to unit spatial mass
-        # makes the probe INVARIANT to that direction, removing the attack's main lever by
-        # construction. The cost is that absolute attention magnitude may itself carry
-        # presence signal, so this can trade clean accuracy for robustness — which is exactly
-        # what the sweep measures. "none" keeps the legacy behaviour bit-for-bit.
-        # col_frame / col_video (2026-10-11): normalise every RAW input column — one
+        # Input mass normalization. Renormalising each (channel, frame) map to unit spatial
+        # mass makes the probe INVARIANT to the total-attention-mass direction. The cost is
+        # that absolute attention magnitude may itself carry presence signal, so this can trade
+        # clean accuracy for invariance. "none" keeps the legacy behaviour bit-for-bit.
+        # col_frame / col_video: normalise every RAW input column — one
         # (block, head) attention map of the target word — BEFORE the layer aggregation, so
         # prompts of any length share one input scale (a longer prompt spreads each row's
         # softmax over more text tokens and shrinks the target column ~2.5x on WAN 21f).
@@ -562,10 +550,6 @@ class ResNetProbe(nn.Module):
         self.act = nn.SiLU(inplace=True)
         self.pool = nn.AdaptiveAvgPool3d(1)
         self.conv_out = nn.Conv3d(out_ch, 1, kernel_size=1)
-        # Auxiliary (multi-task) head — same 1×1×1 conv on the pooled features.
-        self.conv_out_aux: nn.Module | None = (
-            nn.Conv3d(out_ch, aux_dim, kernel_size=1) if multitask else None
-        )
         # Class-identity head: predicts WHICH object class (dog / cat / …) the attention map
         # belongs to. Two architectures (class_head_arch):
         #   "pooled" (default) — a 1×1×1 conv on the FULLY-POOLED backbone features, i.e. a linear
@@ -692,26 +676,20 @@ class ResNetProbe(nn.Module):
         return self.layer_agg.reg_loss(l1, entropy)
 
     def forward(self, x: torch.Tensor, cond: torch.Tensor | None = None,
-                return_aux: bool = False, return_frames: bool = False,
-                return_class: bool = False):
+                return_frames: bool = False, return_class: bool = False):
         """``cond`` is the per-sample denoising-step value ``[B]`` for step-conditioned
         (multi-step pooled) probes; ignored when ``step_cond`` is off, so single-step
         callers keep using ``model(x)`` unchanged.
 
-        ``return_aux=True`` (multi-task only) additionally returns the aux head's prediction:
-        the call yields ``(logit [B, 1], aux [B, aux_dim])`` instead of the bare logit. Default
-        ``False`` → returns just the class logit, so every existing caller is unaffected.
-
         ``return_frames=True`` (per-frame only) additionally returns the per-latent-frame
         presence logits ``[B, T]``. Requested alone the call yields
-        ``(logit, frame_logits)``; together with ``return_aux`` it yields
-        ``(logit, aux, frame_logits)``. Under ``perframe_head="shared"``
+        ``(logit, frame_logits)``. Under ``perframe_head="shared"``
         ``frame_logits.mean(1) == logit[:, 0]`` exactly (a linear head over a mean commutes),
         so the clip prediction is the frame-average and steering can target e.g.
         ``min_t frame_logits`` for "present in every frame".
 
         ``return_class=True`` (class head only) additionally returns the class-identity logits
-        ``[B, n_classes]``, appended AFTER any aux / frame outputs; requested alone the call
+        ``[B, n_classes]``, appended AFTER any frame outputs; requested alone the call
         yields ``(logit, class_logits)``."""
         T, h, w = self.latent_thw
         B = x.shape[0]
@@ -778,12 +756,10 @@ class ResNetProbe(nn.Module):
                 frame_feat = xn.mean(dim=(3, 4), keepdim=True)        # [B, C, T, 1, 1]
                 frame_logits = frame_head(frame_feat).reshape(B, T)   # [B, T]
 
-        # Assemble the output tuple in a FIXED order — (logit, [aux], [frame_logits],
+        # Assemble the output tuple in a FIXED order — (logit, [frame_logits],
         # [class_logits]) — so every existing caller's positional unpacking is preserved
-        # (aux before frames, as before) and the class head is simply appended at the end.
+        # and the class head is simply appended at the end.
         extras: list[torch.Tensor] = []
-        if return_aux and self.conv_out_aux is not None:
-            extras.append(self.conv_out_aux(x).reshape(B, self.aux_dim))  # [B, aux_dim]
         if frame_logits is not None:
             extras.append(frame_logits)                                    # [B, T]
         if return_class and self.classhead:

@@ -20,8 +20,7 @@ Single-node, 1+ GPUs (DDP via torchrun):
         [--classifiers grit gdino owl] \\
         [--frame-threshold 0.15]
 
-(The research monorepo's distributed filesystem-queue mode is out of scope for this
-single-node public repo — see the extraction plan §3.)
+(The distributed filesystem-queue mode is out of scope for this single-node public repo.)
 """
 from __future__ import annotations
 
@@ -225,7 +224,7 @@ def add_frame_colour_args(parser: argparse.ArgumentParser) -> None:
                         help="Cast frames to uint8 before ToPILImage so GDINO/OWLv2/VLM see true "
                              "colours (default off = legacy: they score photographic negatives)")
     parser.add_argument("--source-negated", action="store_true",
-                        help="The mp4s are stored as negatives (CogX clips before 2026-10-09); "
+                        help="The mp4s are stored as negatives (older CogX clips); "
                              "invert on load for every classifier")
 
 
@@ -339,8 +338,8 @@ def process_task(task: dict, ctx: dict, args: argparse.Namespace) -> bool:
 
 
 def _run_seed(args: argparse.Namespace) -> None:
-    # The distributed filesystem-queue mode lived in the research monorepo's cluster tooling,
-    # which is out of scope for this single-node public repo (plan §3). Use torchrun mode
+    # The distributed filesystem-queue mode is out of scope for this single-node public
+    # repo. Use torchrun mode
     # (``--mode torchrun``) for multi-GPU sharding on one machine.
     raise NotImplementedError(
         "Queue (seed) mode is not available in this single-node repo; run with "

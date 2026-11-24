@@ -3,7 +3,7 @@
 
 Mirrors gen_seed_latents_wan.py / gen_seed_latents.py: PyTorch's CUDA RNG maps
 ``(seed, shape)`` to noise in a GPU-architecture-dependent way, so the *same seed* yields a
-*different* initial latent — and video — on an A100 vs H100 vs B200. We sample the initial
+*different* initial latent — and video — across different GPU generations. We sample the initial
 latent ONCE on a canonical GPU and store it; ``CogVideoXBackend._prepare`` then LOADS it
 instead of sampling, so every GPU denoises from the identical initial latent.
 
@@ -14,7 +14,7 @@ DiT/T5/VAE load is needed, so it runs in seconds. We store the batch-less [F', C
 tensor in float32; the backend adds the batch dim and casts to the transformer dtype.
 
 NOTE: only the INITIAL latent is made GPU-independent here. The denoising forward is still
-GPU-tier dependent, so the FINAL video differs across A100/H100/H200/B200 — record the
+GPU-tier dependent, so the FINAL video differs across GPU generations — record the
 generating GPU per prompt (run_extraction writes gen_meta.json) and route the pass-2
 feature regen to the SAME tier to reproduce the pass-1 video (and thus its labels) exactly.
 
@@ -23,7 +23,7 @@ Output (one file per seed), matching ``CogVideoXBackend._seed_latent_path``::
     <out_root>/<model_tag>/<H>x<W>x<F>_<fps>fps/seed_<NNNNN>__<gpu_tag>.pt
       { "video_noise": float32 CPU tensor [F', C, H/8, W/8], "seed": int, "meta": {...} }
 
-Usage (on an A100 for the a100 tag):
+Usage (on your canonical GPU; --gpu-tag names the resulting file):
     cd <repo> && source <your-cogx-venv>/bin/activate   # set VP_COGX_ROOT
     CUDA_VISIBLE_DEVICES=<gpu> python -m data_extraction.gen_seed_latents_cogx \
         --seeds 42,111,123,456,469,696,35426,873641 --gpu-tag a100 \

@@ -97,7 +97,7 @@ def all_objects_present_rate(df: pd.DataFrame) -> float | None:
 
 
 def all_objects_present_rate_legacy(df: pd.DataFrame) -> float | None:
-    """DEPRECATED pre-2026-06-22 definition: a ``-1`` (uncertain) object **fails** the
+    """DEPRECATED legacy definition: a ``-1`` (uncertain) object **fails** the
     clip (clip scores 1.0 only if every object is ``label==1``, else 0.0). Kept only so
     reports can show the old number beside the corrected one; use
     :func:`all_objects_present_rate` for everything else."""

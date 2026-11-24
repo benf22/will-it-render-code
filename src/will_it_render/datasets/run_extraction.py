@@ -16,8 +16,7 @@ Modes:
     --mode generate   Generate videos only, no feature extraction (fast).
     --mode extract    Generate videos and extract per-step AttnSteer features (default).
 
-(The research monorepo's multi-VM / SLURM filesystem-queue runner is out of scope for this
-single-node public repo — see the extraction plan §3.)
+(The multi-VM / SLURM filesystem-queue runner is out of scope for this single-node public repo.)
 """
 from __future__ import annotations
 
@@ -52,7 +51,7 @@ from will_it_render.common.storage import (
 )
 from will_it_render.common.probe_types import CaptureType
 
-# Prompt-CSV helpers hoisted to ``common.prompts`` (WILL_IT_RENDER_PLAN.md §10b R1);
+# Prompt-CSV helpers hoisted to ``common.prompts``;
 # re-exported here so existing ``data_extraction.run_extraction`` callers keep working.
 from will_it_render.common.prompts import load_prompts, normalize_row, parse_target_words  # noqa: F401
 
@@ -253,7 +252,7 @@ def process_task(task: dict, ctx: ExtractionContext, args: argparse.Namespace) -
             feat_dir = saver.finalize(token_index_map) if ctx.per_word_features else saver.finalize()
             print(f"\n  features → {feat_dir}/")
 
-            probe_cfg_path = ctx.output_dir / "extraction_config.yaml"  # N1: was probe_config.yaml
+            probe_cfg_path = ctx.output_dir / "extraction_config.yaml"  # was probe_config.yaml
             if not probe_cfg_path.exists() and probe_shape:
                 lhw = probe_shape.get("latent_hw")
                 Lq = probe_shape["Lq"]

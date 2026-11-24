@@ -1,8 +1,6 @@
 """Resolve external DiT-engine checkouts and artifact locations from env vars.
 
-Replaces the source repo's three incompatible mechanisms (LTX ``parents[3]`` directory
-layout, WAN ``engine.wan_root``-or-``~/repos/Wan2.1``, CogVideoX pip-diffusers) with one
-explicit contract (plan §10b R5). The engines are NOT pip packages — they are local
+One explicit contract for all three backends. The engines are NOT pip packages — they are local
 checkouts that each backend imports after their root is placed on ``sys.path``.
 
     export VP_LTX_ROOT=/path/to/LTX-2

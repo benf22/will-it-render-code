@@ -1,8 +1,7 @@
 # Third-party code and licenses
 
 The project is MIT-licensed (see `LICENSE`), but it incorporates or depends on third-party
-components under other licenses. This file records their provenance and notices. **It is a
-scaffold** — each entry is finalized when the corresponding code is ported (plan §10b R6).
+components under other licenses. This file records their provenance and notices.
 
 ## Vendored / adapted code (ships in this repo)
 
@@ -21,6 +20,3 @@ scaffold** — each entry is finalized when the corresponding code is ported (pl
 | VBench | vbench extra (evaluation) | (TODO confirm) | Video quality metrics. |
 | Llama-3 (prompt enrichment) | optional dataset enrichment | Llama-3 community license | Enrichment is optional; model weights not shipped. |
 | DiT engines: LTX-2 / Wan2.1 / CogVideoX | backends (external checkouts) | respective upstream | Resolved via `VP_*_ROOT`; not redistributed here. |
-
-> TODO (R6): confirm PANNs / VBench license strings; ensure attribution headers survive the
-> port; add NOTICE text for Apache-2.0 components.

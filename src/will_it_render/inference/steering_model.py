@@ -24,7 +24,7 @@ from will_it_render.common.aggregator import aggregate_captures_to_vector
 
 # ``SteeringModel`` ABC and ``build_attnsteer`` were hoisted into ``common`` to break the
 # ``steering ↔ baselines`` import cycle and the ``steering → training.trainer`` heavy pull
-# (WILL_IT_RENDER_PLAN.md §10b R1). Both are re-exported here (imported above) so existing
+# Both are re-exported here (imported above) so existing
 # ``from steering.steering_model import SteeringModel`` / ``build_attnsteer`` callers keep working.
 
 
@@ -66,8 +66,8 @@ def _build_probe_from_ckpt(
         resnet_layer_agg=ckpt.get("resnet_layer_agg", "none"),
         resnet_layer_agg_k=ckpt.get("resnet_layer_agg_k", 1),
         resnet_layer_agg_hidden=ckpt.get("resnet_layer_agg_hidden", 16),
-        # Input normalisation must follow the checkpoint (mass / col_frame / col_video); before
-        # 2026-10-11 it was dropped here, so a normalised probe would have run un-normalised.
+        # Input normalisation must follow the checkpoint (mass / col_frame / col_video);
+        # if dropped here, a normalised probe would run un-normalised.
         resnet_input_norm=ckpt.get("resnet_input_norm", "none"),
         # Per-frame presence head — needed so ``forward(..., return_frames=True)`` yields
         # the per-latent-frame logits the timeline steerer consumes. With
@@ -254,7 +254,7 @@ class StepKeyedSteeringModel(SteeringModel):
                 f"that extract_keys/spatial_downsample match the extraction config."
             )
         feat = vec.view(nbe, nh, T, h, w)
-        # TEMPORARY HACK (2026-10-11) — dataset-level feature renorm, see
+        # TEMPORARY HACK — dataset-level feature renorm, see
         # _install_feature_renorm_HACK. No-op unless steering.model.feature_renorm is set.
         # REMOVE once the probe is retrained with a column normalisation.
         if entry.get("renorm_hack") is not None:
@@ -530,7 +530,7 @@ class PerFrameTimelineSteeringModel(StepKeyedSteeringModel):
         #   "greedy_max"   — per optimization iteration, whichever class currently has the
         #                    LARGER loss is optimized alone; the choice can flip between
         #                    iterations as the leading class is paid down.
-        # The two halves fight through a shared presence level (DEBUG.md §2, §6): "both" parks
+        # The two halves fight through a shared presence level: "both" parks
         # at the equalized fixed point, the single-class arms show what each half can do with
         # the level free, and greedy_max alternates instead of averaging.
         self.class_select = str(class_select).lower()
@@ -669,8 +669,7 @@ class PerFrameTimelineSteeringModel(StepKeyedSteeringModel):
         but a latent nudge mostly moves a global presence *level* shared by both classes:
         raise it and the present loss falls while the absent loss rises. The optimizer then
         parks at an equalized fixed point where neither class can improve without the other
-        getting worse (measured on WAN oo/18 —
-        ``experiment_reports/2026_08_26_STEER_EVAL_wan_temporal_control/DEBUG.md`` §2, §6).
+        getting worse (measured on WAN, empirically).
 
         These three score the CONTRAST between the two classes instead, and the level
         cancels out of all of them, so both halves can fall together.
@@ -819,8 +818,7 @@ class PerFrameTimelineSteeringModel(StepKeyedSteeringModel):
         (:data:`steering_core.run_steering_optimization`, ``frame_grad_mask``). The
         motivation: one shared latent carries both halves, so the absent-frame gradient and
         the present-frame gradient land on *the same* elements and largely cancel — the
-        equalized fixed point measured in
-        ``experiment_reports/2026_08_26_STEER_EVAL_wan_temporal_control/DEBUG.md`` §2, §6.
+        equalized fixed point measured on WAN (empirically).
         Masking makes the two halves structurally unable to fight over a frame.
         """
         entry = self.probes[self._probe_step(step_idx)]
@@ -1008,27 +1006,24 @@ class PerFrameTimelineSteeringModel(StepKeyedSteeringModel):
         return out
 
 
-# WHY THIS IS STILL HERE (2026-10-19, kept on purpose when night-v3-2026-09-25 was merged into
-# feat/merge-ltx-wan-cogx): OFF by default — a no-op unless `steering.model.feature_renorm` is set —
-# so it changes nothing in normal runs. It is kept (1) to reproduce the 10-11/10-12 renorm reports
+# WHY THIS IS STILL HERE: OFF by default — a no-op unless `steering.model.feature_renorm` is set —
+# so it changes nothing in normal runs. It is kept (1) to reproduce the renorm experiments
 # (dataset-level and per-prompt renorm: no help offline or in 5-prompt steering), and (2) because we may
 # want it later: the off-distribution problem it targets is real — TempoControl-style prompts put
 # 3-8x less attention mass on the object word than our training prompts. Until a probe retrained
 # with per-column normalisation (`resnet_input_norm: col_frame|col_video`) is adopted, this is the
 # only steering-time knob for that shift.
 def _install_feature_renorm_HACK(model: SteeringModel, stats_path: Optional[str]) -> SteeringModel:
-    """TEMPORARY HACK (2026-10-11) — REMOVE once the probe is retrained with a per-column
+    """TEMPORARY HACK — REMOVE once the probe is retrained with a per-column
     normalisation (so prompts of any length share one input scale).
 
     Maps the probe input from the prompt set it is steered on (e.g. the TempoControl template)
     onto the probe's TRAINING distribution with fixed, dataset-level factors per
     (probe step, block, head):  x' = (x - mu_src) / sd_src * sd_train + mu_train.
-    The factors are per DATASET, never per prompt; they come from
-    _scratch/loss_quality/renorm_stats.py (json with steps -> mu_train/sd_train/mu_tc/sd_tc,
-    each [n_blocks][n_heads]). Steps without a probe use their nearest probe's factors (the
-    factors live on the probe entry). Offline on the 80 TempoControl prompts this did NOT help
-    (clip AUROC 0.49-0.63 vs 0.54-0.67 un-renormed; report
-    2026_10_11_STEER_EVAL_wan_temporal_control_lossquality21f, "dataset-level renorm").
+    The factors are per DATASET, never per prompt; they come from a precomputed stats JSON
+    (steps -> mu_train/sd_train/mu_tc/sd_tc, each [n_blocks][n_heads]). Steps without a probe
+    use their nearest probe's factors (the factors live on the probe entry). Offline on the 80
+    TempoControl prompts this did NOT help (clip AUROC 0.49-0.63 vs 0.54-0.67 un-renormed).
     """
     if not stats_path:
         return model
@@ -1036,7 +1031,7 @@ def _install_feature_renorm_HACK(model: SteeringModel, stats_path: Optional[str]
     # str -> mode "dataset" (fixed affine, below). dict {mode, stats} also allows the per-PROMPT
     # modes "prompt_scale" (x * M/m_p) and "prompt_affine" ((x - m_p)/s_p * S + M), where m_p/s_p
     # are the clip's own (block, head) mean/std and M/S the training set's typical per-clip values
-    # (json from _scratch/loss_quality/renorm_prompt_eval.py: steps -> M_train/S_train).
+    # (a precomputed stats JSON: steps -> M_train/S_train).
     mode = "dataset"
     if isinstance(stats_path, dict):
         mode, stats_path = str(stats_path.get("mode", "dataset")), stats_path["stats"]
@@ -1072,7 +1067,7 @@ def build_steering_model(cfg: dict, device: torch.device, agg_kwargs: dict, prob
                          steps_filter: Optional[list[int]] = None) -> SteeringModel:
     """Factory: build the steering model from the ``steering.model`` config block."""
     model = _build_steering_model_impl(cfg, device, agg_kwargs, probe_config, steps_filter)
-    # TEMPORARY HACK (2026-10-11): remove with _install_feature_renorm_HACK.
+    # TEMPORARY HACK: remove with _install_feature_renorm_HACK.
     return _install_feature_renorm_HACK(model, cfg.get("feature_renorm"))
 
 

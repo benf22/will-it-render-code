@@ -1,6 +1,6 @@
 """Prompt-CSV parsing helpers, dependency-free.
 
-Hoisted out of ``data_extraction.run_extraction`` (``WILL_IT_RENDER_PLAN.md`` §10b R1) so
+Hoisted out of ``data_extraction.run_extraction`` so
 the steering entry points can parse prompt CSVs without importing the whole DDP extraction
 module (which pulls the model backends). ``data_extraction.run_extraction`` re-exports these
 names for backwards compatibility.

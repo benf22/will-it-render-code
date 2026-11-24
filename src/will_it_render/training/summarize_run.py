@@ -323,48 +323,12 @@ def plot_summary(main_df: pd.DataFrame, seg_df: pd.DataFrame, per_layer: bool, o
 # ---------------------------------------------------------------------------
 
 
-_RESULTS_JSON_EXTRAS = (
-    "adv_auroc", "adv_average_precision", "adv_balanced_accuracy",
-    "flip_rate", "neg_spike_rate", "mean_score_shift",
-    "train_adv_auroc", "train_adv_balanced_accuracy",
-    "train_flip_rate", "train_neg_spike_rate",
-)
-
-
-def _merge_results_json_extras(run_dir: Path, main_df: pd.DataFrame,
-                               per_layer: bool) -> pd.DataFrame:
-    """Add results.json-only columns (the robust/adversarial block) onto the summary table.
-
-    No-op for runs without them, so non-adversarial runs keep their exact column set.
-    """
-    import json
-
-    rows = []
-    for f in sorted(run_dir.glob("step_*/results.json")):
-        try:
-            row = (json.loads(f.read_text()) or {}).get("row") or {}
-        except (OSError, ValueError):
-            continue
-        extra = {k: row[k] for k in _RESULTS_JSON_EXTRAS if k in row}
-        if not extra:
-            continue
-        key = {"step": row.get("step")}
-        if per_layer:
-            key["block"] = row.get("block")
-        rows.append({**key, **extra})
-    if not rows or "step" not in main_df.columns:
-        return main_df
-    on = ["step", "block"] if (per_layer and "block" in main_df.columns) else ["step"]
-    return main_df.merge(pd.DataFrame(rows).drop_duplicates(subset=on), on=on, how="left")
-
-
-def write_run_summary(run_dir: str | Path, metric: str = "auroc", wandb_run=None) -> pd.DataFrame:
+def write_run_summary(run_dir: str | Path, metric: str = "auroc") -> pd.DataFrame:
     """Write training_results.csv + training_results_by_nobj.csv + training_summary.png.
 
     Re-derived from the per-epoch dumps, selecting the best epoch per item by `metric`.
     Returns the main best-epoch DataFrame (empty if no dumps were found — callers that
-    need a hard error, like the CLI, should check `.empty`). Logs the tables + figure
-    to `wandb_run` when provided.
+    need a hard error, like the CLI, should check `.empty`).
     """
     run_dir = Path(run_dir)
     items = discover_items(run_dir)
@@ -379,11 +343,6 @@ def write_run_summary(run_dir: str | Path, metric: str = "auroc", wandb_run=None
     summaries.sort(key=lambda s: (s["step"], -1 if s["block"] is None else s["block"]))
 
     main_df = pd.DataFrame([s["row"] for s in summaries])
-    # The summary is re-derived from the per-epoch prediction dumps, which only carry clean
-    # scores. Metrics that exist solely in results.json — the adversarial/robust block — would
-    # otherwise be silently dropped from training_results.csv even though write_task_result
-    # recorded them. Join them back on (step, block).
-    main_df = _merge_results_json_extras(run_dir, main_df, per_layer)
     main_df.to_csv(str(run_dir / "training_results.csv"), index=False)
 
     seg_df = build_segment_table(summaries, per_layer)
@@ -392,22 +351,6 @@ def write_run_summary(run_dir: str | Path, metric: str = "auroc", wandb_run=None
     summary_png = run_dir / "training_summary.png"
     plot_summary(main_df, seg_df, per_layer, summary_png)
     print(f"[summary] → training_results.csv, training_results_by_nobj.csv, training_summary.png")
-
-    if wandb_run is not None:
-        import wandb
-        # seg_df has a MultiIndex on columns (metric, n_objects); reset_index keeps those
-        # as tuples, which wandb.Table rejects ("columns expects list of strings or ints").
-        # Flatten tuple columns to "metric__nobj" strings before logging.
-        seg_flat = seg_df.reset_index()
-        seg_flat.columns = [
-            "__".join(str(x) for x in c if str(x) != "") if isinstance(c, tuple) else str(c)
-            for c in seg_flat.columns
-        ]
-        log = {"training_results": wandb.Table(dataframe=main_df),
-               "training_results_by_nobj": wandb.Table(dataframe=seg_flat)}
-        if summary_png.exists():
-            log["training_summary"] = wandb.Image(str(summary_png))
-        wandb_run.log(log)
     return main_df
 
 

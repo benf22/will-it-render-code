@@ -44,9 +44,8 @@ def bits_to_latent_frames(
     # frame 0 alone, every later latent frame covers ``s`` native frames, so
     # ``native == 1 + s*(n_latent-1)``. This holds for every backend we support, only the
     # temporal factor differs — LTX-2 s=8 (97 native → 13 latent), WAN 2.1 s=4 (81 native →
-    # 21 latent, verified against the 2026_08_16 labeling), CogVideoX-5B s=4 (49 native → 13
-    # latent; 1 + 4*(13-1) == 49, the same causal stride-4 VAE as WAN, confirmed against the
-    # 2026_09_30 cogvideox extraction's frames_final). ``s`` is derived from the string length
+    # 21 latent), CogVideoX-5B s=4 (49 native → 13
+    # latent; 1 + 4*(13-1) == 49, the same causal stride-4 VAE as WAN). ``s`` is derived from the string length
     # below and the tiling is checked exactly, so a mismatch still raises. Other backends with
     # a non-causal or differently-patchified temporal VAE must be validated before being added
     # here.
@@ -104,8 +103,6 @@ class ProbeDataset(Dataset):
         device: Optional[str | torch.device] = None,
         half: bool = False,
         pin_memory: bool = False,
-        aux_csv: Optional[str | Path] = None,
-        aux_col: str = "score_aesthetic_quality",
         perframe_csv: Optional[str | Path] = None,
         perframe_col: str = "frames_final",
         perframe_T: Optional[int] = None,
@@ -165,20 +162,6 @@ class ProbeDataset(Dataset):
         if n_ignored:
             print(f"[ProbeDataset] step {denoising_step}: ignored {n_ignored} records with label < 0")
         df = df[df["label"] >= 0]
-        # Optional auxiliary (multi-task) target, e.g. the video's aesthetic score, joined
-        # from a separate per-video CSV on (root_extraction_dir, relative_extraction_dir).
-        # Aesthetic is a per-CLIP property, so it's keyed by the clip's absolute dir and shared
-        # across that clip's per-object rows. Clips absent from aux_csv get NaN (masked in loss).
-        self.multitask = aux_csv is not None
-        self.aux_col = aux_col
-        self._aux_by_dir: dict[str, float] = {}
-        aux_lookup: dict[tuple[str, str], float] = {}
-        if self.multitask:
-            adf = pd.read_csv(str(aux_csv), skip_blank_lines=True)
-            if aux_col not in adf.columns:
-                raise ValueError(f"aux_col {aux_col!r} not in {aux_csv} (cols: {list(adf.columns)})")
-            for _, ar in adf.iterrows():
-                aux_lookup[(str(ar["root_extraction_dir"]), str(ar["relative_extraction_dir"]))] = float(ar[aux_col])
         # Optional per-latent-frame presence targets, joined from one or more object-labeler
         # CSVs (comma-separated) carrying the `frames_final` bit-string. Unlike the aesthetic
         # aux — a per-CLIP property — presence is per (clip, OBJECT), so the join key carries
@@ -219,7 +202,7 @@ class ProbeDataset(Dataset):
         # time from prompt_info.json["class_name"]). class_vocab is the {name: index} map built
         # once from the train split; object_names absent from it (e.g. a val-only class) get -1,
         # which the training loop masks out of the cross-entropy. Packed as the LAST label
-        # column (after class-presence, aesthetic aux, and per-frame columns).
+        # column (after class-presence and per-frame columns).
         self.class_head = bool(class_head)
         self.class_vocab = dict(class_vocab) if class_vocab is not None else None
         if self.class_head and not self.class_vocab:
@@ -239,12 +222,6 @@ class ProbeDataset(Dataset):
                 float(row["label"]),
                 str(row["object_name"]),
             ))
-            if self.multitask:
-                # Key by absolute extraction_dir (== record[0]) so the aux value survives the
-                # missing/corrupt record filtering and is found regardless of root_override.
-                self._aux_by_dir[str(extraction_dir)] = aux_lookup.get(
-                    (str(row["root_extraction_dir"]), str(row["relative_extraction_dir"])), float("nan")
-                )
             if self.perframe:
                 # Keyed by (absolute extraction_dir, object_name) == (record[0], record[3])
                 # so the target survives root_override and the missing/corrupt filtering.
@@ -317,7 +294,7 @@ class ProbeDataset(Dataset):
         # non_blocking). Only meaningful when preload=True.
         self.device = torch.device(device) if device is not None else None
         # half=True stores the preloaded feature tensor in float16 (halving the resident
-        # footprint, e.g. so the un-averaged "stack" features fit GPU-resident on a B200).
+        # footprint, e.g. so the un-averaged "stack" features fit GPU-resident on a large card).
         # Features are upcast back to float32 per-sample in __getitem__, so the probe still
         # trains in fp32 and nothing downstream changes — only the storage dtype differs.
         self.half = half
@@ -346,7 +323,6 @@ class ProbeDataset(Dataset):
             self.labels_csv, step, self.avg_mode, self.train_spatial_downsample,
             int(self.half), self.n_blocks_heads, self.latent_thw, self.n_blocks,
             self.block_index, self.layer_subset, self.capture_blocks, self.n_blocks_total,
-            self.multitask, getattr(self, "aux_col", None),
             self.perframe, self.perframe_col if self.perframe else None,
             self.perframe_T, self.perframe_mode,
             self.class_head,
@@ -562,19 +538,10 @@ class ProbeDataset(Dataset):
         self._labels = torch.tensor(
             [r[2] for r in self.records], dtype=torch.float32, device=target
         ).unsqueeze(1)
-        if self.multitask:
-            # Pack the aux target as a 2nd label column → [N, 2] (class, aux). This rides the
-            # existing labels slot through both the DataLoader and GpuBatchStreamer paths, so
-            # no transport code changes; the train loop splits the columns.
-            aux = torch.tensor(
-                [self._aux_by_dir.get(r[0], float("nan")) for r in self.records],
-                dtype=torch.float32, device=target,
-            ).unsqueeze(1)
-            self._labels = torch.cat([self._labels, aux], dim=1)
         if self.perframe:
-            # Pack the T per-latent-frame targets as the LAST columns → [N, 1+T] (or
-            # [N, 2+T] alongside the aesthetic aux, which keeps column 1). Same trick as
-            # above: extra label columns ride the existing transports untouched.
+            # Pack the T per-latent-frame targets as the LAST columns → [N, 1+T]
+            # (class, then the T per-frame columns). The extra label columns ride the
+            # existing DataLoader / GpuBatchStreamer transports untouched.
             pf = torch.tensor(
                 [self._perframe_by_key.get((r[0], r[3]), [float("nan")] * self.perframe_T)
                  for r in self.records],
@@ -597,15 +564,14 @@ class ProbeDataset(Dataset):
     @property
     def perframe_offset(self) -> int:
         """Column index of the first per-frame target in the packed label row
-        (0 = class, 1 = aesthetic aux when multitask, then the T per-frame columns)."""
-        return 1 + int(self.multitask)
+        (0 = class, then the T per-frame columns)."""
+        return 1
 
     @property
     def class_offset(self) -> int:
         """Column index of the class-identity target (the last packed column): after the
-        class-presence label (0), the aesthetic aux (when multitask), and the T per-frame
-        columns (when perframe)."""
-        return 1 + int(self.multitask) + (self.perframe_T if self.perframe else 0)
+        class-presence label (0) and the T per-frame columns (when perframe)."""
+        return 1 + (self.perframe_T if self.perframe else 0)
 
     def __len__(self) -> int:
         return len(self.records)
@@ -656,8 +622,6 @@ class ProbeDataset(Dataset):
         extraction_dir, step, label, word = self.records[idx]
         feat = self._load_feat(extraction_dir, step, word)
         cols = [label]
-        if self.multitask:
-            cols.append(self._aux_by_dir.get(extraction_dir, float("nan")))
         if self.perframe:
             cols.extend(self._perframe_by_key.get(
                 (extraction_dir, word), [float("nan")] * self.perframe_T))
@@ -872,8 +836,8 @@ class GpuBatchStreamer:
     pinned host RAM and are gathered per batch into a reusable pinned buffer and copied to the
     GPU. Each batch is assembled on the GPU and upcast to fp32 so the probe trains exactly as
     before. ``n_resident`` auto-sizes to the GPU's free VRAM (minus ``reserve_gb`` for the
-    batch + activations), so a B200 caches almost everything and an H200 caches less — both
-    correct, only the streamed fraction (and thus speed) differs.
+    batch + activations), so a larger card caches almost everything and a smaller one caches
+    less — both correct, only the streamed fraction (and thus speed) differs.
 
     One streamer owns the (single) resident GPU copy; call ``.loader(batch_index_lists)`` to
     get a cheap iterable for any sampler (the train BalancedBatchSampler, or

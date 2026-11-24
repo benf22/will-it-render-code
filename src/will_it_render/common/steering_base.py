@@ -2,7 +2,7 @@
 
 Hoisted out of ``steering.steering_model`` so that baseline implementations
 (``baselines/*/loss.py``) can subclass it without importing the ``steering`` package —
-which imported ``baselines`` back, forming a cycle (``WILL_IT_RENDER_PLAN.md`` §10b R1).
+which imported ``baselines`` back, forming a cycle.
 ``steering.steering_model`` re-exports this name for backwards compatibility.
 """
 from __future__ import annotations

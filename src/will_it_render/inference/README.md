@@ -4,7 +4,7 @@ Inference-time attention steering: at chosen denoising steps, an AttnSteer model
 cross-attention and its loss gradient is backpropagated into the latent so the target object
 renders. **This is use #1 (run inference).**
 
-**Standalone (N2):** imports only `common` and `backends`.
+**Standalone:** imports only `common` and `backends`.
 
 ## Entry points
 
@@ -31,7 +31,7 @@ python -m will_it_render.inference.steer \
 | `steering_model.py` | loads AttnSteer checkpoints, turns captures → steering loss (`build_steering_model`) | library |
 | `ltx_adapter.py` / `wan_adapter.py` / `cogx_adapter.py` | per-backend seams onto `steering_core` | library |
 
-## The bundle contract (R2)
+## The bundle contract
 
 `wir-run` is not zero-config — it consumes an **artifact bundle**:
 
@@ -53,7 +53,7 @@ Defined in `steering_core.py`'s `GRAD_AGGREGATE_REGISTRY`.
 
 The same steering loop can enforce a **per-frame** presence schedule — make an object appear only
 during part of the clip (the TempoControl protocol), not just "present somewhere". This uses a
-**distinct, per-frame AttnSteer bundle** (an adversarially-hardened per-frame probe) and the
+**distinct, per-frame AttnSteer bundle** (a per-frame probe) and the
 recipe in `configs/steering/ltx_timeline.yaml`. **LTX-2 only.**
 
 Each prompt row carries a `timelines` column: one `word:schedule` entry per object, entries joined
@@ -86,8 +86,8 @@ python -c "from will_it_render.evaluation.metrics.temporal_accuracy import *"   
 There are **two** independent sources of run-to-run variation, handled separately.
 
 **1. The initial latent (generation).** A seed maps to a noise tensor through CUDA's RNG, which
-is **GPU-architecture dependent** — the *same* seed produces a *different* initial latent on an
-A100 vs an H100 vs an L40S, so "seed 42" alone does **not** reproduce a video across machines. We
+is **GPU-architecture dependent** — the *same* seed produces a *different* initial latent across
+different GPU generations, so "seed 42" alone does **not** reproduce a video across machines. We
 fix this by **precomputing** the noise once and *loading* it instead of sampling: the per-seed
 latent files (`seed_latents/`, see `backends/seed_latents_*.py`) make a given seed yield the same
 starting point on any GPU. A bundle ships the latent for its demo seed; for any other seed the

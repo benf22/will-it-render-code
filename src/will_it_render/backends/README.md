@@ -3,7 +3,7 @@
 DiT backend adapters + attention-capture hooks for the three engines. Shared by `datasets`
 (extraction) and `inference` (steering); not an entry point itself.
 
-## Engine resolution (R5)
+## Engine resolution
 
 Engines are **external checkouts** located via env vars (we ship only the hooks). See the main
 README's install table for clone commands + versions.

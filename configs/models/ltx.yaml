@@ -23,7 +23,7 @@ extraction:
 
   # Canonical per-seed initial latents. Seed→noise is GPU-architecture dependent
   # so the pipeline LOADS precomputed video+audio latents
-  # (generated once on ctxa100 via will_it_render.backends.seed_latents) instead of
+  # (generated once on a fixed GPU via will_it_render.backends.seed_latents) instead of
   # sampling — making the same seed reproduce the identical video on any GPU. Missing
   # seeds hard-fail. Files live at <dir>/<model_name>/<HxWxF_fps>/seed_NNNNN__<tag>.pt
   seed_latents_dir: ./seed_latents   # or set VP_SEED_LATENTS_DIR
