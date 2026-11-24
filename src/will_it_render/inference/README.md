@@ -10,7 +10,9 @@ renders. **This is use #1 (run inference).**
 
 ```bash
 # headline: one prompt + one AttnSteer bundle -> a steered video
-wir-run --bundle <bundle-dir> --prompt "a dog on a beach" --seed 42
+# --target-words = the word(s) from the prompt to induce (comma-separated; omit = all nouns)
+wir-run --bundle <bundle-dir> --prompt "a kite and a baseball bat" \
+    --target-words "kite,baseball bat" --seed 1892721232
 
 # config/CSV driven (whole test set); pick the recipe from configs/steering/
 python -m will_it_render.inference.steer \

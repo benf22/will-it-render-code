@@ -66,11 +66,11 @@ engines). Check out the **exact commits we used**:
 | Backbone | How to get it | Versions | Env var |
 |----------|---------------|----------|---------|
 | **LTX-2** | `git clone https://github.com/Lightricks/LTX-2 && git -C LTX-2 checkout 1799988` | torch 2.9.1 (cu128) | `export VP_LTX_ROOT=$PWD/LTX-2` |
-| **WAN (Wan2.1)** | `git clone https://github.com/benf22/Wan2.1 && git -C Wan2.1 checkout 7c81b2f` (SDPA-attention fork) | torch 2.9.1, diffusers 0.39 | `export VP_WAN_ROOT=$PWD/Wan2.1` |
+| **WAN (Wan2.1)** | `git clone https://github.com/Wan-Video/Wan2.1 && git -C Wan2.1 checkout 7c81b2f` | torch 2.9.1, diffusers 0.39 | `export VP_WAN_ROOT=$PWD/Wan2.1` |
 | **CogVideoX-5B** | `pip install "diffusers==0.39"` (no clone needed) | transformers 5.x, torch 2.11 | `VP_COGX_ROOT` optional |
 
 Each engine also needs its own runtime deps. WAN's `requirements.txt` lists `flash_attn`, but
-this is the **SDPA fork** — it runs without it; the minimal set is:
+Wan2.1 runs on its built-in **SDPA** attention path without it; the minimal set is:
 `pip install "diffusers==0.39" transformers accelerate imageio imageio-ffmpeg einops ftfy opencv-python-headless "numpy<2"`.
 
 Model weights (point `configs/models/<backbone>.yaml` at your paths): LTX
@@ -81,10 +81,35 @@ Model weights (point `configs/models/<backbone>.yaml` at your paths): LTX
 
 ```bash
 export VP_WAN_ROOT=/path/to/Wan2.1
-# fetch a trained AttnSteer bundle (checkpoints + extraction_config + seed latent) from HF…
-python -m scripts.download_artifacts --repo benf22/will-it-render --bundle wan --quiet
-# …then steer one prompt → a video
-wir-run --bundle <bundle-dir> --prompt "a dog on a beach" --seed 42
+# fetch a trained AttnSteer bundle (checkpoints + extraction_config + seed latents) from HF…
+bundle=$(python -m scripts.download_artifacts --repo benf22/will-it-render --bundle wan --quiet)
+# …then steer the requested objects so they render (WAN drops the kite; AttnSteer brings it back):
+wir-run --bundle "$bundle" --prompt "a kite and a baseball bat" \
+    --target-words "kite,baseball bat" --seed 1892721232
+```
+
+**Choosing what to steer** — `--target-words` is a comma-separated list of word(s) from the prompt
+to induce (e.g. `--target-words "kite"` for just the kite, or `"kite,baseball bat"` for both).
+Multi-word objects are fine. Omit the flag to steer every noun in the prompt. (The config/CSV path
+uses a `target_words` column instead; see [`inference/`](src/will_it_render/inference/README.md).)
+
+These are project-page carousel prompts at their original seeds. The demo bundle ships the
+latent for seed 42; for other seeds the backend samples noise on the fly — the steering still
+works on any GPU, but bit-exact reproduction of the paper clip needs that seed's precomputed
+latent run on its tagged GPU type (see the [reproducibility
+notes](src/will_it_render/inference/README.md#reproducibility-seeds-gpus-and-determinism)).
+Known-good carousel prompts on the other backbones:
+
+```bash
+# LTX-2 (rescues cow + dog + boat)
+ltx=$(python -m scripts.download_artifacts --repo benf22/will-it-render --bundle ltx --quiet)
+wir-run --bundle "$ltx" --prompt "a tie and a cow and a dog and a boat" \
+    --target-words "cow,dog,boat" --seed 1547425198          # needs VP_LTX_ROOT
+
+# CogVideoX (rescues the refrigerator)
+cogx=$(python -m scripts.download_artifacts --repo benf22/will-it-render --bundle cogvideox --quiet)
+wir-run --bundle "$cogx" --prompt "a refrigerator and an elephant and a kite" \
+    --target-words "refrigerator,elephant,kite" --seed 1356492204
 ```
 
 See [`inference/`](src/will_it_render/inference/README.md) for the bundle contract and
