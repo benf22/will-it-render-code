@@ -18,6 +18,16 @@ python -m will_it_render.evaluation.run --labels labels.csv                     
 
 Prints **det-all** / **det-ratio** / clip-level detection rate, plus a per-k breakdown.
 
+```bash
+# (C) reproduce the paper's §1 table from the shipped annotated clips (no GPU, no model)
+python -m will_it_render.evaluation.paper_table    # det-all / det-ratio per backbone × method
+```
+
+`paper_table` aggregates the labels under [`data/paper_eval/`](../../../data/paper_eval/) under
+**rule C** (drop a clip if any object is a detector tie `-1`; average per-k) and reproduces the
+published numbers exactly — see `tests/test_paper_table.py`. (Rule C's clip-level tie drop
+differs from the row-level default below; `data/paper_eval/README.md` explains why.)
+
 ## Metrics (`metrics/metrics_utils.py` — single source of truth)
 
 | Name | Function | Meaning |
