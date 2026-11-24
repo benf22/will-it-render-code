@@ -1,0 +1,3 @@
+prompt_idx,prompt,object_name,target_words,seed
+3,an orange and a clock,orange_clock,"orange,clock",42
+12,a knife and a tv,knife_tv,"knife,tv",42
