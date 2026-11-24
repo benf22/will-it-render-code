@@ -15,3 +15,17 @@ and temporal-control benchmarks for text-to-video generation. The headline set i
 
 These are **prompts and seeds only** — the generated videos and detector labels are produced by
 the pipeline (`will_it_render.datasets` + `will_it_render.evaluation`), not shipped here.
+
+## Training data (on Hugging Face)
+
+The per-backbone **AttnSteer training sets** — the prompt list with seeds, the train/val split,
+and the detector annotation of each clip — are hosted on HF (too large/data-heavy for git):
+[`benf22/will-it-render` → `datasets/training/`](https://huggingface.co/benf22/will-it-render/tree/main/datasets/training)
+(`wan.csv`, `ltx.csv`, `cogvideox.csv`).
+
+Columns: `prompt_idx, prompt, seed, object_name, n_objects, split, label` (`label` ∈ {1 present,
+0 absent, −1 tie}; WAN uses the colour-corrected `rgbfix` labels that the shipped probe was
+trained on). Point `training.train_csv`/`val_csv` at your split to retrain — see
+[`training/`](../src/will_it_render/training/README.md). The paper's **object-presence eval
+labels** live alongside them under `paper_eval/` (see
+[`evaluation/`](../src/will_it_render/evaluation/README.md)).
