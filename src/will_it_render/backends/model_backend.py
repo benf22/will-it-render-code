@@ -10,6 +10,7 @@ To add a new model, subclass ``ModelBackend`` and register it in
 from __future__ import annotations
 
 import logging
+import os
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
 from pathlib import Path
@@ -427,7 +428,10 @@ class LTXBackend(ModelBackend):
         path construction in ``data_extraction/gen_seed_latents.py`` (model name +
         resolution/fps + gpu tag); both must stay in sync."""
         cfg = self._model_cfg
-        root = cfg.get("seed_latents_dir") or self._experiment_cfg.get("seed_latents_dir")
+        # VP_SEED_LATENTS_DIR overrides the config (how `wir-run --bundle` points at the
+        # bundle's shipped seed_latents/); matches common.paths.seed_latents_dir().
+        root = (os.environ.get("VP_SEED_LATENTS_DIR")
+                or cfg.get("seed_latents_dir") or self._experiment_cfg.get("seed_latents_dir"))
         assert root, (
             "extraction.seed_latents_dir is not set — add it to configs/models/ltx.yaml. "
             "Precomputed per-seed latents are required (seed noise is GPU-dependent)."
@@ -594,15 +598,24 @@ class LTXBackend(ModelBackend):
             if skip_noiser:
                 noiser = None
             elif not (_save_p or _load_p):
-                # Default (mandatory): replay the canonical, GPU-independent per-seed
-                # initial latents precomputed on ctxa100. Seed noise is GPU-architecture
-                # dependent (see seed_gpu_analysis/), so sampling here would make the same
-                # seed produce a different video per GPU. Asserts if the seed is missing.
-                noiser = _PrecomputedNoiser(
-                    self._seed_latent_path(seed, video_h, video_w),
-                    seed,
-                    self._seed_latent_gen_hint(seed, video_h, video_w),
-                )
+                # Prefer the canonical, GPU-independent per-seed initial latents precomputed
+                # on ctxa100 (seed noise is GPU-architecture dependent, see seed_gpu_analysis/,
+                # so a precomputed latent is what makes the same seed reproduce across GPUs).
+                _seed_path = self._seed_latent_path(seed, video_h, video_w)
+                if _seed_path.exists():
+                    noiser = _PrecomputedNoiser(
+                        _seed_path, seed, self._seed_latent_gen_hint(seed, video_h, video_w),
+                    )
+                else:
+                    # On-the-fly fallback: a single seeded GaussianNoiser shared across the
+                    # video then audio stages — EXACTLY backends/seed_latents.py's
+                    # latents_for_seed. CUDA RNG is GPU-arch-dependent, so this reproduces only
+                    # within one GPU type; precompute (seed_latents.py) for cross-GPU parity.
+                    logging.getLogger(__name__).warning(
+                        "seed latent not found (%s) — sampling noise on the fly from seed=%d "
+                        "(reproducible only within this GPU type).", _seed_path, seed)
+                    noiser = GaussianNoiser(
+                        generator=torch.Generator(device=self._device).manual_seed(int(seed)))
             else:
                 from dataclasses import replace as _replace
 
@@ -1369,7 +1382,10 @@ class WanBackend(ModelBackend):
         # Precomputed per-seed initial latents (data_extraction/gen_seed_latents_wan.py) —
         # like LTX, seeds are canonical/GPU-independent because the pipeline LOADS the
         # initial noise instead of sampling (CUDA RNG is GPU-arch-dependent).
-        self._seed_latents_dir = model_cfg.get("seed_latents_dir") or experiment_cfg.get("seed_latents_dir")
+        # VP_SEED_LATENTS_DIR overrides the config (how `wir-run --bundle` points at the
+        # bundle's shipped seed_latents/); matches common.paths.seed_latents_dir().
+        self._seed_latents_dir = (os.environ.get("VP_SEED_LATENTS_DIR")
+                                  or model_cfg.get("seed_latents_dir") or experiment_cfg.get("seed_latents_dir"))
         self._seed_latents_tag = model_cfg.get("seed_latents_gpu_tag", "h100")
 
         self._pipe = WanT2V(
@@ -1501,18 +1517,26 @@ class WanBackend(ModelBackend):
         torch.cuda.empty_cache()
 
         path = self._seed_latent_path(seed, video_h, video_w)
-        assert path.exists(), (
-            f"Precomputed seed latent missing for seed={seed}:\n  {path}\n"
-            f"Generate it on the canonical GPU first:\n  {self._seed_latent_gen_hint(video_h, video_w)}"
-        )
-        # weights_only=False: our own trusted file, and it carries a meta dict.
-        blob = torch.load(path, map_location="cpu", weights_only=False)
-        noise = blob["video_noise"]
-        assert tuple(noise.shape) == tuple(target_shape), (
-            f"seed-latent shape {tuple(noise.shape)} != expected {tuple(target_shape)} for "
-            f"seed={seed} (resolution/frames changed?) — regenerate. File: {path}"
-        )
-        latents = [noise.to(self._device, dtype=torch.float32)]
+        if path.exists():
+            # weights_only=False: our own trusted file, and it carries a meta dict.
+            blob = torch.load(path, map_location="cpu", weights_only=False)
+            noise = blob["video_noise"]
+            assert tuple(noise.shape) == tuple(target_shape), (
+                f"seed-latent shape {tuple(noise.shape)} != expected {tuple(target_shape)} for "
+                f"seed={seed} (resolution/frames changed?) — regenerate. File: {path}"
+            )
+            noise = noise.to(self._device, dtype=torch.float32)
+        else:
+            # On-the-fly fallback: sample noise from the seed EXACTLY as
+            # backends/seed_latents_wan.py does, so it matches the precomputed latent on the
+            # same GPU type. CUDA RNG is GPU-arch-dependent, so this is reproducible only
+            # within one GPU type — precompute (seed_latents_wan.py) for cross-GPU parity.
+            logging.getLogger(__name__).warning(
+                "seed latent not found (%s) — sampling noise on the fly from seed=%d "
+                "(reproducible only within this GPU type).", path, seed)
+            g = torch.Generator(device=self._device).manual_seed(int(seed))
+            noise = torch.randn(*target_shape, dtype=torch.float32, device=self._device, generator=g)
+        latents = [noise]
         scheduler, timesteps = self._build_scheduler(solver, steps, shift)
         return context, context_null, latents, scheduler, timesteps, seq_len
 
@@ -1832,7 +1856,10 @@ class CogVideoXBackend(ModelBackend):
         self._scheduler = self._pipe.scheduler
         self._hf_tokenizer = self._pipe.tokenizer  # T5 fast tokenizer (offset mapping)
 
-        self._seed_latents_dir = model_cfg.get("seed_latents_dir") or experiment_cfg.get("seed_latents_dir")
+        # VP_SEED_LATENTS_DIR overrides the config (how `wir-run --bundle` points at the
+        # bundle's shipped seed_latents/); matches common.paths.seed_latents_dir().
+        self._seed_latents_dir = (os.environ.get("VP_SEED_LATENTS_DIR")
+                                  or model_cfg.get("seed_latents_dir") or experiment_cfg.get("seed_latents_dir"))
         self._seed_latents_tag = model_cfg.get("seed_latents_gpu_tag", "a100")
 
     # ------------------------------------------------------------------ helpers
@@ -1920,16 +1947,23 @@ class CogVideoXBackend(ModelBackend):
 
         target_shape = self._target_shape(video_h, video_w)
         path = self._seed_latent_path(seed, video_h, video_w)
-        assert path.exists(), (
-            f"Precomputed seed latent missing for seed={seed}:\n  {path}\n"
-            f"Generate it on the canonical GPU first:\n  {self._seed_latent_gen_hint(video_h, video_w)}"
-        )
-        blob = torch.load(path, map_location="cpu", weights_only=False)
-        noise = blob["video_noise"]
-        assert tuple(noise.shape) == tuple(target_shape), (
-            f"seed-latent shape {tuple(noise.shape)} != expected {tuple(target_shape)} for "
-            f"seed={seed} (resolution/frames changed?) — regenerate. File: {path}"
-        )
+        if path.exists():
+            blob = torch.load(path, map_location="cpu", weights_only=False)
+            noise = blob["video_noise"]
+            assert tuple(noise.shape) == tuple(target_shape), (
+                f"seed-latent shape {tuple(noise.shape)} != expected {tuple(target_shape)} for "
+                f"seed={seed} (resolution/frames changed?) — regenerate. File: {path}"
+            )
+        else:
+            # On-the-fly fallback: sample noise from the seed EXACTLY as
+            # backends/seed_latents_cogx.py does (matches the precomputed latent on the same
+            # GPU type). CUDA RNG is GPU-arch-dependent → reproducible only within one GPU
+            # type; precompute (seed_latents_cogx.py) for cross-GPU parity.
+            logging.getLogger(__name__).warning(
+                "seed latent not found (%s) — sampling noise on the fly from seed=%d "
+                "(reproducible only within this GPU type).", path, seed)
+            g = torch.Generator(device=self._device).manual_seed(int(seed))
+            noise = torch.randn(*target_shape, dtype=torch.float32, device=self._device, generator=g).cpu()
         # [F', C, H/8, W/8] → [1, F', C, H/8, W/8]; init_noise_sigma == 1.0 (no scaling).
         latents = noise.unsqueeze(0).to(self._device, dtype=self._dtype)
         latents = latents * self._scheduler.init_noise_sigma

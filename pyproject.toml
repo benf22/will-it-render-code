@@ -22,6 +22,7 @@ dependencies = [
     "pyyaml",
     "omegaconf",
     "safetensors",
+    "scipy",        # inference/steer.py writes generated audio via scipy.io.wavfile
     "tqdm",
 ]
 
