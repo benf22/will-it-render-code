@@ -1,10 +1,9 @@
 """Entry point for inference-time attention steering.
 
-    python -m steering.steer --config steering/steering.yaml
-    python -m steering.steer --config steering/steering.yaml \
-        --prompts_csv example_prompts/steer_lion.csv --output_dir /tmp/steer
+    python -m will_it_render.inference.steer --config configs/steering/wan.yaml \
+        --prompts_csv examples/example_prompts/wir_testset_sample.csv --output_dir /tmp/steer
 
-Loads ``steering/steering.yaml`` plus the shared per-model config
+Loads ``configs/steering/<model_type>.yaml`` plus the shared per-model config
 ``configs/models/<model_type>.yaml`` (the only config reused from the rest of the
 pipeline), builds the backend and the steering model, then runs steered generation
 for each prompt — saving ``output.mp4`` / ``output.wav`` and a per-step

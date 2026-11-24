@@ -16,5 +16,3 @@ Reproduce current behavior (plan §10b R7 / §7):
   `video_probing`, or HF/wandb token patterns in tracked files.
 
 CI: GitHub Actions running the CPU suite + both scanners.
-
-> Scaffold — populated in Phase 7.
