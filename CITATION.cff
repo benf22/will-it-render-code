@@ -4,6 +4,9 @@ title: "Will It Render? Learned Attention Steering for Object Presence in Text-t
 version: 0.1.0
 date-released: 2026-11-22
 license: MIT
+repository-code: "https://github.com/benf22/will-it-render-code"
+url: "https://benf22.github.io/will-it-render/"
+repository-artifact: "https://huggingface.co/benf22/will-it-render"
 authors:
   - family-names: Fishman
     given-names: Ben
