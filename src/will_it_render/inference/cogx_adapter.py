@@ -1,7 +1,7 @@
 """CogVideoX steering adapter.
 
 Exposes the CogVideoX joint-attention DiT generation step to the shared steering core
-(:func:`steering.steering_core.run_steering_optimization`), mirroring
+(:func:`will_it_render.inference.steering_core.run_steering_optimization`), mirroring
 :class:`steering.wan_steering_loop.WanSteeringAdapter`.
 
 Decomposition (same contract as WAN):

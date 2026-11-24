@@ -351,7 +351,7 @@ def make_ltx_steering_loop(
 
     Thin wrapper: constructs an :class:`LTXSteeringAdapter` from the pipeline-provided
     state and delegates the actual optimization to the model-agnostic
-    :func:`steering.steering_core.run_steering_optimization`. Signature/behavior are
+    :func:`will_it_render.inference.steering_core.run_steering_optimization`. Signature/behavior are
     unchanged from before the core was extracted.
 
     ``n_iters`` — gradient steps per steered denoising step (0 disables steering;
@@ -359,7 +359,7 @@ def make_ltx_steering_loop(
     ``optimizer_name`` / ``lr`` — optimizer over ``x_t`` (``"simple"`` = plain GD).
 
     Regularizers (``magnitude/anchor/pred/kl/entropy/attn_anchor/source``) are documented on
-    :func:`steering.steering_core.run_steering_optimization`.
+    :func:`will_it_render.inference.steering_core.run_steering_optimization`.
 
     Video-edit only (``LTXBackend.run_with_steering_from_video``): ``step_offset`` = steps
     skipped at the head of the schedule (``sigmas`` is the truncated tail), so the steering

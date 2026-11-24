@@ -3,13 +3,13 @@
     # 1 GPU
     python -m will_it_render.datasets.run_extraction \\
         --config configs/attnsteer.yaml \\
-        --prompts_csv examples/example_prompts/dog_prompt.csv \\
+        --prompts_csv examples/example_prompts/wir_testset_sample.csv \\
         --output_dir /tmp/extract_test
 
     # N GPUs on one machine (DDP)
     torchrun --nproc_per_node=4 -m will_it_render.datasets.run_extraction \\
         --config configs/attnsteer.yaml \\
-        --prompts_csv examples/example_prompts/dog_prompt.csv \\
+        --prompts_csv examples/example_prompts/wir_testset_sample.csv \\
         --output_dir /tmp/extract_test
 
 Modes:

@@ -1055,7 +1055,7 @@ class LTXBackend(ModelBackend):
 
         ``source_reg`` / ``source_reg_every_step`` anchor the steered latent to the
         TRUE source video (as opposed to ``anchor_reg``, which only bounds drift
-        from one steered step to the next) — see ``steering.steering_loop`` for the
+        from one steered step to the next) — see ``will_it_render.inference.steering_core`` for the
         exact mechanism. Both need the noise sample the initial re-noising drew, so
         the noiser passed to ``pipeline.stage`` here is wrapped to record it into
         ``source_noise_sink`` before the loop's first step runs. Returns a third
@@ -1358,7 +1358,7 @@ class WanBackend(ModelBackend):
         # model can't run without flash_attn installed). Held for the process lifetime.
         self._restore_attn = install_sdpa_flash_attention()
 
-        # Determinism (mirrors steering.steer.enable_determinism; inlined to avoid a
+        # Determinism (mirrors will_it_render.inference.steer.enable_determinism; inlined to avoid a
         # circular import). Must be set before CUDA/cuBLAS init below. DEFAULT = strict
         # (use_deterministic_algorithms warn_only=False): SDPA's flash backward then uses its
         # deterministic algorithm, so a steered run is bit-reproducible on the same GPU type.

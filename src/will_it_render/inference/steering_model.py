@@ -25,7 +25,7 @@ from will_it_render.common.aggregator import aggregate_captures_to_vector
 # ``SteeringModel`` ABC and ``build_attnsteer`` were hoisted into ``common`` to break the
 # ``steering ↔ baselines`` import cycle and the ``steering → training.trainer`` heavy pull
 # Both are re-exported here (imported above) so existing
-# ``from steering.steering_model import SteeringModel`` / ``build_attnsteer`` callers keep working.
+# ``from will_it_render.inference.steering_model import SteeringModel`` / ``build_attnsteer`` callers keep working.
 
 
 def _build_probe_from_ckpt(

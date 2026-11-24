@@ -353,7 +353,7 @@ def build_tempo_control_model(
     """Build from the ``steering.model`` block (+ ``steering.objective``).
 
     ``probe_config`` is unused — this baseline has no trained probe — but is accepted so
-    the signature matches ``steering.steering_model.build_steering_model``.
+    the signature matches ``will_it_render.inference.steering_model.build_steering_model``.
     """
     obj = cfg.get("objective", {}) or {}
     # Which steps the method may optimize: their `diffusion.diffusion_steps_range`.

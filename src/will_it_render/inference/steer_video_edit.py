@@ -3,8 +3,8 @@ video editing) — used for object-removal: VAE-encode a real video, partially r
 it, then run the same probe-gradient steering loop as ``steering/steer.py`` but
 starting from the noised real latent instead of from scratch on pure noise.
 
-    python -m steering.steer_video_edit --config steering/steering_video_edit.yaml
-    python -m steering.steer_video_edit --config steering/steering_video_edit.yaml \
+    python -m will_it_render.inference.steer_video_edit --config steering/steering_video_edit.yaml
+    python -m will_it_render.inference.steer_video_edit --config steering/steering_video_edit.yaml \
         --prompts_csv example_prompts/remove_dog.csv --output_dir /tmp/steer_edit
 
 Set ``steering.objective.target: 0.0`` in the config to SUPPRESS the target word(s)
@@ -12,7 +12,7 @@ Set ``steering.objective.target: 0.0`` in the config to SUPPRESS the target word
 ``steering/CLAUDE.md``. Set it to ``1.0`` to instead reinforce/induce an object already
 faintly present.
 
-Reuses ``load_configs`` / ``build_backend`` from ``steering.steer`` verbatim; only the
+Reuses ``load_configs`` / ``build_backend`` from ``will_it_render.inference.steer`` verbatim; only the
 per-prompt loop and the CSV schema differ (``video_path, prompt, target_words[, seed]``
 instead of a from-scratch prompts CSV).
 """
@@ -45,7 +45,7 @@ def run_video_edit_steering(steering: dict, backend, model_extraction_cfg: dict,
                             device: int, logger: logging.Logger, prompts_csv: str | None = None) -> dict:
     """Run video-edit (SDEdit-style) steering for every row into ``output_dir``.
 
-    Mirrors ``steering.steer.run_steering`` (same steering-model construction,
+    Mirrors ``will_it_render.inference.steer.run_steering`` (same steering-model construction,
     optimization knobs, and per-prompt output layout) but reads a
     ``video_path, prompt, target_words[, seed]`` CSV and calls
     ``backend.run_with_steering_from_video`` instead of ``run_with_steering``.

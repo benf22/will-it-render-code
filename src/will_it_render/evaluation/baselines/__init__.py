@@ -1,6 +1,6 @@
 """External baselines to compare against our probe-guided attention steering.
 
-Each baseline is a drop-in :class:`steering.steering_model.SteeringModel`: it turns one
+Each baseline is a drop-in :class:`will_it_render.inference.steering_model.SteeringModel`: it turns one
 denoising step's live cross-attention captures into a scalar loss that
 ``steering/steering_loop.py`` backpropagates to ``x_t``. Reusing that loop (rather than
 porting each paper's own denoising code) means every baseline runs through the *identical*
@@ -13,7 +13,7 @@ Adding a baseline:
 2. register its ``mode`` string in :data:`BASELINE_BUILDERS`,
 3. write a steering-style config with ``steering.model.mode: <mode>``.
 
-``steering.steering_model.build_steering_model`` dispatches any mode it does not
+``will_it_render.inference.steering_model.build_steering_model`` dispatches any mode it does not
 implement here.
 """
 from __future__ import annotations

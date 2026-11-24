@@ -1,9 +1,9 @@
 """The ``SteeringModel`` abstract base class.
 
-Hoisted out of ``steering.steering_model`` so that baseline implementations
+Hoisted out of ``will_it_render.inference.steering_model`` so that baseline implementations
 (``baselines/*/loss.py``) can subclass it without importing the ``steering`` package —
 which imported ``baselines`` back, forming a cycle.
-``steering.steering_model`` re-exports this name for backwards compatibility.
+``will_it_render.inference.steering_model`` re-exports this name for backwards compatibility.
 """
 from __future__ import annotations
 
